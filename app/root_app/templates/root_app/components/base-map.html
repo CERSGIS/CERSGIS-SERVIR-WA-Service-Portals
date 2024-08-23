@@ -1,0 +1,87 @@
+{% load static %}
+
+<div class="box basemap">
+    <div class="d-flex justify-content-between box-title"> 
+        <h4 class="title-text"> Basemaps</h4>
+        <i class="close closebox fa-solid fa-circle-xmark my-auto"></i>
+    </div>
+    <div class="box-body">
+        <div class="row row-cols-12 gap-2 justify-content-center">
+
+            <div class="row basemap-container" id="basemap1">
+              <div class="col-4 lgndthumb">
+                <img src="{% static 'root_app/assets/images/maplegend/cartodb_positron.png' %}">
+              </div>
+              <div class="col-8">
+                <p>OpenStreet</p>
+              </div>
+            </div>
+            
+            <div class="row basemap-container" id="basemap6">
+              <div class="col-4 lgndthumb" >
+                  <img src="{% static 'root_app/assets/images/maplegend/esri_oceanbasemap.png' %} ">
+              </div>
+              <div class="col-8">
+                <p>Ocean</p>
+              </div>
+            </div>
+
+            <div class="row basemap-container" id="basemap3">
+              <div class="col-4 lgndthumb" >
+                <img src="{% static 'root_app/assets/images/maplegend/esri_worldterrain.png' %} ">
+              </div>
+              <div class="col-8">
+                <p>Hybrid</p>
+              </div>
+            </div>
+
+            <div class="row basemap-container" id="basemap2">
+              <div class="col-4 lgndthumb">
+                <img src="{% static 'root_app/assets/images/maplegend/here_satelliteday.png' %} ">
+              </div>
+              <div class="col-8">
+                <p>Satellite</p>
+                <!-- <p>Esri Satellite</p> -->
+              </div>
+            </div>
+            
+            <div class="row basemap-container" id="basemap5">
+              <div class="col-4 lgndthumb" >
+                <img src="{% static 'root_app/assets/images/maplegend/stamen_toner.png' %} ">
+              </div>
+              <div class="col-8">
+                <p>OpenTopoMap</p>
+              </div>
+            </div>
+
+            <div class="row basemap-container" id="basemap13">
+              <div class="col-4 lgndthumb" >
+                <img src="{% static 'root_app/assets/images/maplegend/carto_white.png' %} ">
+              </div>
+              <div class="col-8">
+                <p>CartoDB.Positron</p>
+              </div>
+            </div>
+
+            <div class="row basemap-container" id="basemap11">
+              <div class="col-4 lgndthumb" >
+                <img src="{% static 'root_app/assets/images/maplegend/carto.png' %} ">
+              </div>
+              <div class="col-8">
+                <p>CartoDB.DarkMatter</p>
+              </div>
+            </div>
+
+            <div class="row basemap-container" id="no_basemap">
+              <div class="col-4 lgndthumb" >
+                  <img src="{% static 'root_app/assets/images/maplegend/white.png' %}">
+              </div> 
+              <div class="col-8">
+                <p>Clear</p>
+              </div>
+            </div>
+                
+             
+        </div>
+    </div>
+</div>

@@ -1,0 +1,634 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>{% block title %}{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato%3A700" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro%3A700" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.css"/>
+    <link rel="stylesheet" href="{% static 'root_app/assets/styles/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'root_app/assets/styles/map-nav.css' %}" />
+
+    <!-- Favicon -->
+    <!-- <link href="{% static 'assets/landing/images/partners/servir-favicon.png' %}" rel="icon"> -->
+
+    <!-- Intro js -->
+    <link rel="stylesheet" href="https://unpkg.com/intro.js/introjs.css">
+
+    <!-- Intro js modern theme -->
+    <link href="{% static 'root_app/assets/styles/introjs-modern.css' %}" rel="stylesheet">
+
+    <style type="text/css">
+        .leaflet-bar {
+            border: none !important;
+        }
+
+        .leaflet-control-measure .leaflet-control {
+            border: 2px solid rgba(0, 0, 0, 0.2) !important;
+            background-clip: padding-box;
+        }
+
+        .leaflet-control-measure {
+            box-shadow: 0 1px 5px rgb(0, 0, 0, 0.2) !important;
+        }
+
+        .leaflet-touch .leaflet-control-measure .leaflet-control-measure-toggle,
+        .leaflet-touch .leaflet-control-measure .leaflet-control-measure-toggle:hover {
+            width: 30px;
+            height: 30px;
+        }
+
+        .header {
+            height: 80px !important;
+            overflow: hidden;
+            width: 100%;
+            background-color: {% if app_details %}{{ app_details.top_nav_background_color }}{% else %}#fff{% endif %};
+            color: {% if app_details %}{{ app_details.top_nav_color }}{% else %}#000000{% endif %};
+            border-bottom: 2px solid {% if app_details %}{{ app_details.top_nav_border_color }}{% else %}#000000{% endif %};
+        }
+        
+        .map-nav-Z9P .side-nav, .toggle-sidebar .minimized-side-nav, .analysis-opened .minimized-side-nav  {
+            background-color: {% if app_details %}{{ app_details.side_nav_background_color }}{% else %}#fff{% endif %};
+        }
+
+        .side-nav .side-nav-button{
+            color: {% if app_details %}{{ app_details.side_nav_color }}{% else %}#fff{% endif %};
+        }
+
+        .side-nav-icons, .minimized-side-nav .side-nav-icons, .map-nav-Z9P .minimized-side-nav .mi-chevron-double-right-1eu .side-right-icon,
+        .analysis-opened .side-nav-icons, .map-nav-Z9P .analysis-opened .mi-chevron-double-right-1eu .side-right-icon,
+        .side-nav .mi-chevron-double-right-1eu .side-right-icon{
+            color: {% if app_details %}{{ app_details.side_nav_icon_color }}{% else %}#fff{% endif %};
+        }
+        
+        .box-title, .introjs-tooltip-header, #data-request .modal-header{
+            background: {% if app_details %}{{ app_details.box_top_color }}{% else %}#000000{% endif %};
+        }
+
+        .title-text, .introjs-tooltip-title, .introjs-skipbutton, .close, #data-request .modal-header{
+            color: {% if app_details %}{{ app_details.box_top_text_color }}{% else %}#000000{% endif %};
+        }      
+
+        #data-request .modal-header .closee{
+            color: {% if app_details %}{{ app_details.box_top_text_color }}{% else %}#000000{% endif %};
+            font-size: 20px;
+        }        
+        #data-request #data_request_submit{
+            background-color: {% if app_details %}{{ app_details.box_top_color }}{% else %}#000000{% endif %};
+            color: {% if app_details %}{{ app_details.box_top_text_color }}{% else %}#fff{% endif %};
+        }   
+        #data-request .btn-close{
+            --bs-btn-close-bg: none
+        }
+                
+        .statistics .accordion-button, .statistics .accordion-button:not(.collapsed){
+            background-color: {% if app_details %}{{ app_details.box_top_color }}{% else %}#FFFFFF{% endif %};
+            color: {% if app_details %}{{ app_details.box_top_text_color }}{% else %}#000000{% endif %};
+        }
+
+        .statistics .accordion-item, .statistics .accordion{
+            background-color: #ffffff00 !important;
+        }
+        
+        .accordion-button.collapsed::after, .accordion-button::after {
+            background-image: none;
+            content: "\f077";
+            font-size: 18px;
+            font-weight: 800;
+            font-family: FontAwesome;
+            height: auto;
+        }
+        .accordion-button:not(.collapsed)::after {
+            background-image: none;
+        }
+
+        .map-nav-Z9P .right-map-content  {
+            background: {% if app_details %}{{ app_details.analysis_background }}{% else %}#FFFFFF{% endif %};
+            {% if app_details and app_details.analysis_background %}background-size:{{app_details.analysis_background_size}};{% endif %};
+        }
+
+        .left-drawer {
+            margin-top: 0px;
+        }
+
+        #loading-bar-spinner.spinner {
+            left: 50%;
+            margin-left: -20px;
+            top: 50%;
+            margin-top: -20px;
+            position: absolute;
+            z-index: 500 !important;
+            animation: loading-bar-spinner 400ms linear infinite;
+        }
+
+        #loading-bar-spinner.spinner .spinner-icon {
+            width: 50px;
+            height: 50px;
+            border: solid 4px transparent;
+            border-top-color: #00c8b1 !important;
+            border-left-color: #00c8b1 !important;
+            border-radius: 50%;
+        }
+
+        @keyframes loading-bar-spinner {
+            0% {
+                transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+                transform: rotate(360deg);
+            }
+        }
+
+
+        .notify {
+            position: absolute;
+            padding: 0px 25px 0 20px;
+            top: 18px;
+            right: 7px;
+            width: auto;
+            height: 0;
+            box-sizing: border-box;
+            color: #fff;
+            text-align: center;
+            background: rgba(0, 0, 0, .8);
+            overflow: hidden;
+            box-sizing: border-box;
+            transition: height .2s;
+            border-radius: 10px;
+            z-index: 999;
+        }
+
+        #notifyText {
+            padding-top: 6px;
+        }
+
+        #notifyText>img {
+            display: inline-flex;
+            width: 20px;
+            height: 20px;
+            margin: -3px 10px 0px 0px;
+        }
+
+        .active-dis {
+            height: 40px;
+        }
+
+        .stats-container .nav-pills{
+            --bs-nav-pills-border-radius: var(--bs-border-radius-pill);
+            {% if app_details %}--bs-nav-pills-link-active-bg:{{ app_details.box_top_color }};{% endif %}
+            {% if app_details %}--bs-nav-pills-link-active-color:{{ app_details.box_top_text_color }};{% endif %}
+        }
+
+        .stats-container .nav{
+            {% if app_details %}--bs-nav-link-color:{{ app_details.box_top_text_color }};{% endif %}
+        }
+        
+    </style>
+
+    {% block css %}
+    {% endblock %} 
+    
+</head>
+
+<body>
+    <div id="modal-container" class="one">
+        <div class="modal-background">
+            <div class="modal">
+                <h2>Disclaimer</h2>
+                {% if app_details %} <p>{{app_details.disclaimer | safe}}</p> {% else %} <p> Disclamer </p>{% endif %}
+                <!-- <p> <strong> SERVIR WEST AFRICA </strong>, <strong> CERSGIS </strong>, <strong> USAID </strong>, and <strong> NASA </strong> do not take responsibility for any inaccuracy in any information shared on this web portal and shall not be liable for any damages attributed to this data.</p> -->
+                <button class="btn btn-success m-close"> OK</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="loading-bar-spinner" class="spinner">
+        <div class="spinner-icon"></div>
+    </div>
+
+    <div class="header">
+        <div class="map-nav-sAd">
+            <div class="col-7 col-sm-8 col-md-6 col-lg-5 col-xl-7">
+                <h2> {% if app_details %} {{ app_details.app_name | safe}} {% else %} App title {% endif %} <h2>
+            </div>
+            <div class="col-4 col-sm-4 col-md-5 col-lg-6 col-xl-4">
+                <div class="frame-286-ecd partners">
+                    {% for partner in partners %}
+                    <img class="map-logo" src="{{ partner.logo.url }}" />
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="notify">
+                <p class="" id="notifyText"><img class="" style="display: inline-flex;"
+                        src="{% static 'galamsey_portal/assets/images/ph-info-light-rcD.png' %}" /> in development</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="map-nav-Z9P">
+        <!-- Side navigation -->
+
+             {% block side-nav %}
+            {% endblock %}
+
+
+        <div class="right-map-content">
+            <div id="loader-analysis-container" class="d-none justify-content-center align-items-center">
+                <div class="loader-stats"></div>
+            </div>
+
+            <!-- QUERY -->
+            <div class="query-container">
+                <div class="analysis-box">
+                    <div class="mb-4 text-center box-title">
+                        <h4 class="py-1 title-text">Query</h4>
+                    </div>
+                    <div class="py-3 px-4">
+                    {% block query %}
+                    {% endblock %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- MAP -->
+            <div class="map-container">
+                <div class="analysis-box">
+
+                    <div id="map" class="map" style="position: relative;">
+                        <!-- <div class="control-box">
+                            <div class="inner-control-box"> -->
+                                <!-- Zoom In -->
+                                <!-- <img src="{% static 'root_app/assets/icons/zoom-in.png' %}" alt="zoom-in" class="control-icon" id="zoom-in"> -->
+                                <!-- Zoom Out -->
+                                <!-- <img src="{% static 'root_app/assets/icons/zoom-out.png' %}" alt="zoom-out" class="control-icon" id="zoom-out"> -->
+                                <!-- Zoom Extent -->
+                                <!-- <img src="{% static 'root_app/assets/icons/zoom-extent.png' %}" alt="zoom-extent" class="control-icon" id="zoom-extent"> -->
+                                <!-- Measure Tool -->
+                                <!-- <img src="{% static 'root_app/assets/icons/measure-tool.png' %}" alt="measure-tool" class="control-icon" id="measure-tool"> -->
+                                <!-- Draw Polygon -->
+                                <!-- <img src="{% static 'root_app/assets/icons/draw-polygon.png' %}" alt="draw-polygon" class="control-icon" id="draw-polygon"> -->
+                                <!-- Draw Rectangle -->
+                                <!-- <img src="{% static 'root_app/assets/icons/draw-rectangle.png' %}" alt="draw-rectangle" class="control-icon" id="draw-rectangle"> -->
+                                <!-- Draw Circle -->
+                                <!-- <img src="{% static 'root_app/assets/icons/draw-circle.png' %}" alt="draw-circle" class="control-icon" id="draw-circle"> -->
+                                <!-- Edit Shape-->
+                                <!-- <img src="{% static 'root_app/assets/icons/edit-shape.png' %}" alt="edit-shape" class="control-icon" id="edit-shape"> -->
+                                <!-- Delete Shape -->
+                                <!-- <img src="{% static 'root_app/assets/icons/delete-shape.png' %}" alt="delete-shape" class="control-icon" id="delete-shape"> -->
+                                <!-- Print Map -->
+                                <!-- <img src="{% static 'root_app/assets/icons/print-map.png' %}" alt="print-map" class="control-icon" id="print-map"> -->
+                            <!-- </div>
+                        </div> -->
+                    </div>
+
+                    <div id="analysis-map" class="map d-none" style="border-radius: inherit; position: relative;">
+                        
+                    </div>
+
+                        <!-- <div> -->
+
+                        {% block body %}
+                        {% endblock %}
+                        
+                        <!-- For BASE MAP -->
+                        {% include 'root_app/components/base-map.html' %}
+
+                        <!-- REPORTS -->
+                        {% include 'root_app/components/report.html' %}
+
+                
+                        <!-- WEB MANUAL -->
+                        {% include 'root_app/components/manual.html' %}
+
+
+                        <!-- DATA REQUEST -->
+                        <div id="data-request">
+                            {% include 'root_app/components/data-request.html' %}
+                        </div>
+
+                        <!-- REFERENCE DATA -->
+                         {% include 'root_app/components/reference.html' %}
+                    <!-- </div> -->
+
+                </div>
+            </div>
+
+
+            <!-- STATISTICS -->
+            <div class="stats-container">
+                <div class="analysis-box">
+                    <div class="mb-4 text-center box-title">
+                        <h4 class="py-1 title-text">Statistics</h4>
+                    </div>
+                    <div class="p-3">
+                        {% block stats %}
+                        {% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
+        integrity="sha512-+NqPlbbtM1QqiK8ZAo4Yrj2c4lNQoGv8P79DPtKzj++l5jnN39rHA/xsqn8zE9l0uSoxaCdrOgFs6yjyfbBxSg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.js"></script>
+
+    <!-- highcharts CDN scripts -->
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-3d.js"></script>
+    <script src="https://code.highcharts.com/modules/cylinder.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <!-- optional -->
+    <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+
+    <!-- Sweet alert CDN script -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Intro js CDN -->
+    <script src="https://unpkg.com/intro.js/intro.js"></script>
+
+    <!-- Custom Control Buttons -->
+    <script src="{% static 'root_app/assets/js/control-buttons.js' %}" defer></script>
+            
+
+    <script type="text/javascript">
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 2500,
+            timerProgressBar: true,
+        })
+
+
+        $('body').addClass('modal-active').delay(3000);
+
+        $('#modal-container').click(function(){
+          $(this).addClass('out');
+          $('body').removeClass('modal-active');
+        });
+
+        $('.m-close').click(function(){
+          $('#modal-container').addClass('out');
+          $('body').removeClass('modal-active');
+        });
+
+        $("#loading-bar-spinner")
+            .delay(10.5)
+            .queue(function (next) {
+                $(this).css("display", "none");
+                next();
+            });
+
+        function doit() {
+
+            $(".notify").addClass("active-dis").delay(120000).queue(function (next) {
+                $(this).removeClass("active-dis").delay(1000);
+                next();
+            });
+
+            // alert('box2 already on shutting down entire box');
+        }
+
+        setInterval(doit, 70000);
+
+
+        $(function () {
+            $('[data-toggle="side-nav-popover"]').tooltip()
+        })
+    </script>
+
+
+    <!-- <script>
+        $(document).ready(function(){
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script> -->
+
+
+    <script>
+        const charcoal_base_url = '{% url "charcoalPortal:charcoal_map_view" %}';
+        const charcoal_data_request_url = '{% url "charcoalPortal:data_request" %}';
+        const galamsey_base_url = '{% url "galamseyPortal:galamsey_map_view" %}';
+        const galamsey_data_request_url = '{% url "galamseyPortal:data_request" %}';
+
+
+        $("#data_request_submit").click(function () {
+        event.preventDefault();
+        $('#loading-spinner').removeClass('d-none');
+        
+        var data = new FormData($('#data_request_form').get(0));
+        
+        
+        const url = "{{request.path}}" == charcoal_base_url ? charcoal_data_request_url : "{{request.path}}" == galamsey_base_url ? galamsey_data_request_url : "none";
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: data,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+            
+            if (data.status == 200) {
+                $('#loading-spinner').addClass('d-none')
+                Toast.fire({
+                    icon: 'success',
+                    title: data.message,
+                    })
+                setTimeout(function(){window.location.reload()}, 2000)
+            } else {
+                $('#loading-spinner').addClass('d-none')
+                Toast.fire({
+                    icon: 'error',
+                    title: data.message,
+                    })
+            }
+            
+            }
+        });
+    })
+
+
+
+// =======================================================================================
+                        // MAP INITIALIZATING AND BASE MAP 
+// =======================================================================================
+    
+    const carto_white_map_url = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
+    // const openstreetmap_url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+
+    let initialView , initialZoom;
+
+    if ("{{request.path}}" === galamsey_base_url) {
+        initialView = [6.155785, -1.936499];
+        initialZoom = 9;
+    } else if ("{{request.path}}" === charcoal_base_url) {
+        initialView = [8.967388, -0.971667];
+        initialZoom = 8.2;
+    } else {
+        // Set a default view and zoom level if no conditions match
+        initialView = [7.9465, 1.0232];
+        initialZoom = 7; 
+    }
+
+    let map = L.map('map', { attributionControl: false}).setView(initialView, initialZoom)
+    let analysis_map = L.map('analysis-map', { attributionControl: false}).setView(initialView, initialZoom)
+
+    // CARTO WHITE 
+    let initialBasemap = L.tileLayer(carto_white_map_url, {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+        }).addTo(map);
+
+    let analysisInitialBasemap = L.tileLayer(carto_white_map_url, {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+        }).addTo(analysis_map);
+    // OPEN STREET
+    // let initialBasemap = L.tileLayer(openstreetmap_url, {
+    //         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>'
+    //     }).addTo(map);
+
+    // let analysisInitialBasemap = L.tileLayer(openstreetmap_url, {
+    //         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>'
+    //     }).addTo(analysis_map);
+
+    map.invalidateSize();
+    // analysis_map.invalidateSize();
+
+
+    $("#analytics").on('click', function () {
+        setTimeout(function(){ analysis_map.invalidateSize()}, 10);
+    });
+
+    $(".basemap-container").click(function(e) {
+        map.removeLayer(initialBasemap);
+        $(".lgndthumb > img").css("border-color", "#3e5766");
+        var toolname = $(this).attr("id");
+
+        if (toolname == "no_basemap") {
+            initialBasemap = L.tileLayer("").addTo(map);
+        } else if (toolname == "basemap1") {
+            initialBasemap = L.tileLayer(
+                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                    maxZoom: 19,
+                    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>',
+                }
+            ).addTo(map);
+        } else if (toolname == "basemap2") {
+            initialBasemap = L.tileLayer(
+                'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+                }
+            ).addTo(map);
+        } else if (toolname == "basemap3") {
+            initialBasemap = L.tileLayer(
+                "https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
+                    maxZoom: 19,
+                    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>',
+                }
+            ).addTo(map);
+        } else if (toolname == "basemap4") {
+            initialBasemap = L.tileLayer(
+                "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
+                    maxZoom: 17,
+                    attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
+                }
+            ).addTo(map);
+        } else if (toolname == "basemap5") {
+            initialBasemap = L.tileLayer(
+                "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
+                    maxZoom: 17,
+                    attribution: 'Map data: &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
+                }
+            ).addTo(map);
+        } else if (toolname == "basemap6") {
+            initialBasemap = L.tileLayer(
+                "http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
+                    attribution: "Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012",
+                }
+            ).addTo(map);
+        } else if (toolname == "basemap7") {
+            initialBasemap = L.tileLayer(
+                "https://{s}.tile.openstreetmap.se/hydda/roads_and_labels/{z}/{x}/{y}.png", {
+                    maxZoom: 18,
+                    attribution: 'Tiles courtesy of <a href="http://openstreetmap.se/" target="_blank">OpenStreetMap Sweden</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                }
+            ).addTo(map);
+        } else if (toolname == "basemap8") {
+            initialBasemap = L.tileLayer(
+                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                    maxZoom: 19,
+                    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                }
+            ).addTo(map);
+        } else if (toolname == "basemap9") {
+            initialBasemap = L.tileLayer(
+                "http://server.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/{z}/{y}/{x}", {
+                    attribution: "Tiles &copy; Esri &mdash; Sources: GEBCO, NOAA, CHS, OSU, UNH, CSUMB, National Geographic, DeLorme, NAVTEQ, and Esri",
+                }
+            ).addTo(map);
+        } else if (toolname == "basemap10") {
+            initialBasemap = L.tileLayer(
+                "https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.{ext}", {
+                    attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                    subdomains: "abcd",
+                    minZoom: 0,
+                    maxZoom: 20,
+                    ext: "png",
+                }
+            ).addTo(map);
+        } else if (toolname == "basemap11") {
+            initialBasemap = L.tileLayer(
+                "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                    subdomains: 'abcd',
+                    maxZoom: 20
+                }
+            ).addTo(map);
+        } else if (toolname == "basemap12") {
+            initialBasemap = L.tileLayer(
+                "https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png", {
+                    attribution: 'Map data: &copy; <a href="http://www.openseamap.org">OpenSeaMap</a> contributors',
+                    subdomains: 'abcd',
+                    maxZoom: 20
+                }
+            ).addTo(map);
+        } else if (toolname == "basemap13") {
+            initialBasemap = L.tileLayer(
+                'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                    subdomains: 'abcd',
+                    maxZoom: 20
+                }
+            ).addTo(map);
+        }
+
+        initialBasemap.bringToBack();
+    });
+
+    </script>
+
+    {% block js %}
+    {% endblock %}
+</body>
+
+</html>

@@ -1,0 +1,3 @@
+#GEE stuff
+geeAccount/*
+!geeAccount/gee_service_key.json

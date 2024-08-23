@@ -1,0 +1,142 @@
+{% extends 'home/base.html' %}
+{% load static %}
+
+
+{% block body %}
+    <div id="landing_page">
+    <div class="hero_area">
+        <!-- slider section -->
+        <section class="slider_section ">
+            <div class="slider_bg_box">
+                <img src="/static/assets/landing/images/slider-bg.jpg" alt="">
+            </div>
+            <div id="customCarousel1" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-12 col-lg-12">
+                                    <div class="detail-box" align="center">
+                                       <img class="" src="/static/assets/landing/images/s-wa1.png" />
+                                        <h1>
+                                          Connecting Space to Village in West Africa 
+                                        </h1>
+                                        <p>
+                                            SERVIR-West Africa is a geospatial data-for-development program <br> that responds to the needs of West African countries
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+        <!-- end slider section -->
+    </div>
+    <!-- why section -->
+    <section class="why_section layout_padding">
+        <div class="container">
+            <div class="heading_container heading_center">
+                <h2>
+                    Decision Support Services
+                </h2>
+                <div class="row">
+                    <div class="col-md-10 offset-md-1">
+                        <p>These user-tailored applications have been developed to address the information gap on climate-sensitive challenges such as disasters, agriculture, water management, ecosystem protection and land use.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- end why section -->
+    <!-- why section -->
+    <section class="why_section layout_padding">
+        <div class="container-lg">
+
+            <div class="row row-cols-md-4">
+
+                {% for service in services %}
+                <div class="col">
+                    <div class="mybox" onclick="window.location.href =`{% url 'home:about_service_view' %}?id={{ service.id }}`">
+                        {% if service.image %}
+                            <img class="w-100 h-100" src="{{ service.image.url }}" />
+                        {% else %}
+                            <img class="w-100 h-100" src="/static/assets/landing/images/thumbnail.jpg" />
+                        {% endif %}
+                        <div class="box-content d-flex justify-content-between align-items-center">
+                            <h3 class="title">{{service.name | truncatechars:26}}</h3>
+                            <a href="{{ service.url }}"  target="_blank" onclick="event.stopPropagation();"><i class="link-icon fa-solid fa-link"></i></a>
+                        </div>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+                
+            </div>
+
+            <div>
+        {% if services.has_other_pages %}
+        <ul class="pagination">
+            {% if services.has_previous %}
+            <li><a href="?{% if request.GET.sector %}sector={{request.GET.sector}}&{% endif %}page={{ services.previous_page_number }}" aria-label="Previous"><i class="fa-solid fa-left-long"></i></a></li>
+            {% else %}
+            <li class="disabled"><span>&laquo;</span></li>
+            {% endif %}
+
+            {% for i in services.paginator.page_range %}
+
+            {% if services.number == i %}
+            <li class="active"><a>{{ i }}</a></li>
+            {% else %}
+            <li><a href="{{request.path}}?{% if request.GET.sector %}sector={{request.GET.sector}}&{% endif %}page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+            {% endfor %} 
+            
+            {% if services.has_next %}
+            <li><a href="{{request.path}}?{% if request.GET.sector %}sector={{request.GET.sector}}&{% endif %}page={{ services.next_page_number }}" aria-label="Next"><i class="fa-solid fa-right-long"></i></a></li>
+            {% else %}
+            <li class="disabled"><span>&raquo;</span></li>
+            {% endif %}
+        </ul>
+        {% endif %}
+    </div>
+        </div>
+    </section>
+
+    <!-- end why section -->
+    <!-- why section -->
+    <section class="why_section layout_padding">
+        <div class="container mt-5">
+            <div class="heading_container heading_center">
+                <!-- <h2 style="font-weight: normal; font-size: 20px;"> -->
+                <h2 >
+                    Partners
+                </h2>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="customer-logos slider">
+                        {% for globalPartner in globalPartners %}
+                        <div class="slideX" onclick="window.open('{{ globalPartner.url }}', '_blank')" >
+                        {% if globalPartner.logo %}
+                            <img src="{{ globalPartner.logo.url }}" alt="{{ globalPartner.name }}">
+                        {% else %}
+                            <img src="/static/assets/landing/images/thumbnail.jpg" alt="{{ globalPartner.name }}"/>
+                        {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+{% endblock %}
+
+{% block js %}
+ 
+{% endblock %}
