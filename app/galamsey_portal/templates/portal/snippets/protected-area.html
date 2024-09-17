@@ -1,0 +1,4 @@
+<option disabled selected>Select Protected Area</option>
+{% for protected_area in protected_areas %}
+<option value="{{protected_area.properties.id}}">{{protected_area.properties.reserve_na}}</option>
+{% endfor %}

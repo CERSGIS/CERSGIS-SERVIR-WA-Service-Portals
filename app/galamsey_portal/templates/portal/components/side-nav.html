@@ -1,0 +1,145 @@
+{% load static %}
+
+<div class="side-nav intro-step" data-step="1">
+    <!-- <img class="mi-chevron-double-right-1eu toggle-sidebar-btn"
+        src="{% static 'galamsey_portal/assets/images/mi-chevron-double-right-qYR.png' %}" /> -->
+    <div class="mi-chevron-double-right-1eu intro-step" >
+        <i class="fa-solid fa-angles-left toggle-sidebar-btn side-right-icon" data-step="2"></i>
+    </div>
+    <!-- {% comment %} <img class="vector-20-hXj" src="REPLACE_IMAGE:436:2076" /> {% endcomment %} -->
+    <div class="frame-293-CzH">
+        <div class="auto-group-qeuu-7rM">
+            <div id="details" class="details_div frame-308-X6m side-nav-button intro-step" data-step="3">
+                <div class="side-nav-icons">
+                    <i class="fa-solid fa-circle-info "></i>
+                </div>
+                <p class="dt-txt details-1qF">Details</p>
+            </div>
+            <div id="layer" class="layer_div frame-308-X6m side-nav-button intro-step" data-step="4">
+                <div class="side-nav-icons">
+                    <i class="fa-solid fa-layer-group"></i>
+                </div>
+                <p class="dt-txt layers-G2R">Layers</p>
+            </div>
+            <!-- <div id="legend" class="legend_div frame-308-X6m side-nav-button side-nav-button intro-step" data-step="5">
+                <div class="side-nav-icons">
+                    <i class="fa-solid fa-list-check"></i>
+                </div>
+                <p class="dt-txt legend-jem">Legend</p>
+            </div> -->
+            <div id="basemap" class="basemap_div frame-308-X6m side-nav-button side-nav-button intro-step" data-step="6">
+                <div class="side-nav-icons"> 
+                    <i class="fa-solid fa-map"></i>
+                </div>
+                <p class="dt-txt basemaps-ogZ">Basemaps</p>
+            </div>
+            <div id="footprints" class="footprints_div frame-308-X6m side-nav-button side-nav-button intro-step" data-step="7">
+                <div class="side-nav-icons">
+                    <i class="fa-solid fa-shoe-prints"></i>
+                </div>
+                <p class="dt-txt details-1qF">Footprints</p>
+            </div>
+            <!-- <div id="query" class="frame-308-X6m side-nav-button">
+                <img class="tabler-brand-google-big-query-F2m"
+                    src="{% static 'portal/assets/assets/footprints.png' %}" />
+                <p class="dt-txt details-1qF">Footprints</p>
+            </div> -->
+            <div id="analytics" class="analytics_div frame-308-X6m side-nav-button side-nav-button intro-step" data-step="8">
+                <div class="side-nav-icons">
+                    <i class="fa-solid fa-chart-column "></i>
+                </div>
+                <p class="dt-txt details-1qF">Analysis</p>
+            </div>
+            <div id="report" class="report_div frame-308-X6m side-nav-button side-nav-button intro-step" data-step="9">
+                <div class="side-nav-icons">
+                    <i class="fa-solid fa-book-open-reader "></i>
+                </div>
+                <p class="dt-txt details-1qF">Report</p>
+            </div>
+            <!-- <div id="manual" class="manual_div frame-308-X6m side-nav-button side-nav-button intro-step" data-step="10"> -->
+            <div id="manual" class="manual_div frame-308-X6m side-nav-button side-nav-button">
+                <div class="side-nav-icons">
+                    <i class="fa-solid fa-laptop "></i>
+                </div>
+                <p class="dt-txt details-1qF">Web Manual</p>
+            </div>
+            <div id="" class="frame-308-X6m side-nav-button" data-bs-toggle="modal" data-bs-target="#dataRequestModal" data-step="10">
+                <div class="side-nav-icons">
+                    <i class="fa-solid fa-database "></i>
+                </div>
+                <p class="dt-txt details-1qF">Data Request</p>
+            </div>
+            <div id="reference" class="reference_div frame-308-X6m side-nav-button" data-step="11">
+                <div class="side-nav-icons">
+                    <i class="fa-solid fa-folder-tree"></i>
+                </div>
+                <p class="dt-txt details-1qF">Reference Data</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="minimized-side-nav">
+    <div class="mi-chevron-double-right-1eu ">
+        <i class="bi bi-chevron-double-right side-right-icon toggle-sidebar-btn"></i>
+    </div>
+    <div class="frame-293-CzH">
+        <div class="auto-group-qeuu-7rM">
+            <div id="details" class="details_div frame-292-1B3 side-nav-button" data-toggle="tooltip" data-placement="right" title="Details">
+                <div class="side-nav-icons">
+                    <i class="fa-solid fa-circle-info "></i>
+                </div>
+            </div>
+            <div id="layer" class="layer_div frame-290-eWq side-nav-button" data-toggle="tooltip" data-placement="right" title="Layers">
+                <div class="side-nav-icons">
+                    <i class="fa-solid fa-layer-group"></i>
+                </div>
+            </div>
+            <!-- <div id="legend" class="legend_div frame-291-vBX side-nav-button" data-toggle="tooltip" data-placement="right" title="Legend">
+                <div class="side-nav-icons">
+                    <i class="fa-solid fa-list-check"></i>
+                </div>
+            </div> -->
+            <div id="basemap" class="basemap_div frame-289-B9P side-nav-button" data-toggle="tooltip" data-placement="right" title="Basemaps">
+                <div class="side-nav-icons"> 
+                    <i class="fa-solid fa-map"></i>
+                </div>
+            </div>
+            <div id="query" class="query_div frame-308-X6m side-nav-button"  data-toggle="tooltip" data-placement="right" title="Footprint">
+                <div class="side-nav-icons">
+                    <i class="fa-solid fa-shoe-prints"></i>
+                </div>
+            </div>
+            <!-- <div id="query" class="frame-308-X6m side-nav-button">
+                <img class="tabler-brand-google-big-query-F2m"
+                src="{% static 'portal/assets/assets/footprints.png' %}" />
+            </div> -->
+            <div id="analytics" class="analytics_div frame-308-X6m side-nav-button" data-toggle="tooltip" data-placement="right" title="Analysis">
+                <div class="side-nav-icons">
+                    <i class="fa-solid fa-chart-column "></i>
+                </div>
+            </div>
+            <div id="report" class="report_div frame-308-X6m side-nav-button" data-toggle="tooltip" data-placement="right" title="Report">
+                <div class="side-nav-icons">
+                    <i class="fa-solid fa-book-open-reader "></i>
+                </div>
+            </div>
+            <div id="manual" class="manual_div frame-308-X6m side-nav-button" data-toggle="tooltip" data-placement="right" title="Web Manual">
+                <div class="side-nav-icons">
+                    <i class="fa-solid fa-laptop "></i>
+                </div>
+            </div>
+            <div id="" class="frame-308-X6m side-nav-button" data-toggle="tooltip" data-placement="right" title="Data Request" data-bs-toggle="modal" data-bs-target="#dataRequestModal">
+                <div class="side-nav-icons">
+                    <i class="fa-solid fa-database "></i>
+                </div>
+            </div>
+            <div id="reference" class="reference_div frame-308-X6m side-nav-button" data-toggle="tooltip" data-placement="right" title="Reference Data">
+                <div class="side-nav-icons">
+                    <i class="fa-solid fa-folder-tree"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
