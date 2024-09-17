@@ -1,0 +1,128 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LandScape GH</title>
+
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato%3A700" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro%3A700" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css"
+    integrity="sha512-rt/SrQ4UNIaGfDyEXZtNcyWvQeOq0QLygHluFQcSjaGB04IxWhal71tKuzP6K8eYXYB6vJV4pHkXcmFGGQ1/0w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <!-- Import nav from charcoal portal -->
+  <link rel="stylesheet" href="{% static 'charcoal_portal/assets/libs/styles/map-nav.css' %}" />
+  <link rel="stylesheet" href="{% static 'charcoal_portal/assets/libs/styles/style.css' %}" />
+
+  {% block head_links %}
+  {% endblock head_links %}
+
+  <!-- General Styling -->
+  <style>
+    .header {
+      background-color: #cee4ca;
+      height: 80px !important;
+      overflow: hidden;
+      width: 100%;
+    }
+  </style>
+
+  <!-- Spinner Style -->
+  <style>
+    #loading-bar-spinner.spinner {
+      left: 50%;
+      margin-left: -20px;
+      top: 50%;
+      margin-top: -20px;
+      position: absolute;
+      z-index: 500 !important;
+      animation: loading-bar-spinner 400ms linear infinite;
+    }
+
+    #loading-bar-spinner.spinner .spinner-icon {
+      width: 50px;
+      height: 50px;
+      border: solid 4px transparent;
+      border-top-color: #00c8b1 !important;
+      border-left-color: #00c8b1 !important;
+      border-radius: 50%;
+    }
+
+    @keyframes loading-bar-spinner {
+      0% {
+        transform: rotate(0deg);
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="loading-bar-spinner" class="spinner">
+    <div class="spinner-icon"></div>
+  </div>
+  <div class="header">
+    <div class="map-nav-sAd">
+      <div class="col-xl-9 col-l-7">
+        <h2> LandScape Ghana Portal</h2>
+      </div>
+      <div class="col-xl-3 col-l-5">
+        <div class="frame-286-ecd">
+          <img class="map-logo" src="{% static 'charcoal_portal/assets/assets/logo/nasa.png' %}" />
+          <img class="map-logo" src="{% static 'charcoal_portal/assets/assets/logo/usaid.png' %}" />
+          <img class="map-logo" src="{% static 'charcoal_portal/assets/assets/logo/icrisat.png' %}" />
+          <img class="map-logo" src="{% static 'charcoal_portal/assets/assets/logo/cersgis.png' %}" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="map-nav-Z9P">
+    <div class="side-nav">
+      <div class="frame-293-CzH">
+        <div class="auto-group-qeuu-7rM">
+          <!-- <div id="details" class="frame-292-1B3">
+            <img class="details ph-info-light-w4h"
+              src="{% static 'charcoal_portal/assets/assets/ph-info-light-rcD.png' %}" />
+            <p class="dt-txt details-1qF">Dashboard</p>
+          </div> -->
+          <div id="layer" class="frame-290-eWq">
+            <img class="fluent-layer-20-regular-NSq"
+              src="{% static 'charcoal_portal/assets/assets/fluent-layer-20-regular.png' %}" />
+            <p class="dt-txt layers-G2R">Backend</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% block body %}
+
+    {% endblock body %}
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+    integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script>
+    $("#loading-bar-spinner")
+      .delay(0.5)
+      .queue(function (next) {
+        $(this).css("display", "none");
+        next();
+      });
+  </script>
+  {% block js %}
+  {% endblock js %}
+</body>
+
+</html>

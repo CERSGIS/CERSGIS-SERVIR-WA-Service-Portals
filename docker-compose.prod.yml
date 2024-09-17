@@ -1,0 +1,18 @@
+
+services:
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile.prod
+    container_name: servir-portals-app
+    restart: always
+    volumes:
+      - ./app:/src/servir-portals
+    ports:
+      - 8006:8000
+    env_file:
+      - ./env/app/.env
+    
+volumes:
+  servir-portals-data:
+  

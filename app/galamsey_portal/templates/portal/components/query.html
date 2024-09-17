@@ -1,0 +1,118 @@
+<form class="form-compact" action="#">
+  <!-- <form class="form-compact" action="#" style="margin-top: 10px; padding: 5px 15px 5px 15px"> -->
+  <div class="row paddingBottom20">
+    <div class="container col-12">
+      <div class="form-group row align-items-center">
+        <label for="boundary" class="col-12 col-form-label-lg">AOI Configuration</label>
+        <div class="input-group">
+          <select id="boundary" class="form-control">
+            <option disabled selected>Select Configuration</option>
+            <option value="admin_boundaries">Admin Boundaries</option>
+            <option value="protected_area">Protected Area</option>
+            <!-- <option value="upload_aoi">Upload AOI</option>
+            <option value="draw_aoi">Draw AOI</option> -->
+          </select>
+        </div>
+      </div>
+      <div class="form-group row align-items-center admin_level">
+        <label for="admin_level" class="col-12 col-form-label-lg">Admin Boundary Level</label>
+        <div class="input-group">
+          <select id="admin_level" class="form-control">
+            <option disabled selected>Select Boundary Level</option>
+            <option value="region">Region</option>
+            <option value="district">District</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group row align-items-center region">
+        <label for="region" class="col-12 col-form-label-lg">Region</label>
+        <div class="input-group">
+          <select id="region" class="form-control">
+            <option disabled selected>Select Region</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group row align-items-center district">
+        <label for="district" class="col-12 col-form-label-lg">District:</label>
+        <div class="input-group">
+          <select id="district" class="form-control">
+            <option value="" disabled selected>Select District</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group row align-items-center protected_areas">
+        <label for="protected_areas" class="col-12 col-form-label-lg">Protected Area:</label>
+        <div class="input-group">
+          <select id="protected_areas" class="form-control">
+            <option value="">Select Protected Area</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group row align-items-center upload_aoi_input">
+        <label for="upload_aoi_input" class="col-12 col-form-label-lg">Upload Your Area Of Interest:</label>
+        <div class="input-group">
+          <input id="upload_aoi_input" class="form-control" type="file" accept=".csv,.shp,.json,geojson" />
+        </div>
+      </div>
+      <div class="form-group row align-items-center draw_aoi_tool">
+        <label for="draw_aoi_tool" class="col-12 col-form-label-lg">Draw Tool Options</label>
+        <div class="input-group">
+          <select id="draw_aoi_tool" class="form-control">
+            <option value="" disabled selected>Select Tool Shape</option>
+            <option value="polygon">Polygon</option>
+            <option value="rectangle">Rectangle</option>
+            <option value="polygon">Polygon</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group row align-items-center oneyear">
+        <label for="year" class="col-12 col-form-label-lg">Year:</label>
+        <div class="input-group">
+          <select id="year" class="form-control">
+            <option>Select the Year</option>
+            {% for footprint in footprint_years %}
+            <option value="{{footprint.year}}">{{footprint.year}}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="form-group row align-items-center twoyear" style="display: none">
+        <div class="row" style="padding: 0px 15px">
+          <div class="col-6">
+            <label for="firstName" class="col-form-label-lg">Year 1:</label>
+            <div class="input-group">
+              <select id="year1" class="form-control">
+                <option>Select Year1</option>
+                {% for footprint in footprint_years %}
+                <option value="{{footprint.year}}">{{footprint.year}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="col-6">
+            <label for="firstName" class="col-form-label-lg"> Year 2:</label>
+            <div class="input-group">
+              <select id="year2" class="form-control">
+                <option>Select Year2</option>
+                {% for footprint in footprint_years %}
+                <option value="{{footprint.year}}">{{footprint.year}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group align-items-center switchyear">
+        <label class="col-form-label-lg">
+          <input id="switchyear" type="checkbox"/> Compare two (2) years
+          instead
+        </label>
+      </div>
+      <div class="form-group row align-items-center execute mt-3">
+        <button id="execute" type="button"  class="btn btn-success">
+          Execute Query
+        </button>
+      </div>
+    </div>
+  </div>
+</form>

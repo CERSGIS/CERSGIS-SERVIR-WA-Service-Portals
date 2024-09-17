@@ -1,0 +1,33 @@
+<div class="box manual">
+    <div class="d-flex justify-content-between box-title">
+      <h4 class="title-text"> Web Manual</h4>
+      <i class="close closebox fa-solid fa-circle-xmark my-auto"></i>
+    </div>
+    <div class="report-container" style="margin-top: 10px; padding: 5px 15px 5px 15px;">
+
+      <div class="border manual-btn-div rounded shadow bg-body mb-3">
+        <button id="manual_btn" type="button" class="btn btn-success closebox rounded w-100"><i class="fa-solid fa-book-open-reader pe-2"></i>Explore portal</a></button>
+      </div>
+
+      {% if manual %}
+      <div class="report-card border shadow bg-body">
+        <div class="row h-100">
+          <div class="col-4">
+            <img class="report-img" src="{{manual.image.url}}">
+          </div>
+          <div class="col-8 ps-0 pt-2">
+            <p class="report-title">{{manual.name |truncatechars:45}}</p>
+            <div class="row report-btns">
+              <button class="col-6 btn"><a class="d-flex align-items-center" href="{{manual.document.url}}" download><i
+                    class="fa-solid fa-download pe-2"></i> Download</a></button>
+              <button class="col-6 btn"><a class="d-flex align-items-center" target="_blank" href="{{manual.document}}"><i
+                    class="fa-solid fa-eye pe-2"></i>View </a></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+  

@@ -1,0 +1,46 @@
+{% extends 'home/base.html' %}
+{% load static %}
+
+
+{% block body %}
+
+    <div id="about-service">
+        {% if service %}
+        <div class="top-box">
+            <img class="top-img" src="/static/assets/landing/images/slider-bg.jpg" alt="">
+            <div class="top-logo-div">
+                <a href="{% url 'home:home_view' %}"><img class="top-logo" src="/static/assets/landing/images/s-wa1.png" /></a>
+            </div>
+
+        </div>
+
+        <div class="service-container">
+            <div class="row row-cols-md-2 row-cols-lg-2 row-cols-1 ">
+                <div class="col d-flex flex-column justify-content-center align-items-center">
+                    <div class="image-col">
+                        {% if service.image %}
+                        <img class="w-100 h-100 rounded" src="{{ service.image.url }}" />
+                        {% else %}
+                        <img class="w-100 h-100 rounded" src="/static/assets/landing/images/thumbnail.jpg" />
+                        {% endif %}
+                    </div>
+                    <button class="btn btn-outline-primary m-auto mt-2 w-25" onclick="window.open('{{service.url}}',  '_blank')">Open App</button>
+                </div>
+                
+                <div class="col">
+                    <div class="px-5">
+                        <h1 class="title">{{service.name}}</h1>
+                        <p>{{service.details}}</p>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+{% endblock %}
+
+{% block js %}
+
+{% endblock %}

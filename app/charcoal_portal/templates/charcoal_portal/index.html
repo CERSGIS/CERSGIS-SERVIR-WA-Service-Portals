@@ -1,0 +1,787 @@
+{% extends 'root_app/default-base.html' %}
+{% load static %}
+
+{% block title %}Charcoal Portal{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato%3A700" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro%3A700" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+  integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.12/leaflet.draw.css" />
+<!-- <link rel="stylesheet" href="{% static 'charcoal_portal/assets/styles/map-nav.css' %}" /> -->
+<link rel="stylesheet" href="{% static 'root_app/assets/css/leaflet-measure.css' %}" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css" integrity="sha512-mQ77VzAakzdpWdgfL/lM1ksNy89uFgibRQANsNneSTMD/bj0Y/8+94XMwYhnbzx8eki2hrbPpDm0vD0CiT2lcg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<!-- <link rel="stylesheet" href="{% static 'charcoal_portal/assets/styles/style.css' %}" /> -->
+<style type="text/css">
+  {% for charcoalpoint in charcoalpoint_years %}
+
+  .lgdfp{{ charcoalpoint.year}}
+    {
+      background-color: {{ charcoalpoint.fill_color }};
+      border: 1.5px solid {{ charcoalpoint.border_color }};
+    }
+
+    .point-marker-{{charcoalpoint.year}} {
+      background-color: {{ charcoalpoint.fill_color}}61;
+    }
+
+    .point-marker-{{charcoalpoint.year}} div {
+      background-color: {{ charcoalpoint.fill_color}};
+    }
+    
+    {% endfor %}
+    
+    .point-marker-all {
+      background-color: #0000ff61;
+    }
+    
+    .point-marker-all div {
+      background-color: #0000ff;
+    }
+
+  /* Cluster Marker Styles */
+  .marker-cluster {
+	  background-clip: padding-box;
+	  border-radius: 20px;
+    color: #ffffff;
+	}
+  
+  .marker-cluster div {
+	  width: 30px;
+	  height: 30px;
+	  margin-left: 5px;
+	  margin-top: 5px;
+
+	  text-align: center;
+	  border-radius: 15px;
+	  font: 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+	}
+  
+  .marker-cluster span {
+	  line-height: 30px;
+	}
+
+  .loader-stats {
+    height: 30px;
+    aspect-ratio: 2.5;
+    --_g: no-repeat radial-gradient(farthest-side,{% if app_details %}{{ app_details.box_top_color }}{% else %}#000000{% endif %} 90%,#0000);
+    background: var(--_g), var(--_g), var(--_g), var(--_g);
+    background-size: 20% 50%;
+    animation: l44 1s infinite linear alternate; 
+  }
+  @keyframes l44 {
+    0%,
+    5%    {background-position: calc(0*100%/3) 50% ,calc(1*100%/3) 50% ,calc(2*100%/3) 50% ,calc(3*100%/3) 50% }
+    12.5% {background-position: calc(0*100%/3) 0   ,calc(1*100%/3) 50% ,calc(2*100%/3) 50% ,calc(3*100%/3) 50% }
+    25%   {background-position: calc(0*100%/3) 0   ,calc(1*100%/3) 0   ,calc(2*100%/3) 50% ,calc(3*100%/3) 50% }
+    37.5% {background-position: calc(0*100%/3) 100%,calc(1*100%/3) 0   ,calc(2*100%/3) 0   ,calc(3*100%/3) 50% }
+    50%   {background-position: calc(0*100%/3) 100%,calc(1*100%/3) 100%,calc(2*100%/3) 0   ,calc(3*100%/3) 0   }
+    62.5% {background-position: calc(0*100%/3) 50% ,calc(1*100%/3) 100%,calc(2*100%/3) 100%,calc(3*100%/3) 0   }
+    75%   {background-position: calc(0*100%/3) 50% ,calc(1*100%/3) 50% ,calc(2*100%/3) 100%,calc(3*100%/3) 100%}
+    87.5% {background-position: calc(0*100%/3) 50% ,calc(1*100%/3) 50% ,calc(2*100%/3) 50% ,calc(3*100%/3) 100%}
+    95%,
+    100%  {background-position: calc(0*100%/3) 50% ,calc(1*100%/3) 50% ,calc(2*100%/3) 50% ,calc(3*100%/3) 50% }
+  }
+</style>
+{% endblock %}
+
+{% block side-nav %}
+{% include 'charcoal_portal/components/side-nav.html' %}
+{% endblock %}
+
+{% block body %}
+<div class="box detials">
+  <div class="d-flex justify-content-between box-title">
+    <h4 class="title-text"> Details</h4>
+    <i class="close closebox fa-solid fa-circle-xmark my-auto"></i>
+  </div>
+  <div class="box-body">
+    <p>
+      <img class="" style="width: 80%; height: auto; margin-bottom: 15px;"
+        src="{% static 'root_app/assets/images/11.png' %}" />
+      <br>
+      {% if app_details %} {{app_details.details | safe}} {% else %}
+    <p> Details </p>{% endif %}
+    </p>
+  </div>
+</div>
+
+<div class="box2 legend">
+  <div class="d-flex justify-content-between box-title">
+    <h4 class="title-text"> Legend</h4>
+    <i class="close closebox1 fa-solid fa-circle-xmark my-auto"></i>
+  </div>
+  <div class="row" style="padding: 5px;">
+    <!-- <h4 class="boxheading"> Layers</h4> -->
+    <div class="col-12" id="legend-region">
+      <div class="lgd lgdx1"></div>
+      <p class="layer-name">Region</p>
+    </div>
+    <div class="col-12" id="legend-year-one">
+      <div class="lgd lgdx7"></div>
+      <p class="layer-name">Kiln (Year1)</p>
+    </div>
+    <div class="col-12" id="legend-year-two">
+      <div class="lgd lgdx8"></div>
+      <p class="layer-name">Kiln (Year2)</p>
+    </div>
+  </div>
+</div>
+
+<div class="box layer">
+  <div class="d-flex justify-content-between box-title">
+    <h4 class="title-text"> Layers</h4>
+    <!-- <span class="close closebox my-auto"> X </span> -->
+    <i class="close closebox fa-solid fa-circle-xmark my-auto"></i>
+  </div>
+  <div class="row box-body">
+    <!-- <h4 class="boxheading"> Layers</h4> -->
+    <div class="col-12">
+      <div class="form-check form-switch form-check-reverse custom-switch">
+        <input type="checkbox" class="form-check-input switch-input" id="region_boundary" name="region_boundary">
+        <label class="form-check-label" for="region_boundary"></label>
+      </div>
+      <div class="lgd lgd1"></div>
+      <p class="layer-name">Region</p>
+    </div>
+    <!-- <div class="col-12">
+        <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="district_boundary" name="example">
+            <label class="custom-control-label" for="district_boundary"></label>
+        </div>
+        <div class="lgd lgd2"></div>
+        <p class="layer-name">District</p>
+    </div> -->
+    <!-- <div class="col-12">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="protected_area_boundary"
+                                name="example">
+                            <label class="custom-control-label" for="protected_area_boundary"></label>
+                        </div>
+                        <div class="lgd lgd3"></div>
+                        <p class="layer-name">Protected Areas</p>
+                    </div> -->
+    <!-- <div class="col-12">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="mineral_concession_boundary"
+                                name="example">
+                            <label class="custom-control-label" for="mineral_concession_boundary"></label>
+                        </div>
+                        <div class="lgd lgd4"></div>
+                        <p class="layer-name">Mineral Concession</p>
+                    </div> -->
+    <div class="col-12">
+      <div class="form-check form-switch form-check-reverse custom-switch">
+        <input type="checkbox" class="form-check-input switch-input" id="aoi_boundary" name="aoi_boundary">
+        <label class="form-check-label" for="aoi_boundary"></label>
+      </div>
+      <div class="lgd lgd5"></div>
+      <p class="layer-name">District of Interest</p>
+    </div>
+  </div>
+</div>
+
+<div class="box charcoaldata-modal">
+  <div class="d-flex justify-content-between box-title">
+    <h4 class="title-text">Charcoal Points</h4>
+    <i class="close closebox fa-solid fa-circle-xmark my-auto"></i>
+  </div>
+
+  <div class="box-body">
+    <div class="col-12">
+      <div class="form-check form-switch form-check-reverse custom-switch">
+        <input type="checkbox" class="form-check-input switch-input" id="all_points"
+          name="all_points">
+        <label class="form-check-label" for="all_points"></label>
+      </div>
+      <div class="lgd lgd6"></div>
+      <p class="layer-name">All Charcoal Points</p>
+    </div>
+    {% for charcoalpoint in charcoalpoint_years %}
+    <div class="col-12">
+      <div class="form-check form-switch form-check-reverse custom-switch">
+        <input type="checkbox" class="form-check-input switch-input" id="charcoalpoint_{{charcoalpoint.year}}"
+          name="charcoalpoint_{{charcoalpoint.year}}">
+        <label class="form-check-label" for="{{charcoalpoint.year}}"></label>
+      </div>
+      <div class="lgd lgdfp{{charcoalpoint.year}}"></div>
+      <p class="layer-name">{{charcoalpoint.year}}</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+
+<div class="box analytics">
+  <div class="d-flex justify-content-between box-title">
+    <h4 class="title-text">Query</h4>
+    <i class="close closebox fa-solid fa-circle-xmark my-auto"></i>
+  </div>
+  <form class="form-compact" action="#" style="margin-top: 10px; padding: 5px 15px 5px 15px;">
+    <div class="row paddingBottom20">
+      <div class="container col-12">
+        <!-- <div class="row">
+          <h6 class="text-center col-12 mb-0">Contact Information</h6>
+          <sub class="text-right text-muted col-12"><a href="#" tabindex="-1"><i class="far fa-edit"></i></a></sub>
+        </div> -->
+        <!-- <div class="dropdown-divider mb-3"></div> -->
+        <div class="form-group row align-items-center">
+          <div class="col-12">
+            <div class="col-12">
+              <label for="boundary" class="col-12 col-form-label-lg">Bounadary:</label>
+              <div class="input-group">
+                <select id="boundary" class="form-control">
+                  <option disabled selected>Select a Bounadary</option>
+                  <option value="admin_boundaries">Admin Boundaries</option>
+                  <option value="protected_area">Protected Area</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row align-items-center level">
+          <div class="col-12">
+            <div class="col-12">
+              <label for="region" class="col-12 col-form-label-lg">Level:</label>
+              <div class="input-group">
+                <select id="level" class="form-control">
+                  <option disabled selected>Select a Level</option>
+                  <option value="national">National</option>
+                  <option value="regional">Regional</option>
+                  <option value="district">District</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row align-items-center region">
+          <div class="col-12">
+            <div class="col-12">
+              <label for="region" class="col-12 col-form-label-lg">Region:</label>
+              <div class="input-group">
+                <select id="region" class="form-control">
+                  <option disabled selected>Select a Region</option>
+                  {% for region in regions %}
+                  <option value="{{region.reg_code}}">{{region.region}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row align-items-center district">
+          <div class="col-12">
+            <div class="col-12">
+              <label for="district" class="col-12 col-form-label-lg">District:</label>
+              <div class="input-group">
+                <select id="district" class="form-control">
+                  <option value="" disabled selected>Select a District</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="form-group row align-items-center protected_areas">
+                                <div class="col-12">
+                                    <div class="col-12">
+                                        <label for="protected_areas" class="col-12 col-form-label-lg">Protected
+                                            Area:</label>
+                                        <div class="input-group">
+                                            <select id="protected_areas" class="form-control">
+                                                <option value="">Select a Protected</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> -->
+        <div class="form-group row align-items-center oneyear">
+          <div class="col-12">
+            <div class="col-12">
+              <label for="year" class="col-12 col-form-label-lg">Year:</label>
+              <div class="input-group">
+                <select id="year" class="form-control">
+                  <option>Select the Year</option>
+                  <option value="2015">2015</option>
+                  <option value="2018">2018</option>
+                  <option value="2022">2022</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row align-items-center twoyear" style="display: none;">
+          <div class="row" style="padding: 0px 15px;">
+            <div class="col-6">
+              <label for="firstName" class="col-12 col-form-label-lg">Year 1:</label>
+              <div class="col-12">
+                <div class="input-group">
+                  <select id="year1" class="form-control">
+                    <option>Select Year1</option>
+                    <option value="2015">2015</option>
+                    <option value="2018">2018</option>
+                    <option value="2022">2022</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="col-6">
+              <label for="firstName" class="col-12 col-form-label-lg"> Year 2:</label>
+              <div class="col-12">
+                <div class="input-group">
+                  <select id="year2" class="form-control">
+                    <option>Select Year2</option>
+                    <option value="2015">2015</option>
+                    <option value="2018">2018</option>
+                    <option value="2022">2022</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row align-items-center switchyear">
+          <div class="col-12">
+            <label class="col-12 col-form-label-lg"> <input id="switchyear" type="checkbox">
+              Compare two (2) years instead </label>
+          </div>
+        </div>
+        <div class="form-group row align-items-center execute mt-3">
+            <button id="execute" type="button" class="btn btn-success"> Query </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+            <!-- <div class="box query">
+                <div class="d-flex justify-content-between box-title">
+                    <h4 class="title-text">Query</h4>
+                    <i class="close closebox fa-solid fa-circle-xmark my-auto"></i>
+                  </div>
+                <form class="form-compact" action="#">
+                    <div class="row paddingBottom20">
+                        <div class="container col-12">
+                            <div class="row">
+                                <sub class="text-right text-muted col-12"><a href="#" tabindex="-1"><i class="far fa-edit"></i></a></sub>
+                            </div>
+                            <div class="dropdown-divider mb-3"></div>
+                            <div class="form-group row align-items-center">
+                                <div class="col-12">
+                                    <div class="col-12">
+                                        <label for="boundary" class="col-12 col-form-label-lg">Bounadary:</label>
+                                        <div class="input-group">
+                                            <select id="boundary" class="form-control">
+                                                <option disabled selected>Select a Bounadary</option>
+                                                <option value="admin_boundaries">Admin Boundaries</option>
+                                                <option value="protected_area">Protected Area</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row align-items-center level">
+                                <div class="col-12">
+                                    <div class="col-12">
+                                        <label for="region" class="col-12 col-form-label-lg">Level:</label>
+                                        <div class="input-group">
+                                            <select id="level" class="form-control">
+                                                <option disabled selected>Select a Level</option>
+                                                <option value="national">National</option>
+                                                <option value="regional">Regional</option>
+                                                <option value="district">District</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row align-items-center region">
+                                <div class="col-12">
+                                    <div class="col-12">
+                                        <label for="region" class="col-12 col-form-label-lg">Region:</label>
+                                        <div class="input-group">
+                                            <select id="region" class="form-control">
+                                                <option disabled selected>Select a Region</option>
+                                                {% for region in regions %}
+                                                <option value="{{region.reg_code}}">{{region.region}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row align-items-center district">
+                                <div class="col-12">
+                                    <div class="col-12">
+                                        <label for="district" class="col-12 col-form-label-lg">District:</label>
+                                        <div class="input-group">
+                                            <select id="district" class="form-control">
+                                                <option value="" disabled selected>Select a District</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row align-items-center oneyear">
+                                <div class="col-12">
+                                    <div class="col-12">
+                                        <label for="year" class="col-12 col-form-label-lg">Year:</label>
+                                        <div class="input-group">
+                                            <select id="year" class="form-control">
+                                                <option>Select the Year</option>
+                                                <option value="2015">2015</option>
+                                                <option value="2018">2018</option>
+                                                <option value="2022">2022</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row align-items-center twoyear" style="display: none;">
+                                <div class="row" style="padding: 0px 15px;">
+                                    <div class="col-6">
+                                        <label for="firstName" class="col-12 col-form-label-lg">Year 1:</label>
+                                        <div class="col-12">
+                                            <div class="input-group">
+                                                <select id="year1" class="form-control">
+                                                    <option>Select Year1</option>
+                                                    <option value="2015">2015</option>
+                                                    <option value="2018">2018</option>
+                                                    <option value="2022">2022</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="firstName" class="col-12 col-form-label-lg"> Year 2:</label>
+                                        <div class="col-12">
+                                            <div class="input-group">
+                                                <select id="year2" class="form-control">
+                                                    <option>Select Year2</option>
+                                                    <option value="2015">2015</option>
+                                                    <option value="2018">2018</option>
+                                                    <option value="2022">2022</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row align-items-center switchyear">
+                                <div class="col-12">
+                                    <label class="col-12 col-form-label-lg"> <input id="switchyear" type="checkbox">
+                                        Compare two (2) years instead </label>
+                                </div>
+                            </div>
+                            <div class="form-group row align-items-center execute">
+                                <div class="col-12">
+                                    <button id="execute" type="button" class="btn btn-success"> Query </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div> -->
+
+
+
+
+  <div class="statistics-box statistics">
+    <div class="accordion" id="accordionExample">
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingOne">
+          <button class="accordion-button py-1" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+            aria-expanded="true" aria-controls="collapseOne">
+            STATISTICS
+          </button>
+        </h2>
+        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+        data-bs-parent="#statAccordionExample">
+        <div class="accordion-body">
+          <div id="loader-stats-container" class="d-flex justify-content-center align-items-center">
+            <div class="loader-stats"></div>
+          </div>
+          <div id="stat-line-chart"></div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+
+
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'charcoal_portal/assets/js/leaflet.browser.print.min.js' %}"></script>
+<script src="{% static 'charcoal_portal/assets/js/L.TileLayer.BetterWMS.js' %}"></script>
+<script src="{% static 'root_app/assets/js/leaflet-measure.js' %}"></script>
+<script src="{% static 'charcoal_portal/assets/js/leaflet-side-by-side.min.js' %}"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.js" integrity="sha512-OFs3W4DIZ5ZkrDhBFtsCP6JXtMEDGmhl0QPlmWYBJay40TT1n3gt2Xuw8Pf/iezgW9CdabjkNChRqozl/YADmg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!-- <script src="https://unpkg.com/geojson-vt@3.2.0/geojson-vt.js"></script> -->
+<!-- <script src="{% static 'charcoal_portal/assets/js/leaflet-geojson-vt.js' %}"></script> -->
+<script src="{% static 'charcoal_portal/assets/js/functions.js' %}"></script>
+<script src="{% static 'charcoal_portal/assets/js/script.js' %}"></script>
+
+<!-- Intro js Initilization -->
+<script src="{% static 'charcoal_portal/assets/js/intro.js' %}"></script>
+
+<!-- <script src="{% static 'charcoal_portal/assets/js/map.js' %}"></script> -->
+
+<script>
+  // Set up the chart
+  Highcharts.chart('bar-chart', {
+    chart: {
+      type: 'column',
+      backgroundColor: '#ffffff1c' // Transparent background
+      // backgroundColor: 'rgba(0, 0, 0, 0)' // Transparent background
+    },
+    title: {
+      text: 'Charcoal Area Size per Years'
+    },
+    xAxis: {
+      type: 'category',
+      labels: {
+        autoRotation: [-45, -90],
+        style: {
+          fontSize: '13px',
+          fontFamily: 'Verdana, sans-serif'
+        }
+      }
+    },
+    yAxis: {
+      min: 0,
+      gridLineColor: '#302f2faf', 
+      title: {
+        text: 'Area (sqkm)'
+      }
+    },
+    legend: {
+      enabled: false
+    },
+    tooltip: {
+      // pointFormat: 'Population in {point.x}: <b>{point.y:.1f} millions</b>'
+      pointFormat: 'Area in {point.x}: <b>{point.y:.1f} sqkm</b>'
+    },
+    series: [{
+      name: 'Population',
+      colors: [
+        '#9b20d9', '#9215ac', '#861ec9', '#7a17e6', '#7010f9', '#691af3',
+        '#6225ed', '#5b30e7', '#533be1', '#4c46db', '#4551d5',
+      ],
+      colorByPoint: true,
+      groupPadding: 0,
+      data: [
+        ['2015', 211.28043],
+        ['2016', 289.06169],
+        ['2017', 278.807],
+        ['2018', 304.9212],
+        ['2019', 314.33184],
+        ['2020', 353.92],
+        ['2021', 361.725],
+        ['2022', 340.9445],
+        ['2023', 635.530772716955],
+      ],
+      dataLabels: {
+        enabled: true,
+        rotation: -90,
+        color: '#FFFFFF',
+        inside: true,
+        verticalAlign: 'top',
+        format: '{point.y:.1f}', // one decimal
+        y: 10, // 10 pixels down from the top
+        style: {
+          fontSize: '13px',
+          fontFamily: 'Verdana, sans-serif'
+        }
+      }
+    }]
+  });
+
+</script>
+
+<script>
+  /* 
+GLOBAL Variables And Helper
+*/
+  const geoserver_wfs_url = 'https://geoserver-dev.cersgis.org/geoserver/wfs'
+  const geoserver_wms_url = 'https://geoserver-dev.cersgis.org/geoserver/wms'
+  // const openstreetmap_url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+
+  // Set Map
+  // let map = L.map('map', { attributionControl: false}).setView([8.967388, -0.971667], 8.2);
+
+  var layers_group = [];
+  var charcoalpoints_group = [];
+
+  // Set Initial BaseMap
+  // let initialBasemap = L.tileLayer(openstreetmap_url, {
+  //   attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>'
+  // }).addTo(map);
+
+  // map.invalidateSize();
+
+  // Get Data On load
+  (function async() {
+    GeoserverWFSLayers(geoserver_wfs_url,
+      {
+        layers: 'charcoal:region',
+        style: {
+          fillColor: 'transparent',
+          weight: 2,
+          opacity: 1,
+          color: 'red',
+          dashArray: '3',
+          fillOpacity: 0.7,
+        },
+      },
+      'region_layer'
+    )
+
+    GeoserverWFSLayers(geoserver_wfs_url,
+      {
+        layers: 'charcoal:area_of_interest',
+        style: {
+          // fillColor: '#00000063',
+          fillColor: '#FDEED8',
+          weight: 2,
+          opacity: 1,
+          color: '#000',
+          fillOpacity: 0.7,
+        },
+      },
+      'aoi_layer'
+    )
+
+    GeoserverWFS(geoserver_wfs_url,
+      {
+        layers: 'charcoal:points',
+        style: {
+          radius: 6,
+          fillColor: 'blue',
+          color: 'black',
+          weight: 1,
+          opacity: 1,
+          fillOpacity: 0.8,
+        },
+        class_name: 'point-marker-all',
+      },
+      'layer_all_points'
+    ).then(() => {
+      let onload_check = $('#all_points').prop('checked', true);
+      toggleLayer(map, charcoalpoints_group['layer_all_points'], onload_check);
+    });
+    
+    {% for charcoalpoint in charcoalpoint_years %}
+    
+    GeoserverWFS(geoserver_wfs_url,
+      {
+        layers: 'charcoal:points',
+        style: {
+          radius: 6,
+          fillColor: '{{charcoalpoint.fill_color}}',
+          color: '{{charcoalpoint.border_color}}',
+          weight: 1,
+          opacity: 1,
+          fillOpacity: 0.8,
+        },
+        CQL_FILTER: 'year={{charcoalpoint.year}}',
+        class_name: 'point-marker-{{charcoalpoint.year}}',
+      },
+      'charcoalpoint_{{charcoalpoint.year}}'
+    )
+
+    {% endfor %}
+
+    loadGeneralStats(`{% url 'charcoalPortal:load_statistics' %}`)
+  })()
+
+
+  $('#region_boundary').change(function () {
+    toggleLayer(map, layers_group['region_layer'], $(this));
+  });
+
+  $('#aoi_boundary').change(function () {
+    toggleLayer(map, layers_group['aoi_layer'], $(this));
+  });
+
+  $('#all_points').change(function () {
+    toggleLayer(map, charcoalpoints_group['layer_all_points'], $(this));
+  });
+
+  // Footprint Checkbox Change Detect
+  {% for charcoalpoint in charcoalpoint_years %}
+  $('#charcoalpoint_{{charcoalpoint.year}}').change(function () {
+    toggleLayer(map, charcoalpoints_group['charcoalpoint_{{charcoalpoint.year}}'], $(this));
+  });
+  {% endfor %}
+
+  
+  let coords;
+  var drawnItems = new L.geoJson().addTo(map);
+  drawnItems.bringToFront();
+  var layer;
+
+  map.on(L.Draw.Event.CREATED, function (event) {
+    drawnItems.removeLayer(layer);
+    layer = event.layer;
+
+    // $("#dialog").dialog("open");
+    drawnItems.addLayer(layer);
+
+    let type = event.layerType;
+    coords = layer.getLatLngs();
+
+  });
+
+
+
+  L.EditToolbar.Delete.include({
+    removeAllLayers: false,
+  });
+
+  // Control Options
+  var measureOptions = {
+    position: 'bottomleft',
+    primaryAreaUnit: 'hectares',
+    secondaryAreaUnit: 'sqmeters',
+    primaryLengthUnit: 'meters',
+    secondaryLengthUnit: 'kilometers'
+  }
+
+  var positionOption = {
+    position: 'bottomleft'
+  }
+
+  var drawtool = new L.Control.Draw({
+    edit: {
+      featureGroup: drawnItems,
+    },
+    draw: {
+      polygon: true,
+      rectangle: true,
+      circlemarker: false,
+      marker: false,
+      polyline: false,
+      circle: false,
+    },
+    position: 'bottomleft',
+  });
+
+
+
+
+  // Control Initialization
+  var measureControl = new L.Control.Measure(measureOptions);
+  var browserPrintControl = L.control.browserPrint(positionOption);
+
+
+  // Adding Controls - NB: Order appears inverted on page
+  browserPrintControl.addTo(map)
+  drawtool.addTo(map)
+  measureControl.addTo(map);
+  map.zoomControl.setPosition('bottomleft');
+</script>
+{% endblock %}

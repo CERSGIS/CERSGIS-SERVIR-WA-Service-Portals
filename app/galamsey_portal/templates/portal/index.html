@@ -1,0 +1,677 @@
+{% extends 'root_app/default-base.html' %}
+{% load static %}
+
+{% block title %}SSM Portal{% endblock %}
+{% block css %}
+
+  <!-- <link rel="stylesheet" href="{% static 'galamsey_portal/assets/styles/map-nav.css' %}" /> -->
+  <link rel="stylesheet" href="{% static 'root_app/assets/css/leaflet-measure.css' %}" />
+  <!-- <link rel="stylesheet" href="{% static 'galamsey_portal/assets/styles/style.css' %}" /> -->
+  <style type="text/css">
+        /* .leaflet-control-measure .leaflet-control {
+            border: 2px solid rgba(0, 0, 0, 0.2) !important;
+            background-clip: padding-box;
+        }
+
+  .leaflet-control-measure {
+    box-shadow: 0 1px 5px rgb(0, 0, 0, 0.2) !important;
+  }
+
+        .leaflet-touch .leaflet-control-measure .leaflet-control-measure-toggle,
+        .leaflet-touch .leaflet-control-measure .leaflet-control-measure-toggle:hover {
+            width: 31px;
+            height: 31px;
+        } */
+
+  {% for footprint in footprint_years %}
+    .lgdfp{{footprint.year}} {
+      background-color: {{footprint.fill_color}}; 
+      border: 1.5px solid {{footprint.border_color}};
+    }
+  {% endfor %}
+
+  .loader-stats {
+    height: 30px;
+    aspect-ratio: 2.5;
+    --_g: no-repeat radial-gradient(farthest-side,{% if app_details %}{{ app_details.box_top_color }}{% else %}#000000{% endif %} 90%,#0000);
+    background: var(--_g), var(--_g), var(--_g), var(--_g);
+    background-size: 20% 50%;
+    animation: l44 1s infinite linear alternate; 
+  }
+  @keyframes l44 {
+    0%,
+    5%    {background-position: calc(0*100%/3) 50% ,calc(1*100%/3) 50% ,calc(2*100%/3) 50% ,calc(3*100%/3) 50% }
+    12.5% {background-position: calc(0*100%/3) 0   ,calc(1*100%/3) 50% ,calc(2*100%/3) 50% ,calc(3*100%/3) 50% }
+    25%   {background-position: calc(0*100%/3) 0   ,calc(1*100%/3) 0   ,calc(2*100%/3) 50% ,calc(3*100%/3) 50% }
+    37.5% {background-position: calc(0*100%/3) 100%,calc(1*100%/3) 0   ,calc(2*100%/3) 0   ,calc(3*100%/3) 50% }
+    50%   {background-position: calc(0*100%/3) 100%,calc(1*100%/3) 100%,calc(2*100%/3) 0   ,calc(3*100%/3) 0   }
+    62.5% {background-position: calc(0*100%/3) 50% ,calc(1*100%/3) 100%,calc(2*100%/3) 100%,calc(3*100%/3) 0   }
+    75%   {background-position: calc(0*100%/3) 50% ,calc(1*100%/3) 50% ,calc(2*100%/3) 100%,calc(3*100%/3) 100%}
+    87.5% {background-position: calc(0*100%/3) 50% ,calc(1*100%/3) 50% ,calc(2*100%/3) 50% ,calc(3*100%/3) 100%}
+    95%,
+    100%  {background-position: calc(0*100%/3) 50% ,calc(1*100%/3) 50% ,calc(2*100%/3) 50% ,calc(3*100%/3) 50% }
+  }
+</style>
+
+{% endblock %}
+
+{% block side-nav %}
+{% include 'portal/components/side-nav.html' %}
+{% endblock %}
+
+{% block query %}
+{% include 'portal/components/query.html' %}
+{% endblock %}
+
+{% block stats %}
+{% include 'portal/components/statistics.html' %}
+{% endblock %}
+
+{% block body %}
+<div class="box detials">
+  <div class="d-flex justify-content-between box-title">
+    <h4 class="title-text"> Details</h4>
+    <i class="close closebox fa-solid fa-circle-xmark my-auto"></i>
+  </div>
+
+  <div class="box-body">
+    <p>
+      <img class="" style="width: 80%; height: auto; margin-bottom: 15px;"
+      src="{% static 'root_app/assets/images/11.png' %}" />
+      <br>
+      {% if app_details %} {{app_details.details | safe}} {% else %}
+    <p> Details </p>{% endif %}
+    </p>
+
+
+    <!-- <p>
+      <img class="" style="width: 80%; height: auto; margin-bottom: 15px;"
+        src="{% static 'root_app/assets/partners/11.png' %}" />
+      <br>
+      The online portal has been developed by the Center for Remote Sensing and
+      Geographic Information Services (CERSGIS), with the support of USAID and NASA
+      as part of the SERVIR West Africa Program, a global network of SERVIR programs
+      in more than 50 countries around the world. <br><br>
+      This map visualization service is available to help close the information gap required to make informed decisions
+      and ensure evidence-based reporting. <br><br> The
+      information is produced and updated by CERSGIS in collaboration with national
+      partner institutions.
+    </p> -->
+  </div>
+</div>
+
+<div class="box2 legend">
+  <div class="d-flex justify-content-between box-title">
+    <h4 class="title-text"> Legend</h4>
+    <i class="close closebox1 fa-solid fa-circle-xmark my-auto"></i>
+  </div>
+  <div class="row" style="padding: 5px;">
+    <!-- <h4 class="boxheading"> Layers</h4> -->
+    <div class="col-12" id="legend-region">
+      <div class="lgd lgdx1"></div>
+      <p class="layer-name">Region</p>
+    </div>
+    <!-- <div class="col-12" id="legend-district">
+                        <div class="lgd lgdx2"></div>
+                        <p class="layer-name">District</p>
+                    </div> -->
+    <div class="col-12" id="legend-protected-areas">
+      <div class="lgd lgdx3"></div>
+      <p class="layer-name">Protected Areas</p>
+    </div>
+    <div class="col-12" id="legend-mineral-concession">
+      <div class="lgd lgdx41"></div>
+      <p class="layer-name">Mineral Concession</p>
+    </div>
+    <!-- <div class="col-12" id="legend-aoi">
+                        <div class="lgd lgdx4"></div>
+                        <p class="layer-name">Galamsey Area of Interest</p>
+                    </div> -->
+    <div class="col-12" id="legend-doi">
+      <div class="lgd lgdx4"></div>
+      <p class="layer-name">Districts of Interest</p>
+    </div>
+    <div class="col-12" id="legend-selected-district">
+      <div class="lgd lgdx5"></div>
+      <p class="layer-name">District of Interest</p>
+    </div>
+    <div class="col-12" id="legend-footprint-2015">
+      <div class="lgd lgdx15"></div>
+      <p class="layer-name">Galamsey footprints 2015</p>
+    </div>
+    <div class="col-12" id="legend-footprint-2016">
+      <div class="lgd lgdx16"></div>
+      <p class="layer-name">Galamsey footprints 2016</p>
+    </div>
+    <div class="col-12" id="legend-footprint-2017">
+      <div class="lgd lgdx17"></div>
+      <p class="layer-name">Galamsey footprints 2017</p>
+    </div>
+    <div class="col-12" id="legend-footprint-2018">
+      <!-- <div class="lgd lgdx63"></div> -->
+      <div class="lgd lgdx18"></div>
+      <p class="layer-name">Galamsey footprints 2018</p>
+    </div>
+    <div class="col-12" id="legend-footprint-2019">
+      <div class="lgd lgdx19"></div>
+      <p class="layer-name">Galamsey footprints 2019</p>
+    </div>
+    <div class="col-12" id="legend-footprint-2020">
+      <div class="lgd lgdx20"></div>
+      <p class="layer-name">Galamsey footprints 2020</p>
+    </div>
+    <div class="col-12" id="legend-footprint-2021">
+      <!-- <div class="lgd lgdx66"></div> -->
+      <div class="lgd lgdx21"></div>
+      <p class="layer-name">Galamsey footprints 2021</p>
+    </div>
+    <div class="col-12" id="legend-footprint-2022">
+      <!-- <div class="lgd lgdx66"></div> -->
+      <div class="lgd lgdx22"></div>
+      <p class="layer-name">Galamsey footprints 2022</p>
+    </div>
+    <!-- <div class="col-12">
+                        <div class="lgd lgdx64"></div>
+                        <p class="layer-name">Galamsey footprints 2023</p>
+                    </div> -->
+    <div class="col-12" id="legend-year-one">
+      <div class="lgd lgdx7"></div>
+      <p class="layer-name">Galamsey footprints (Year1)</p>
+    </div>
+    <div class="col-12" id="legend-year-two">
+      <div class="lgd lgdx8"></div>
+      <p class="layer-name">Galamsey footprints (Year2)</p>
+    </div>
+  </div>
+</div>
+
+<div class="box layer">
+  <div class="d-flex justify-content-between box-title">
+    <h4 class="title-text"> Layers</h4>
+    <!-- <span class="close closebox my-auto"> X </span> -->
+    <i class="close closebox fa-solid fa-circle-xmark my-auto"></i>
+  </div>
+  <div class="row box-body">
+    <!-- <h4 class="boxheading"> Layers</h4> -->
+    <div class="col-12">
+      <div class="form-check form-switch form-check-reverse custom-switch">
+        <input type="checkbox" class="form-check-input switch-input" id="region_boundary" name="example">
+        <label class="custom-control-label" for="region_boundary"></label>
+      </div>
+      <div class="lgd lgd1"></div>
+      <p class="layer-name">Region</p>
+    </div>
+    <!-- <div class="col-12">
+        <div class="custom-control custom-switch">
+            <input type="checkbox" class="form-check-input switch-input" id="district_boundary" name="example">
+            <label class="custom-control-label" for="district_boundary"></label>
+        </div>
+        <div class="lgd lgd2"></div>
+        <p class="layer-name">District</p>
+    </div> -->
+    <div class="col-12">
+      <div class="form-check form-switch form-check-reverse custom-switch">
+        <input type="checkbox" class="form-check-input switch-input" id="doi" name="example">
+        <label class="form-check-label" for="doi"></label>
+      </div>
+      <div class="lgd lgd5"></div>
+      <p class="layer-name">Districts of Interest</p>
+    </div>
+    <div class="col-12">
+      <div class="form-check form-switch form-check-reverse custom-switch">
+        <input type="checkbox" class="form-check-input switch-input" id="protected_area_boundary" name="example">
+        <label class="form-check-label" for="protected_area_boundary"></label>
+      </div>
+      <div class="lgd lgd3"></div>
+      <p class="layer-name">Protected Areas</p>
+    </div>
+    <div class="col-12">
+      <div class="form-check form-switch form-check-reverse custom-switch">
+        <input type="checkbox" class="form-check-input switch-input" id="mineral_concession_boundary" name="example">
+        <label class="form-check-label" for="mineral_concession_boundary"></label>
+      </div>
+      <div class="lgd lgd4"></div>
+      <p class="layer-name">Mineral Concession</p>
+    </div>
+  </div>
+</div>
+
+<div class="box footprints-modal">
+  <div class="d-flex justify-content-between box-title">
+    <h4 class="title-text">Footprints</h4>
+    <i class="close closebox fa-solid fa-circle-xmark my-auto"></i>
+  </div>
+
+  <div class="box-body">
+    
+    {% for footprint in footprint_years %}
+    <div class="col-12">
+      <div class="form-check form-switch form-check-reverse custom-switch">
+        <input type="checkbox" class="form-check-input switch-input" id="footprint_{{footprint.year}}"
+          name="footprint_{{footprint.year}}">
+        <label class="form-check-label" for="{{footprint.year}}"></label>
+      </div>
+      <div class="lgd lgdfp{{footprint.year}}"></div>
+      <p class="layer-name">{{footprint.year}}</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+
+<div class="statistics-box statistics intro-step" data-step="11">
+  <div class="accordion" id="statAccordionExample">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingOne">
+        <button class="accordion-button py-1" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+          aria-expanded="true" aria-controls="collapseOne">
+          STATISTICS
+        </button>
+      </h2>
+      <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+        data-bs-parent="#statAccordionExample">
+        <div class="accordion-body">
+          <div id="loader-stats-container" class="d-flex justify-content-center align-items-center">
+            <div class="loader-stats"></div>
+          </div>
+          <div id="stat-bar-chart"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'galamsey_portal/assets/js/leaflet.browser.print.min.js' %}"></script>
+<script src="{% static 'galamsey_portal/assets/js/L.TileLayer.BetterWMS.js' %}"></script>
+<script src="{% static 'root_app/assets/js/leaflet-measure.js' %}"></script>
+<script src="{% static 'galamsey_portal/assets/js/leaflet-side-by-side.min.js' %}"></script>
+<script src="{% static 'galamsey_portal/assets/js/functions.js' %}"></script>
+<script defer src="{% static 'galamsey_portal/assets/js/script.js' %}"></script>
+
+<!-- Intro js Initilization -->
+<script src="{% static 'galamsey_portal/assets/js/intro.js' %}"></script>
+
+<script src="{% static 'galamsey_portal/assets/js/query.js' %}"></script>
+  
+
+<!-- MAP CONTROLLING FUNCTION -->
+<script>
+
+  /* 
+    GLOBAL Variables And Helper
+  */
+  const geoserver_wfs_url = 'https://geoserver-dev.cersgis.org/geoserver/wfs';
+  const geoserver_wms_url = 'https://geoserver-dev.cersgis.org/geoserver/wms';
+  const footprint_url = '{% url "galamseyPortal:load_galamsey_footprint" %}';
+
+  var layers_group = [];
+  var footprints_group = [];
+
+  // Geoserver WFS request
+  async function GeoserverWFS(geoserver_wfs_url, options, target_layer) {
+
+    return $.ajax(geoserver_wfs_url, {
+      type: 'GET',
+      dataType: 'json',
+      data: {
+        servrice: 'WFS',
+        version: '2.0.0',
+        request: 'GetFeature',
+        typename: options.layers,
+        CQL_FILTER: options.CQL_FILTER,
+        srsname: options.srsname,
+        outputFormat: "application/json",
+        // format_options: "callback: getJson",
+      },
+
+      // dataType: "jsonp",
+      // jsonpCallback: "getJson",
+      success: await handlejson
+    });
+
+    function handlejson(data) {
+      layers_group[target_layer] = L.geoJSON(data, {
+        style: options.style,
+        onEachFeature: options.onEachFeature,
+        attribution: target_layer
+      });
+
+    }
+  }
+
+  // Geoserver WMS 
+
+  async function GeoserverWMS(geoserver_wms_url, options, target_layer) {
+
+    return footprints_group[target_layer] = await L.tileLayer.betterWms(geoserver_wms_url, {
+      layers: options.layers,
+      style: options.style,
+      transparent: true,
+      format: 'image/png'
+    });
+  }
+
+  // Set Initial BaseMap
+  // let initialBasemap = L.tileLayer(openstreetmap_url, {
+  //   attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>'
+  // }).addTo(map);
+
+  // map.invalidateSize();
+
+  let districtOnEachFeature, regionOnEachFeature, protectedOnEachFeature, mineralOnEachFeature;
+
+  // ---------------- HELPER Functions ---------------------
+
+  // Zoom to Feature
+  function zoomToFeature(e) {
+    map.fitBounds(e.target.getBounds());
+  }
+
+  // HighlightFeature
+  function highlightFeature(e) {
+    var layer = e.target;
+
+    layer.setStyle({
+      weight: 5,
+      color: '#666',
+      dashArray: '',
+      fillOpacity: 0.7,
+      fillColor: 'transparent',
+    });
+
+    // if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+    //   layer.bringToFront();
+    // }
+  }
+
+  // Highlight and zoom
+  function zoomAndHighlight(e) {
+    var layer = e.target;
+
+    layer.setStyle({
+      color: '#ff7f7f',
+    })
+
+    layer.bringToFront();
+
+    map.fitBounds(layer.getBounds());
+  }
+
+  // Reset Layers
+  function resetLayerHighlight(e) {
+    layers_group[e.target.options.attribution].resetStyle(e.target);
+  }
+
+  function resetDistrictHighlight(e) {
+
+    district_layer.resetStyle(e.target)
+
+  }
+
+  districtOnEachFeature = function (feature, layer) {
+
+    layer.on({
+      mouseover: highlightFeature,
+      mouseout: resetLayerHighlight,
+      click: zoomAndHighlight
+    });
+
+    layer.bindTooltip(layer.feature.properties['district'])
+  };
+
+  regionOnEachFeature = function (feature, layer) {
+    layer.on({
+      mouseover: highlightFeature,
+      mouseout: resetLayerHighlight,
+      click: zoomToFeature,
+    });
+
+    layer.bindPopup(layer.feature.properties["region"] + ' REGION');
+  }
+
+  protectedOnEachFeature = function (feature, layer) {
+    layer.on({
+      mouseover: highlightFeature,
+      mouseout: resetLayerHighlight,
+      click: zoomToFeature,
+    })
+
+    layer.bindTooltip('Protected Area Name: ' + layer.feature.properties['reserve_na'])
+
+  }
+
+  mineralOnEachFeature = function (feature, layer) {
+    layer.on({
+      mouseover: highlightFeature,
+      mouseout: resetLayerHighlight,
+      click: zoomToFeature,
+    })
+
+
+    layer.bindTooltip(`<div class="container table-responsive"> <table class="table table-bordered table-hover"> <thead class="thead-dark"> <tr> <th scope="col" colspan="2" class="text-center"> Information on the Concession </th></tr> </thead> <tbody> <tr><th scope="row">Owner</th><td>` + layer.feature.properties['owner'] + `</td> </tr><tr> <th scope="row">Type</th> <td>` + layer.feature.properties['type'] + `</td></tr><tr> <th scope="row">Status</th> <td>` + layer.feature.properties['status'] + `</td> </tr> <tr> <th scope="row">Code</th> <td>` + layer.feature.properties['code'] + `</td> </tr> <tr> <th scope="row">Assets</th> <td>` + layer.feature.properties['assets'] +`</td> </tr> </tbody> </table> </div>`)
+  }
+
+
+  // Handler for Toggle
+  function toggleLayer(map, layer, checkbox) {
+
+    if (layer) {
+      map.removeLayer(layer)
+      if (checkbox.prop('checked')) {
+        map.removeLayer(layer)
+        layer.bringToFront();
+        map.addLayer(layer)
+      } else {
+        map.removeLayer(layer)
+      }
+    } else {
+      alert('Preparing layer for visualisation. Please check in a few seconds');
+      checkbox.prop('checked', false)
+    }
+  }
+
+
+
+
+  /* 
+      Layers [ Region, District, Protected Areas, Mineral Concession ]
+  */
+
+  // GET WFS data on load
+  (function async() {
+    // Region
+    GeoserverWFS(geoserver_wfs_url,
+      {
+        layers: 'galamsey:region',
+        style: {
+          fillColor: "transparent",
+          weight: 5,
+          opacity: 1,
+          color: "#ff7f7f",
+          dashArray: "3",
+          fillOpacity: 0.7,
+        },
+        onEachFeature: regionOnEachFeature
+      },
+      'region_layer'
+    );
+
+    // District 
+    GeoserverWFS(geoserver_wfs_url,
+      {
+        layers: 'galamsey:area_of_interest',
+        style: {
+          fillColor: 'transparent',
+          weight: 2,
+          opacity: 1,
+          color: '#000000',
+          dashArray: '3',
+          fillOpacity: 0.7
+        },
+        onEachFeature: districtOnEachFeature
+      },
+      'district_layer'
+    ).then(() => {
+      let onload_check = $('#doi').prop('checked', true);
+      toggleLayer(map, layers_group['district_layer'], onload_check);
+    });
+
+    // Protected Area
+    GeoserverWFS(geoserver_wfs_url,
+      {
+        layers: 'galamsey:protected_area',
+        style: {
+          fillColor: "transparent",
+          weight: 2,
+          opacity: 1,
+          color: "Green",
+          dashArray: "3",
+          fillOpacity: 0.7,
+        },
+        onEachFeature: protectedOnEachFeature
+      },
+      'protected_area_layer'
+    );
+
+    // Mineral Concession
+    GeoserverWFS(geoserver_wfs_url,
+      {
+        layers: 'galamsey:mineral_concession',
+        style: {
+          fillColor: "transparent",
+          weight: 2,
+          opacity: 1,
+          color: "#ffb502",
+          dashArray: "3",
+          fillOpacity: 0.7,
+        },
+        onEachFeature: mineralOnEachFeature
+      },
+      'mineral_concession_layer'
+    );
+
+    {% for footprint in footprint_years %}
+    
+    loadFootprint(footprint_url, '{{footprint.year}}', 'footprint_{{footprint.year}}')
+
+    {% endfor %}
+
+    loadGeneralStats(`{% url 'galamseyPortal:load_statistics' %}?year=all`)
+  })();
+
+
+
+
+
+  // Checkbox Change Detection
+  $('#region_boundary').change(function () {
+    toggleLayer(map, layers_group['region_layer'], $(this));
+  });
+
+  $('#doi').change(function () {
+    toggleLayer(map, layers_group['district_layer'], $(this));
+  });
+
+  $('#protected_area_boundary').change(function () {
+    toggleLayer(map, layers_group['protected_area_layer'], $(this));
+  });
+
+  $('#mineral_concession_boundary').change(function () {
+    toggleLayer(map, layers_group['mineral_concession_layer'], $(this));
+  });
+  
+  // Footprint Checkbox Change Detect
+  {% for footprint in footprint_years %}
+  $('#footprint_{{footprint.year}}').change(function () {
+    toggleLayer(map, footprints_group['footprint_{{footprint.year}}'], $(this));
+  });
+  {% endfor %}
+
+
+
+
+  let coords;
+  var drawnItems = new L.geoJson().addTo(map);
+  drawnItems.bringToFront();
+  var layer;
+
+  map.on(L.Draw.Event.CREATED, function (event) {
+    drawnItems.removeLayer(layer);
+    layer = event.layer;
+
+    // $("#dialog").dialog("open");
+    drawnItems.addLayer(layer);
+
+    let type = event.layerType;
+    coords = layer.getLatLngs();
+
+  });
+
+
+
+  L.EditToolbar.Delete.include({
+    removeAllLayers: false,
+  });
+
+  // Control Options
+  var measureOptions = {
+    position: 'bottomleft',
+    primaryAreaUnit: 'hectares',
+    secondaryAreaUnit: 'sqmeters',
+    primaryLengthUnit: 'meters',
+    secondaryLengthUnit: 'kilometers'
+  }
+
+  var positionOption = {
+    position: 'bottomleft'
+  }
+
+  var drawtool = new L.Control.Draw({
+    edit: {
+      featureGroup: drawnItems,
+    },
+    draw: {
+      polygon: true,
+      rectangle: true,
+      circlemarker: false,
+      marker: false,
+      polyline: false,
+      circle: false,
+    },
+    position: 'bottomleft',
+  });
+
+
+
+
+  // Control Initialization
+  var measureControl = new L.Control.Measure(measureOptions);
+  var browserPrintControl = L.control.browserPrint(positionOption);
+  
+  var analysisMeasureControl = new L.Control.Measure(measureOptions);
+  var analysisBrowserPrintControl = L.control.browserPrint(positionOption);
+
+  // Adding Controls - NB: Order appears inverted on page
+  browserPrintControl.addTo(map)
+  drawtool.addTo(map)
+  measureControl.addTo(map);
+  map.zoomControl.setPosition('bottomleft');
+  
+  // For the analysis map
+  analysisBrowserPrintControl.addTo(analysis_map)
+  analysisMeasureControl.addTo(analysis_map);
+  analysis_map.zoomControl.setPosition('bottomleft');
+</script>
+
+
+
+
+{% endblock %}

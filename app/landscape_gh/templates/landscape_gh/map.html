@@ -1,0 +1,16 @@
+{% extends 'landscape_gh/base.html' %}
+{% load static %}
+
+{% block head_links %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+{% endblock head_links %}
+
+{% block body %}
+<div class="map"></div>
+{% endblock body %}
+
+{% block js %}
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+<script src="{% static 'landscape_gh/js/map.js' %}"></script>
+
+{% endblock js %}
