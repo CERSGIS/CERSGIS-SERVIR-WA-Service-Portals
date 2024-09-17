@@ -1,0 +1,158 @@
+{% extends 'landscape_gh/base.html' %}
+{% load utils_tags %}
+{% load static %}
+
+{% block body %}
+<div class="map">
+  <div class="container-fluid">
+    <!-- <div class="mb-5 mt-5">
+      <div class="row mb-4 align-items-center">
+        <div class="col-lg-6 mb-lg-0 mb-4">
+          <h3 class="font-size-6 mb-0">Dashboard</h3>
+        </div>
+      </div>
+      <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="col">
+          <div class="card">
+            <img src="" class="card-img-top" alt="">
+            <div class="card-body">
+              <h5 class="card-title">Card title</h5>
+              <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional
+                content. This content is a little bit longer.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card">
+            <img src="" class="card-img-top" alt="">
+            <div class="card-body">
+              <h5 class="card-title">Card title</h5>
+              <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional
+                content. This content is a little bit longer.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card">
+            <img src="" class="card-img-top" alt="">
+            <div class="card-body">
+              <h5 class="card-title">Card title</h5>
+              <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional
+                content.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card">
+            <img src="" class="card-img-top" alt="">
+            <div class="card-body">
+              <h5 class="card-title">Card title</h5>
+              <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional
+                content. This content is a little bit longer.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> -->
+    <div class="mb-14">
+      <div class="row mb-11 align-items-center">
+        <div class="col-lg-6 mb-lg-0 mb-4">
+          <h3 class="font-size-6 mb-0">Records</h3>
+        </div>
+      </div>
+      <div class="bg-white shadow-8 rounded p-3">
+        <div class="row mb-7" id="repo">
+          <div class="col-xlg-12 col-lg-12 col-md-12 p-0">
+            <div class="col-md-12">
+              <div class="card shadow-lg">
+                <div class="card-body rounded">
+                  <div class="table-responsive">
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <table id="records-table" class="display rounded">
+                          <thead style="background-color: #cee4ca; color: #000;">
+                            <tr role="row">
+                              <th></th>
+                              <th>Record Name</th>
+                              <th>Image</th>
+                              <th>Observation On Site</th>
+                              <th>Activity Status</th>
+                              <th>Charcoal Type</th>
+                              <th>Comment</th>
+                              <th>Audio</th>
+                              <th>Geometry Type</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for record in records %}
+                            {{ record.coordinates }}
+                            <tr>
+                              <td></td>
+                              <td>{{record.name}}</td>
+                              <td>
+                                {% if record.image %}
+                                {% file_exists record.image as image %}
+
+                                {% if image %}
+                                <img class="img-thambnail" src="{{image.url}}" alt="" width="50px" height="50px">
+                                {% else %}
+                                No Image Available
+                                {% endif %}
+                                {% else %}
+                                No Image Available
+                                {% endif %}
+                              </td>
+                              <td>{{record.observation_on_site}}</td>
+                              <td>{{record.activity_status}}</td>
+                              <td>{{record.charcoal_type}}</td>
+                              <td>{{record.comment}}</td>
+                              <td>
+                                {% if record.audio %}
+                                {% file_exists record.audio as audio %}
+
+
+                                {% if audio %}
+                                <audio controls>
+
+                                  <source src="{{audio.url}}" type="audio/mpeg">
+
+                                </audio>
+                                {% else %}
+
+                                No Audio Available
+                                {% endif %}
+                                {% else %}
+
+                                No Audio Available
+                                {% endif %}
+                              </td>
+                              <td>{{record.geometry_type}}</td>
+                            </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock body %}
+
+{% block js %}
+<script>
+  $(document).ready(function () {
+    $('#records-table').DataTable({
+      scrollCollapse: true,
+      scrollY: '50vh'
+    })
+  });
+</script>
+{% endblock js %}
