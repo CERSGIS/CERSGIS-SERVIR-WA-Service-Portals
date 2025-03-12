@@ -1,0 +1,447 @@
+{% extends "portal/base.html" %}
+{% block home %} active {% endblock %}
+{% load static %}{% load humanize %}
+{% block css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+    crossorigin="" />
+<link rel="stylesheet" type="text/css" href="/static/portal/assets/libs/css/leaflet-measure.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.12/leaflet.draw.css" />
+
+<link rel="stylesheet" type="text/css" href="/static/portal/assets/libs/css/easy-button.css">
+
+<style type="text/css">
+    /*.leaflet-left { left:calc(100% - 50px) !important; }*/
+    .leaflet-control-measure .leaflet-control {
+        border: 2px solid rgba(0, 0, 0, 0.2) !important;
+        background-clip: padding-box;
+    }
+
+    .leaflet-control-measure {
+        box-shadow: 0 1px 5px rgb(0, 0, 0, 0.2) !important;
+    }
+
+    .leaflet-touch .leaflet-control-measure .leaflet-control-measure-toggle,
+    .leaflet-touch .leaflet-control-measure .leaflet-control-measure-toggle:hover {
+        width: 31px;
+        height: 31px;
+    }
+
+    #loading-bar-spinner.spinner {
+        left: 50%;
+        margin-left: -20px;
+        top: 50%;
+        margin-top: -20px;
+        position: absolute;
+        z-index: 500 !important;
+        animation: loading-bar-spinner 400ms linear infinite;
+    }
+
+    #loading-bar-spinner.spinner .spinner-icon {
+        width: 50px;
+        height: 50px;
+        border: solid 4px transparent;
+        border-top-color: #00c8b1 !important;
+        border-left-color: #00c8b1 !important;
+        border-radius: 50%;
+    }
+
+    @keyframes loading-bar-spinner {
+        0% {
+            transform: rotate(0deg);
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+
+{% endblock %}
+{% block body %}
+<div id="loading-bar-spinner" class="spinner">
+    <div class="spinner-icon"></div>
+</div>
+<div id="map" class="">
+    <div class="box">
+        <div id="cardbox1" class="card">
+            <div class="card-header cbox d-flex">
+                <h4 class="mb-0">Query</h4>
+                <div class="dropdown ml-auto">
+                    <a class="toolbar slide-toggle" href="#" role="button"> <i class="fas fa-times"></i> </a>
+                </div>
+            </div>
+            <div class="card-body cbox toggledisp">
+                <div class="row">
+                </div>
+                <div class="row">
+                    <div class="col-md-12 border-top"> &nbsp;</div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Select Region </label>
+                            <select id="region" class="form-control">
+                                <option>Select a Region</option>
+                                {% for region in regions %}
+                                <option value="{{region.reg_code}}">{{region.region}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Select District </label>
+                            <select id="district" class="form-control">
+                                <option value="">Select a District</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Select Year </label>
+                            <select id='year' class="form-control">
+                                <option>Select the Year</option>
+                                <option value="2015">2015</option>
+                                <option value="2018">2018</option>
+                                <option value="2022">2022</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12 iconbox4">
+                        <!-- <div class="form-group">
+                            <label>Date </label>
+                            <input type="date" class="form-control" id="cc-mask" im-insert="true">
+                        </div> -->
+                        <div class="form-group">
+                            <button id="execute" class="btn btn-secondary">Execute</button>
+                            <button id="reset" class="btn btn-secondary">Reset</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="cardbox2" class="card">
+            <div class="card-header cbox d-flex">
+                <h4 class="mb-0">Layer</h4>
+                <div class="dropdown ml-auto">
+                    <a class="toolbar slide-toggle" href="#" role="button"> <i class="fas fa-times"></i> </a>
+                </div>
+            </div>
+            <div class="card-body cbox toggledisp">
+                <div class="p-2 mb-2 bg-primary text-white">
+                    <div class="switch-button switch-button-xs switch-button-success">
+                        <input type="checkbox" name="region_boundary" id="region_boundary"><span>
+                            <label for="region_boundary"></label></span>
+                    </div>
+                    Region
+                </div>
+                <div class="p-2 mb-2 bg-primary text-white">
+                    <div class="switch-button switch-button-xs switch-button-success">
+                        <input type="checkbox" name="district_boundary" id="district_boundary"><span>
+                            <label for="district_boundary"></label></span>
+                    </div>
+                    Districts
+                </div>
+                <div class="p-2 mb-2 bg-primary text-white">
+                    <div class="switch-button switch-button-xs switch-button-success">
+                        <input type="checkbox" name="protected_area_boundary" id="protected_area_boundary"><span>
+                            <label for="protected_area_boundary"></label></span>
+                    </div>
+                    Protected Areas
+                </div>
+                <div class="p-2 mb-2 bg-primary text-white">
+                    <div class="switch-button switch-button-xs switch-button-success">
+                        <input type="checkbox" name="aoi" id="aoi"><span>
+                            <label for="aoi"></label></span>
+                    </div>
+                    Galamsey Area of Interests
+                </div>
+                <!-- <div class="p-2 mb-2 bg-primary text-white">
+                    <div class="switch-button switch-button-xs switch-button-success">
+                        <input type="checkbox" checked="" name="switch2" id="switch2"><span>
+                            <label for="switch2"></label></span>
+                    </div>
+                    Layer name 2
+                </div>
+                <div class="p-2 mb-2 bg-primary text-white">
+                    <div class="switch-button switch-button-xs switch-button-success">
+                        <input type="checkbox" checked="" name="switch3" id="switch3"><span>
+                            <label for="switch3"></label></span>
+                    </div>
+                    Layer name 3
+                </div>
+                <div class="p-2 mb-2 bg-primary text-white">
+                    <div class="switch-button switch-button-xs switch-button-success">
+                        <input type="checkbox" checked="" name="switch4" id="switch4"><span>
+                            <label for="switch4"></label></span>
+                    </div>
+                    Layer name 4
+                </div> -->
+            </div>
+        </div>
+        <div id="cardbox3" class="card">
+            <div class="card-header cbox d-flex">
+                <h4 class="mb-0">Basemaps</h4>
+                <div class="dropdown ml-auto">
+                    <a class="toolbar slide-toggle" href="#" role="button"> <i class="fas fa-times"></i> </a>
+                </div>
+            </div>
+            <div class="card-body cbox toggledisp">
+                <div class="basemapCont" style="">
+                    <div class="tileDiv" id="no_basemap" style="">
+                        <img src="/static/portal/assets/images/tiles/1.png" class="tiles" title="Satellite Image"> No
+                        Basemap
+                    </div>
+                    <div class="tileDiv" id="basemap8" style="">
+                        <img id="" src="/static/portal/assets/images/tiles/2.png" class="tiles" title="Satellite Image">
+                        Openstreetmap
+                    </div>
+                    <div class="tileDiv" id="sate" style="">
+                        <img id="" src="/static/portal/assets/images/tiles/3.png" class="tiles" title="Satellite Image">
+                        Satellite Image
+                    </div>
+                    <div class="tileDiv" id="basemap7" style="">
+                        <img id="" src="/static/portal/assets/images/tiles/4.png" class="tiles" title="Satellite Image">
+                        Openstreetmap Hotmap
+                    </div>
+                    <div class="tileDiv" id="topo" style="">
+                        <img id="" src="/static/portal/assets/images/tiles/5.png" class="tiles" title="Satellite Image">
+                        Opentopomap
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="cardbox5" class="card">
+            <!-- <div class="card-header d-flex">
+                <ul>
+                  <li>
+              </ul>
+                <ul>
+                  <li><span class="flag-icon flag-icon-cmr"></span><span class="code">cmr</span> - Camaroun</li>
+              </ul>
+                <span class=”flag-icon flag-icon-bi flag-icon-squared”></span>
+                <span class=”flag-icon flag-icon-in flag-icon-squared”></span>
+                <span class=”flag-icon flag-icon-in flag-icon-squared”></span>
+                <span class=”flag-icon flag-icon-in flag-icon-squared”></span>
+                <div class="dropdown ml-auto">
+                    <a class="toolbar slide-toggle" href="#" role="button"> <i class="fas fa-times"></i> </a>
+                </div>
+            </div> -->
+            <!-- <div class="card-body toggledisp">
+                <div class="basemapCont" style="">
+                    <div class="tileDiv" id="no_basemap" style="">
+                        <img src="/static/portal/assets/images/tiles/1.png" class="tiles" title="Satellite Image"> No Basemap
+                    </div>
+                    <div class="tileDiv" id="basemap8" style="">
+                        <img id="" src="/static/portal/assets/images/tiles/2.png" class="tiles" title="Satellite Image"> Openstreetmap
+                    </div>
+                    <div class="tileDiv" id="sate" style="">
+                        <img id="" src="/static/portal/assets/images/tiles/3.png" class="tiles" title="Satellite Image"> Satellite Image
+                    </div>
+                    <div class="tileDiv" id="basemap7" style="">
+                        <img id="" src="/static/portal/assets/images/tiles/4.png" class="tiles" title="Satellite Image"> Openstreetmap Hotmap
+                    </div>
+                    <div class="tileDiv" id="topo" style="">
+                        <img id="" src="/static/portal/assets/images/tiles/5.png" class="tiles" title="Satellite Image"> Opentopomap
+                    </div>
+                </div>
+            </div> -->
+        </div>
+    </div>
+    <div class="iconrack" style="float:right;">
+        <!-- <div id="iconbox4" class="iconbox">
+            <i class="fas fa-globe">
+                <span>Boundaries</span>
+            </i>
+        </div> -->
+        <div id="iconbox2" class="iconbox">
+            <i class="fas fa-bars">
+                <span>Layer</span>
+            </i>
+        </div>
+        <div id="iconbox1" class="iconbox">
+            <i class="fas fa-cogs">
+                <span>Query</span>
+            </i>
+        </div>
+        <div id="iconbox3" class="iconbox">
+            <i class="fas fa-map">
+                <span>Basemaps</span>
+            </i>
+        </div>
+        <div id="iconbox4" class="iconbox iconbox4">
+            <i class="fas fa-cogs">
+                <span>Analytics</span>
+            </i>
+        </div>
+    </div>
+    <div class="cardbox" style="display: none;">
+        <div class="card" id="mycard">
+            <div class="card-header d-flex">
+                <h4 class="mb-0">Card Header</h4>
+                <div class="dropdown ml-auto">
+                    <a class="cardbox_close toolbar" href="#" role="button"> <i class="fas fa-times"></i> </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="pills-vertical">
+                    <div class="row">
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12" style="padding-right: 0px;">
+                            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist"
+                                aria-orientation="vertical">
+                                <a class="nav-link active show" id="v-pills-home-tab" data-toggle="pill"
+                                    href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">
+                                    <div class="iconpill">
+                                        <i class="fas fa-anchor"></i>
+                                        <h6>Analysis on Query</h6>
+                                    </div>
+                                </a>
+                                <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile"
+                                    role="tab" aria-controls="v-pills-profile" aria-selected="false">
+                                    <div class="iconpill">
+                                        <i class="fas fa-balance-scale"></i>
+                                        <h6>Compare</h6>
+                                    </div>
+                                </a>
+                                <a class="nav-link" id="v-pills-messages-tab" data-toggle="pill"
+                                    href="#v-pills-messages" role="tab" aria-controls="v-pills-messages"
+                                    aria-selected="false">
+                                    <div class="iconpill">
+                                        <i class="fas fa-globe"></i>
+                                        <h6> Export</h6>
+                                    </div>
+                                </a>
+                                <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill"
+                                    href="#v-pills-settings" role="tab" aria-controls="v-pills-settings"
+                                    aria-selected="false">
+                                    <div class="iconpill">
+                                        <i class="fas fa-balance-scale"></i>
+                                        <h6> layout</h6>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-xl-9 col-lg-9 col-md-9 col-sm-12 col-12" style="padding-left: 0px;">
+                            <div class="tab-content" id="v-pills-tabContent">
+                                <div class="tab-pane fade active show" id="v-pills-home" role="tabpanel"
+                                    aria-labelledby="v-pills-home-tab">
+                                    <div class="col-md-12 col-sm-12 col-12">
+                                        <div class="section-block">
+                                            <button id="buttonchange" class="btn btn-secondary">Click to View
+                                                Analysis</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="v-pills-profile" role="tabpanel"
+                                    aria-labelledby="v-pills-profile-tab">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h3 class="text-center">COMPARE YEARS FOR A DISTRICT</h3>
+                                        </div>
+                                        <div class="col-md-12 border-top"> &nbsp;</div>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label>Select Region </label>
+                                                <select id="region_compare" class="form-control">
+                                                    <option>Select a Region</option>
+                                                    {% for region in regions %}
+                                                    <option value="{{region.reg_code}}">{{region.region}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label>Select District </label>
+                                                <select id="district_compare" class="form-control">
+                                                    <option value="">Select a District</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Select Year 1 </label>
+                                                <select id='year1' class="form-control">
+                                                    <option>Select the Year</option>
+                                                    <option value="2015">2015</option>
+                                                    <option value="2018">2018</option>
+                                                    <option value="2022">2022</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Select Year 2 </label>
+                                                <select id='year2' class="form-control">
+                                                    <option>Select the Year</option>
+                                                    <option value="2015">2015</option>
+                                                    <option value="2018">2018</option>
+                                                    <option value="2022">2022</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 iconbox4">
+                                            <!-- <div class="form-group">
+                                                <label>Date </label>
+                                                <input type="date" class="form-control" id="cc-mask" im-insert="true">
+                                            </div> -->
+                                            <div class="form-group">
+                                                <button id="compare" class="btn btn-secondary">Compare</button>
+                                                <button id="reset" class="btn btn-secondary">Reset</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="v-pills-messages" role="tabpanel"
+                                    aria-labelledby="v-pills-messages-tab">
+                                    <p>Vivamus pellentesque vestibulum lectus vitae auctor. Maecenas eu sodales arcu.
+                                        Fusce lobortis, libero ac cursus feugiat, nibh ex ultricies tortor, id dictum
+                                        massa nisl ac nisi. Fusce a eros pellentesque, ultricies urna nec, consectetur
+                                        dolor. Nam dapibus scelerisque risus, a commodo mi tempus eu.</p>
+                                </div>
+                                <div class="tab-pane fade" id="v-pills-settings" role="tabpanel"
+                                    aria-labelledby="v-pills-settings-tab">
+                                    <p>Vivamus pellentesque vestibulum lectus vitae auctor. Maecenas eu sodales arcu.
+                                        Fusce lobortis, libero ac cursus feugiat, nibh ex ultricies tortor, id dictum
+                                        massa nisl ac nisi. Fusce a eros pellentesque, ultricies urna nec, consectetur
+                                        dolor. Nam dapibus scelerisque risus, a commodo mi tempus eu.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+    crossorigin=""></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.12/leaflet.draw.js"></script>
+<script src="/static/portal/assets/libs/js/leaflet-measure.js"></script>
+<script src="/static/portal/assets/libs/js/Sortable.js"></script>
+<script src="/static/portal/assets/libs/js/leaflet.browser.print.js"></script>
+<script src="/static/portal/assets/libs/js/L.TileLayer.BetterWMS.js"></script>
+<script src="/static/portal/assets/libs/js/jquery-sortable.js"></script>
+<script src="/static/portal/assets/libs/js/easy-button.js"></script>
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<script src="/static/portal/assets/libs/js/leaflet-side-by-side.min.js"></script>
+
+<script src="/static/portal/assets/libs/js/map.js"></script>
+
+<script>
+    $("#loading-bar-spinner")
+        .delay(0.5)
+        .queue(function (next) {
+            $(this).css("display", "none");
+            next();
+        });
+</script>
+{% endblock %}

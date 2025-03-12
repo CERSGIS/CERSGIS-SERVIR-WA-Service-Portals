@@ -26,7 +26,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = eval(os.environ.get('DEBUG'))
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', default=['*'])
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', default=['*']).split(',')
+CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', default=['*']).split(',')
 
 
 # Application definition
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
 
     'colorfield',
+    'drf_yasg',
     'rest_framework',
     'home',
     'root_app',
@@ -120,6 +122,14 @@ DATABASES = {
     }
 }
 
+# Caches
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': os.environ.get('CACHE_LOCATION'),
+    }
+}
+
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
@@ -182,14 +192,13 @@ EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = os.environ.get('EMAIL_PORT')
 
-RECIPIENT_EMAILS = os.environ.get('RECIPIENT_EMAILS').split(',')
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # GEE CREDENTIALS STUFFS
 SERVICE_ACCOUNT_NAME = os.environ.get('SERVICE_ACCOUNT_NAME')
 SERVICE_ACCOUNT_KEY = os.environ.get('SERVICE_ACCOUNT_KEY')
 PROJECT_ASSETS = os.environ.get('PROJECT_ASSETS')
+PLANET_PROJECT_ASSETS = os.environ.get('PLANET_PROJECT_ASSETS')
 
 # GEOSERVER BASE URL
 GEOSERVER_BASE_URL = os.environ.get('GEOSERVER_BASE_URL')
@@ -197,3 +206,5 @@ GEOSERVER_BASE_URL = os.environ.get('GEOSERVER_BASE_URL')
 SERIALIZATION_MODULES = {
     "geojson": "django.contrib.gis.serializers.geojson", 
 }
+
+CACHE_TIMEOUT = os.environ.get('CACHE_TIMEOUT')

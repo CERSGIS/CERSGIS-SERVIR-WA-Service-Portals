@@ -1,6 +1,11 @@
+{% url 'galamseyPortal:galamsey_map_view' as galamsey_portal_url %}
 <div class="box report">
     <div class="d-flex justify-content-between box-title">
-      <h4 class="title-text"> Reports</h4>
+      {% if request.path == galamsey_portal_url %}
+      <h4 class="title-text">Reports & Maps</h4>
+      {% else %}
+      <h4 class="title-text">Reports </h4>
+      {% endif %}
       <i class="close closebox fa-solid fa-circle-xmark my-auto"></i>
     </div>
     <div class="report-container" style="margin-top: 10px; padding: 5px 10px 5px 10px;">

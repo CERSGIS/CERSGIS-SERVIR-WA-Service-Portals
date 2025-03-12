@@ -1,0 +1,58 @@
+{% load static %}
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+      <div class="modal-content">
+        <!-- <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div> -->
+        <div id="map-modal-body" class="modal-body">
+            <div id="print-map-container" class="print-map-container">
+                <div class="map-header">
+                  <input id="map_title" class="title" for="title" placeholder="Map title here" />
+                    <!-- <h1 class="title">COCOA COMMUNITIES OF SEFWI WIAWSO DISTRICT</h1> -->
+                </div>
+        
+                <div class="map-content">
+                    <div class="right-side">
+                      <!-- Replace this with your map image or an embedded map -->
+                        <div id="map-img-container" class="map-img-container leaflet-container leaflet-touch leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom">
+                  
+                            <!-- <img class="map-image" src="{% static 'root_app/assets/images/map.jpg' %}" alt="map"> -->
+                        </div>
+                    </div>
+        
+                    <div class="side-content">
+                        <div class="north-arrow">
+                             <!-- North arrow representation -->
+                             <img class="north-arrow-img" src="{% static 'root_app/assets/images/arrow.png' %}" alt="north-arrow">
+                        </div>
+        
+                        <div class="scale">
+                            <!-- Scale representation -->
+                            <div class="scale-bar"></div>
+                            <span class="scale-text">1 km</span>
+                        </div>
+        
+                        <div class="legend">
+                             <!-- Legend representation -->
+                             <img class="legend-img" src="{% static 'root_app/assets/images/legend.png' %}" alt="legend">
+                        </div>
+        
+                        <div class="logo">
+                             <!-- Logo representation -->
+                             <img class="logo-img" src="{% static 'root_app/assets/images/logo.jpg' %}" alt="logo">
+                        </div>
+        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="downloadLayoutAsImage()">Print</button>
+        </div>
+      </div>
+    </div>
+  </div>

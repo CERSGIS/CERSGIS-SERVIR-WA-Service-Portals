@@ -4,17 +4,12 @@
 {% block title %}Charcoal Portal{% endblock %}
 
 {% block css %}
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato%3A700" />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro%3A700" />
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
-  integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.12/leaflet.draw.css" />
 <!-- <link rel="stylesheet" href="{% static 'charcoal_portal/assets/styles/map-nav.css' %}" /> -->
 <link rel="stylesheet" href="{% static 'root_app/assets/css/leaflet-measure.css' %}" />
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css" integrity="sha512-mQ77VzAakzdpWdgfL/lM1ksNy89uFgibRQANsNneSTMD/bj0Y/8+94XMwYhnbzx8eki2hrbPpDm0vD0CiT2lcg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-<!-- <link rel="stylesheet" href="{% static 'charcoal_portal/assets/styles/style.css' %}" /> -->
+<link rel="stylesheet" href="{% static 'charcoal_portal/assets/styles/dashboard.css' %}" />
 <style type="text/css">
   {% for charcoalpoint in charcoalpoint_years %}
 
@@ -72,6 +67,18 @@
     background-size: 20% 50%;
     animation: l44 1s infinite linear alternate; 
   }
+
+  .statistics-box .nav-pills{ 
+    --bs-nav-pills-link-active-bg: {% if app_details %}{{ app_details.side_nav_icon_color }}{% else %}#fff{% endif %}; 
+    --bs-nav-pills-link-active-color: {% if app_details %}{{ app_details.side_nav_color }}{% else %}#fff{% endif %}; 
+    --bs-nav-link-color: {% if app_details %}{{ app_details.side_nav_icon_color }}{% else %}#fff{% endif %};
+  }
+
+  .statistics-box .nav-pills a:hover{
+    outline:1px solid {% if app_details %}{{ app_details.side_nav_icon_color }}{% else %}#fff{% endif %}; 
+    --bs-nav-link-hover-color: {% if app_details %}{{ app_details.side_nav_icon_color }}{% else %}#fff{% endif %}; 
+  }
+
   @keyframes l44 {
     0%,
     5%    {background-position: calc(0*100%/3) 50% ,calc(1*100%/3) 50% ,calc(2*100%/3) 50% ,calc(3*100%/3) 50% }
@@ -92,7 +99,17 @@
 {% include 'charcoal_portal/components/side-nav.html' %}
 {% endblock %}
 
+{% block query %}
+{% include 'charcoal_portal/components/query.html' %}
+{% endblock %}
+
+{% block stats %}
+{% include 'charcoal_portal/components/statistics.html' %}
+{% endblock %}
+
+
 {% block body %}
+{% include 'charcoal_portal/components/dashboard.html' %}
 <div class="box detials">
   <div class="d-flex justify-content-between box-title">
     <h4 class="title-text"> Details</h4>
@@ -147,32 +164,7 @@
       <div class="lgd lgd1"></div>
       <p class="layer-name">Region</p>
     </div>
-    <!-- <div class="col-12">
-        <div class="custom-control custom-switch">
-            <input type="checkbox" class="custom-control-input" id="district_boundary" name="example">
-            <label class="custom-control-label" for="district_boundary"></label>
-        </div>
-        <div class="lgd lgd2"></div>
-        <p class="layer-name">District</p>
-    </div> -->
-    <!-- <div class="col-12">
-                        <div class="custom-control custom-switch">
-                            <input type="checkbox" class="custom-control-input" id="protected_area_boundary"
-                                name="example">
-                            <label class="custom-control-label" for="protected_area_boundary"></label>
-                        </div>
-                        <div class="lgd lgd3"></div>
-                        <p class="layer-name">Protected Areas</p>
-                    </div> -->
-    <!-- <div class="col-12">
-                        <div class="custom-control custom-switch">
-                            <input type="checkbox" class="custom-control-input" id="mineral_concession_boundary"
-                                name="example">
-                            <label class="custom-control-label" for="mineral_concession_boundary"></label>
-                        </div>
-                        <div class="lgd lgd4"></div>
-                        <p class="layer-name">Mineral Concession</p>
-                    </div> -->
+
     <div class="col-12">
       <div class="form-check form-switch form-check-reverse custom-switch">
         <input type="checkbox" class="form-check-input switch-input" id="aoi_boundary" name="aoi_boundary">
@@ -191,301 +183,55 @@
   </div>
 
   <div class="box-body">
-    <div class="col-12">
-      <div class="form-check form-switch form-check-reverse custom-switch">
-        <input type="checkbox" class="form-check-input switch-input" id="all_points"
-          name="all_points">
-        <label class="form-check-label" for="all_points"></label>
+    <div id="deselect_all_points" class="row row-cols-12 gap-2 justify-content-center charcoaldata-container d-none">
+      <div class="col-12">
+        <p class="layer-name text-center"><strong>Deselect All Points</strong></p>
       </div>
-      <div class="lgd lgd6"></div>
-      <p class="layer-name">All Charcoal Points</p>
+    </div>
+    <div class="row row-cols-12 gap-2 justify-content-center charcoaldata-container">
+      <div class="col-12">
+        <div class="form-check form-switch form-check-reverse custom-switch">
+          <i id="cluster-down" class="fa-solid fa-chevron-down" data-bs-toggle="collapse" data-bs-target="#collapseAllPoints" aria-expanded="false" aria-controls="collapseAllPoints"></i>
+          <input type="checkbox" class="form-check-input switch-input" id="all_points"
+          name="all_points">
+          <label class="form-check-label" for="all_points"></label>
+        </div>
+        <div class="lgd lgd6"></div>
+        <p class="layer-name">All Charcoal Points</p>
+      </div>
+      <div id="collapseAllPoints" class="cluster-container border border-2 collapse col-11">
+        <div class="form-check form-check-reverse custom-switch">
+          <input type="checkbox" class="form-check-input switch-input-cluster" id="cluster_all_points"
+          name="cluster_all_points">
+          <label class="form-check-label" for="cluster_all_points"></label>
+        </div>
+        <p class="layer-name">Cluster</p>
+      </div>
     </div>
     {% for charcoalpoint in charcoalpoint_years %}
-    <div class="col-12">
-      <div class="form-check form-switch form-check-reverse custom-switch">
-        <input type="checkbox" class="form-check-input switch-input" id="charcoalpoint_{{charcoalpoint.year}}"
-          name="charcoalpoint_{{charcoalpoint.year}}">
-        <label class="form-check-label" for="{{charcoalpoint.year}}"></label>
+    <div class="row row-cols-12 gap-2 justify-content-center charcoaldata-container">
+      <div class="col-12 ">
+        <div class="form-check form-switch form-check-reverse custom-switch">
+          <i id="cluster-down" class="fa-solid fa-chevron-down" data-bs-toggle="collapse" data-bs-target="#collapseCharcoalpoint{{charcoalpoint.year}}" aria-expanded="false" aria-controls="collapseCharcoalpoint{{charcoalpoint.year}}"></i>
+          <input type="checkbox" class="form-check-input switch-input" id="charcoalpoint_{{charcoalpoint.year}}"
+            name="charcoalpoint_{{charcoalpoint.year}}">
+          <label class="form-check-label" for="{{charcoalpoint.year}}"></label>
+        </div>
+        <div class="lgd lgdfp{{charcoalpoint.year}}"></div>
+        <p class="layer-name">{{charcoalpoint.year}}</p>
       </div>
-      <div class="lgd lgdfp{{charcoalpoint.year}}"></div>
-      <p class="layer-name">{{charcoalpoint.year}}</p>
+      <div id="collapseCharcoalpoint{{charcoalpoint.year}}" class="cluster-container border border-2 collapse col-11">
+        <div class="form-check form-check-reverse custom-switch">
+          <input type="checkbox" class="form-check-input switch-input-cluster" id="cluster_charcoalpoint_{{charcoalpoint.year}}"
+          name="cluster_charcoalpoint_{{charcoalpoint.year}}">
+          <label class="form-check-label" for="cluster_charcoalpoint_{{charcoalpoint.year}}"></label>
+        </div>
+        <p class="layer-name">Cluster</p>
+      </div>
     </div>
     {% endfor %}
   </div>
 </div>
-
-
-<div class="box analytics">
-  <div class="d-flex justify-content-between box-title">
-    <h4 class="title-text">Query</h4>
-    <i class="close closebox fa-solid fa-circle-xmark my-auto"></i>
-  </div>
-  <form class="form-compact" action="#" style="margin-top: 10px; padding: 5px 15px 5px 15px;">
-    <div class="row paddingBottom20">
-      <div class="container col-12">
-        <!-- <div class="row">
-          <h6 class="text-center col-12 mb-0">Contact Information</h6>
-          <sub class="text-right text-muted col-12"><a href="#" tabindex="-1"><i class="far fa-edit"></i></a></sub>
-        </div> -->
-        <!-- <div class="dropdown-divider mb-3"></div> -->
-        <div class="form-group row align-items-center">
-          <div class="col-12">
-            <div class="col-12">
-              <label for="boundary" class="col-12 col-form-label-lg">Bounadary:</label>
-              <div class="input-group">
-                <select id="boundary" class="form-control">
-                  <option disabled selected>Select a Bounadary</option>
-                  <option value="admin_boundaries">Admin Boundaries</option>
-                  <option value="protected_area">Protected Area</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="form-group row align-items-center level">
-          <div class="col-12">
-            <div class="col-12">
-              <label for="region" class="col-12 col-form-label-lg">Level:</label>
-              <div class="input-group">
-                <select id="level" class="form-control">
-                  <option disabled selected>Select a Level</option>
-                  <option value="national">National</option>
-                  <option value="regional">Regional</option>
-                  <option value="district">District</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="form-group row align-items-center region">
-          <div class="col-12">
-            <div class="col-12">
-              <label for="region" class="col-12 col-form-label-lg">Region:</label>
-              <div class="input-group">
-                <select id="region" class="form-control">
-                  <option disabled selected>Select a Region</option>
-                  {% for region in regions %}
-                  <option value="{{region.reg_code}}">{{region.region}}</option>
-                  {% endfor %}
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="form-group row align-items-center district">
-          <div class="col-12">
-            <div class="col-12">
-              <label for="district" class="col-12 col-form-label-lg">District:</label>
-              <div class="input-group">
-                <select id="district" class="form-control">
-                  <option value="" disabled selected>Select a District</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- <div class="form-group row align-items-center protected_areas">
-                                <div class="col-12">
-                                    <div class="col-12">
-                                        <label for="protected_areas" class="col-12 col-form-label-lg">Protected
-                                            Area:</label>
-                                        <div class="input-group">
-                                            <select id="protected_areas" class="form-control">
-                                                <option value="">Select a Protected</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> -->
-        <div class="form-group row align-items-center oneyear">
-          <div class="col-12">
-            <div class="col-12">
-              <label for="year" class="col-12 col-form-label-lg">Year:</label>
-              <div class="input-group">
-                <select id="year" class="form-control">
-                  <option>Select the Year</option>
-                  <option value="2015">2015</option>
-                  <option value="2018">2018</option>
-                  <option value="2022">2022</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="form-group row align-items-center twoyear" style="display: none;">
-          <div class="row" style="padding: 0px 15px;">
-            <div class="col-6">
-              <label for="firstName" class="col-12 col-form-label-lg">Year 1:</label>
-              <div class="col-12">
-                <div class="input-group">
-                  <select id="year1" class="form-control">
-                    <option>Select Year1</option>
-                    <option value="2015">2015</option>
-                    <option value="2018">2018</option>
-                    <option value="2022">2022</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div class="col-6">
-              <label for="firstName" class="col-12 col-form-label-lg"> Year 2:</label>
-              <div class="col-12">
-                <div class="input-group">
-                  <select id="year2" class="form-control">
-                    <option>Select Year2</option>
-                    <option value="2015">2015</option>
-                    <option value="2018">2018</option>
-                    <option value="2022">2022</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="form-group row align-items-center switchyear">
-          <div class="col-12">
-            <label class="col-12 col-form-label-lg"> <input id="switchyear" type="checkbox">
-              Compare two (2) years instead </label>
-          </div>
-        </div>
-        <div class="form-group row align-items-center execute mt-3">
-            <button id="execute" type="button" class="btn btn-success"> Query </button>
-        </div>
-      </div>
-    </div>
-  </form>
-</div>
-
-            <!-- <div class="box query">
-                <div class="d-flex justify-content-between box-title">
-                    <h4 class="title-text">Query</h4>
-                    <i class="close closebox fa-solid fa-circle-xmark my-auto"></i>
-                  </div>
-                <form class="form-compact" action="#">
-                    <div class="row paddingBottom20">
-                        <div class="container col-12">
-                            <div class="row">
-                                <sub class="text-right text-muted col-12"><a href="#" tabindex="-1"><i class="far fa-edit"></i></a></sub>
-                            </div>
-                            <div class="dropdown-divider mb-3"></div>
-                            <div class="form-group row align-items-center">
-                                <div class="col-12">
-                                    <div class="col-12">
-                                        <label for="boundary" class="col-12 col-form-label-lg">Bounadary:</label>
-                                        <div class="input-group">
-                                            <select id="boundary" class="form-control">
-                                                <option disabled selected>Select a Bounadary</option>
-                                                <option value="admin_boundaries">Admin Boundaries</option>
-                                                <option value="protected_area">Protected Area</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group row align-items-center level">
-                                <div class="col-12">
-                                    <div class="col-12">
-                                        <label for="region" class="col-12 col-form-label-lg">Level:</label>
-                                        <div class="input-group">
-                                            <select id="level" class="form-control">
-                                                <option disabled selected>Select a Level</option>
-                                                <option value="national">National</option>
-                                                <option value="regional">Regional</option>
-                                                <option value="district">District</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group row align-items-center region">
-                                <div class="col-12">
-                                    <div class="col-12">
-                                        <label for="region" class="col-12 col-form-label-lg">Region:</label>
-                                        <div class="input-group">
-                                            <select id="region" class="form-control">
-                                                <option disabled selected>Select a Region</option>
-                                                {% for region in regions %}
-                                                <option value="{{region.reg_code}}">{{region.region}}</option>
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group row align-items-center district">
-                                <div class="col-12">
-                                    <div class="col-12">
-                                        <label for="district" class="col-12 col-form-label-lg">District:</label>
-                                        <div class="input-group">
-                                            <select id="district" class="form-control">
-                                                <option value="" disabled selected>Select a District</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group row align-items-center oneyear">
-                                <div class="col-12">
-                                    <div class="col-12">
-                                        <label for="year" class="col-12 col-form-label-lg">Year:</label>
-                                        <div class="input-group">
-                                            <select id="year" class="form-control">
-                                                <option>Select the Year</option>
-                                                <option value="2015">2015</option>
-                                                <option value="2018">2018</option>
-                                                <option value="2022">2022</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group row align-items-center twoyear" style="display: none;">
-                                <div class="row" style="padding: 0px 15px;">
-                                    <div class="col-6">
-                                        <label for="firstName" class="col-12 col-form-label-lg">Year 1:</label>
-                                        <div class="col-12">
-                                            <div class="input-group">
-                                                <select id="year1" class="form-control">
-                                                    <option>Select Year1</option>
-                                                    <option value="2015">2015</option>
-                                                    <option value="2018">2018</option>
-                                                    <option value="2022">2022</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <label for="firstName" class="col-12 col-form-label-lg"> Year 2:</label>
-                                        <div class="col-12">
-                                            <div class="input-group">
-                                                <select id="year2" class="form-control">
-                                                    <option>Select Year2</option>
-                                                    <option value="2015">2015</option>
-                                                    <option value="2018">2018</option>
-                                                    <option value="2022">2022</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group row align-items-center switchyear">
-                                <div class="col-12">
-                                    <label class="col-12 col-form-label-lg"> <input id="switchyear" type="checkbox">
-                                        Compare two (2) years instead </label>
-                                </div>
-                            </div>
-                            <div class="form-group row align-items-center execute">
-                                <div class="col-12">
-                                    <button id="execute" type="button" class="btn btn-success"> Query </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div> -->
-
-
 
 
   <div class="statistics-box statistics">
@@ -498,18 +244,102 @@
           </button>
         </h2>
         <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
-        data-bs-parent="#statAccordionExample">
-        <div class="accordion-body">
-          <div id="loader-stats-container" class="d-flex justify-content-center align-items-center">
-            <div class="loader-stats"></div>
+          data-bs-parent="#statAccordionExample">
+          <div class="accordion-body">
+      
+              <ul class="nav nav-pills gap-2" id="pending-myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                  <a class="nav-link active" id="bar-chart-tab" data-bs-toggle="tab" data-bs-target="#bar-chart-home" type="button" role="tab" aria-controls="bar-chart-home" title="Level" aria-selected="true">
+                      Level
+                  </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <a class="nav-link" id="trend-tab" data-bs-toggle="tab" data-bs-target="#trend-profile" type="button" role="tab" aria-controls="pending-profile" title="Growth Rate"  aria-selected="false">
+                      Growth Rate</a>
+                </li>
+                <!-- <li class="nav-item" role="presentation">
+                  <a class="nav-link" id="pending-profile-tab" data-bs-toggle="tab" data-bs-target="#pending-profile" type="button" role="tab" aria-controls="pending-profile" title="Trend analysis"  aria-selected="false">
+                      Pie chart</a>
+                </li> -->
+              </ul>
+              <div class="tab-content" id="myTabContent">
+            
+                <div class="tab-pane fade show active" id="bar-chart-home" role="tabpanel" aria-labelledby="bar-chart-tab">          
+                    <div id="stat-line-chart"></div>
+                </div>
+            
+                <div class="tab-pane fade" id="trend-profile" role="tabpanel" aria-labelledby="trend-tab">
+                    <div id="growth-rate-chart"></div> 
+                </div>
+                
+                <div class="tab-pane fade" id="pending-profile" role="tabpanel" aria-labelledby="pending-profile-tab">
+                    <div id="pie-chart"></div> 
+                </div>
+            
+              </div>
+  
+            <div id="loader-stats-container" class="d-flex justify-content-center align-items-center">
+              <div class="loader-stats"></div>
+            </div>
           </div>
-          <div id="stat-line-chart"></div>
         </div>
-      </div>
       </div>
     </div>
   </div>
 
+  <div class="box watershed_legend">
+    <div class="accordion" id="defLegendAccordion">
+      <div class="accordion-item">
+        <div class="d-flex justify-content-between box-title">
+          <button class="accordion-button py-1" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDefLegend"
+                aria-expanded="true" aria-controls="DefLegend">
+                <h4 class="title-text">Land Use/Land Cover Legend</h4>
+              </button>
+        </div>
+      
+        <div id="collapseDefLegend" class="box-body accordion-collapse collapse show">
+          <div class="col-12">
+            <div class="lgd" style="background-color: #0070FF;"></div>
+            <p class="layer-name">Water</p>
+          </div>
+          <div class="col-12">
+            <div class="lgd" style="background-color: #FFFF00;"></div>
+            <p class="layer-name">Agriculture</p>
+          </div>
+          <div class="col-12">
+            <div class="lgd" style="background-color: #4FBB36;"></div>
+            <p class="layer-name">Woodland</p>
+          </div>
+          <div class="col-12">
+            <div class="lgd" style="background-color: #D7C29E;"></div>
+            <p class="layer-name">Shrub and Trees</p>
+          </div>
+          <div class="col-12">
+            <div class="lgd" style="background-color: #FFAA00;"></div>
+            <p class="layer-name">Grassland</p>
+          </div>
+          <div class="col-12">
+            <div class="lgd" style="background-color: #008000;"></div>
+            <p class="layer-name">Closed Forest</p>
+          </div>
+          <div class="col-12">
+            <div class="lgd" style="background-color: #B514FF;"></div>
+            <p class="layer-name">Plantation</p>
+          </div>
+          <div class="col-12">
+            <div class="lgd" style="background-color: #9EFBAA;"></div>
+            <p class="layer-name">Open Forest</p>
+          </div>
+          <div class="col-12">
+            <div class="lgd" style="background-color: #FF0000;"></div>
+            <p class="layer-name">Built Up</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  
 
 {% endblock %}
 
@@ -518,89 +348,20 @@
 <script src="{% static 'charcoal_portal/assets/js/L.TileLayer.BetterWMS.js' %}"></script>
 <script src="{% static 'root_app/assets/js/leaflet-measure.js' %}"></script>
 <script src="{% static 'charcoal_portal/assets/js/leaflet-side-by-side.min.js' %}"></script>
+<script src="{% static 'charcoal_portal/assets/js/dashboard.js' %}"></script>
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.js" integrity="sha512-OFs3W4DIZ5ZkrDhBFtsCP6JXtMEDGmhl0QPlmWYBJay40TT1n3gt2Xuw8Pf/iezgW9CdabjkNChRqozl/YADmg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<!-- <script src="https://unpkg.com/geojson-vt@3.2.0/geojson-vt.js"></script> -->
-<!-- <script src="{% static 'charcoal_portal/assets/js/leaflet-geojson-vt.js' %}"></script> -->
 <script src="{% static 'charcoal_portal/assets/js/functions.js' %}"></script>
 <script src="{% static 'charcoal_portal/assets/js/script.js' %}"></script>
 
 <!-- Intro js Initilization -->
 <script src="{% static 'charcoal_portal/assets/js/intro.js' %}"></script>
 
+<script src="{% static 'charcoal_portal/assets/js/query.js' %}"></script>
+
+
 <!-- <script src="{% static 'charcoal_portal/assets/js/map.js' %}"></script> -->
-
-<script>
-  // Set up the chart
-  Highcharts.chart('bar-chart', {
-    chart: {
-      type: 'column',
-      backgroundColor: '#ffffff1c' // Transparent background
-      // backgroundColor: 'rgba(0, 0, 0, 0)' // Transparent background
-    },
-    title: {
-      text: 'Charcoal Area Size per Years'
-    },
-    xAxis: {
-      type: 'category',
-      labels: {
-        autoRotation: [-45, -90],
-        style: {
-          fontSize: '13px',
-          fontFamily: 'Verdana, sans-serif'
-        }
-      }
-    },
-    yAxis: {
-      min: 0,
-      gridLineColor: '#302f2faf', 
-      title: {
-        text: 'Area (sqkm)'
-      }
-    },
-    legend: {
-      enabled: false
-    },
-    tooltip: {
-      // pointFormat: 'Population in {point.x}: <b>{point.y:.1f} millions</b>'
-      pointFormat: 'Area in {point.x}: <b>{point.y:.1f} sqkm</b>'
-    },
-    series: [{
-      name: 'Population',
-      colors: [
-        '#9b20d9', '#9215ac', '#861ec9', '#7a17e6', '#7010f9', '#691af3',
-        '#6225ed', '#5b30e7', '#533be1', '#4c46db', '#4551d5',
-      ],
-      colorByPoint: true,
-      groupPadding: 0,
-      data: [
-        ['2015', 211.28043],
-        ['2016', 289.06169],
-        ['2017', 278.807],
-        ['2018', 304.9212],
-        ['2019', 314.33184],
-        ['2020', 353.92],
-        ['2021', 361.725],
-        ['2022', 340.9445],
-        ['2023', 635.530772716955],
-      ],
-      dataLabels: {
-        enabled: true,
-        rotation: -90,
-        color: '#FFFFFF',
-        inside: true,
-        verticalAlign: 'top',
-        format: '{point.y:.1f}', // one decimal
-        y: 10, // 10 pixels down from the top
-        style: {
-          fontSize: '13px',
-          fontFamily: 'Verdana, sans-serif'
-        }
-      }
-    }]
-  });
-
-</script>
 
 <script>
   /* 
@@ -609,12 +370,16 @@ GLOBAL Variables And Helper
   const geoserver_wfs_url = 'https://geoserver-dev.cersgis.org/geoserver/wfs'
   const geoserver_wms_url = 'https://geoserver-dev.cersgis.org/geoserver/wms'
   // const openstreetmap_url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+  const watershed_url = '{% url "charcoalPortal:load_lulc_watershed" %}';
 
   // Set Map
   // let map = L.map('map', { attributionControl: false}).setView([8.967388, -0.971667], 8.2);
 
   var layers_group = [];
-  var charcoalpoints_group = [];
+  let charcoalpoints_group = [], charcoalpoints_cluster = [],  watershed_group = [], fire_hotspots = [];
+
+  let watershedOnEachFeature;
+
 
   // Set Initial BaseMap
   // let initialBasemap = L.tileLayer(openstreetmap_url, {
@@ -655,6 +420,22 @@ GLOBAL Variables And Helper
       'aoi_layer'
     )
 
+    GeoserverWFSCluster(geoserver_wfs_url,
+      {
+        layers: 'charcoal:points',
+        style: {
+          radius: 6,
+          fillColor: 'blue',
+          color: 'black',
+          weight: 1,
+          opacity: 1,
+          fillOpacity: 0.8,
+        },
+        class_name: 'point-marker-all',
+      },
+      'cluster_all_points'
+    );
+
     GeoserverWFS(geoserver_wfs_url,
       {
         layers: 'charcoal:points',
@@ -668,11 +449,12 @@ GLOBAL Variables And Helper
         },
         class_name: 'point-marker-all',
       },
-      'layer_all_points'
-    ).then(() => {
-      let onload_check = $('#all_points').prop('checked', true);
-      toggleLayer(map, charcoalpoints_group['layer_all_points'], onload_check);
-    });
+      'all_points'
+    )
+    // .then(() => {
+    //   let onload_check = $('#all_points').prop('checked', true);
+    //   toggleLayer(map, charcoalpoints_group['all_points'], onload_check);
+    // });
     
     {% for charcoalpoint in charcoalpoint_years %}
     
@@ -693,9 +475,65 @@ GLOBAL Variables And Helper
       'charcoalpoint_{{charcoalpoint.year}}'
     )
 
+    GeoserverWFSCluster(geoserver_wfs_url,
+      {
+        layers: 'charcoal:points',
+        style: {
+          radius: 6,
+          fillColor: '{{charcoalpoint.fill_color}}',
+          color: '{{charcoalpoint.border_color}}',
+          weight: 1,
+          opacity: 1,
+          fillOpacity: 0.8,
+        },
+        CQL_FILTER: 'year={{charcoalpoint.year}}',
+        class_name: 'point-marker-{{charcoalpoint.year}}',
+      },
+      'cluster_charcoalpoint_{{charcoalpoint.year}}'
+    )
+
     {% endfor %}
 
-    loadGeneralStats(`{% url 'charcoalPortal:load_statistics' %}`)
+    GeoserverWFSHotspots(geoserver_wfs_url,
+      {
+        layers: 'charcoal:firehotspot_2020',
+        style: {
+          // fillColor: '#00000063',
+          fillColor: '#FDEED8',
+          weight: 2,
+          opacity: 1,
+          color: '#000',
+          fillOpacity: 0.7,
+        },
+      },
+      'firehotspot_2020'
+    )
+
+    GeoserverWFSLayers(geoserver_wfs_url,
+      {
+        layers: 'charcoal:watershed_savannah',
+        style: {
+          fillColor: 'transparent',
+          weight: 2,
+          opacity: 1,
+          color: '#000000',
+          dashArray: '3',
+          fillOpacity: 0.7
+        },
+        // onEachFeature: watershedOnEachFeature
+      },
+      'watershed_boundary_layer'
+    )
+
+    // Watershed Loader
+    loadwaterShed(watershed_url, '2024', 'watershed')
+
+    $.get(`{% url 'charcoalPortal:load_statistics' %}`, (res) => {
+      data = res['computed_stats']
+
+      loadGeneralStats(data, 'Points Per Year', 'Number of Points', 'logarithmic','total_points', 'stat-line-chart', 'line');
+      loadGeneralStats(data, 'Growth Rate \n (Log Transformed)', 'Percentage (%)', 'linear','growth_rate', 'growth-rate-chart', 'area');
+    });
   })()
 
 
@@ -706,17 +544,44 @@ GLOBAL Variables And Helper
   $('#aoi_boundary').change(function () {
     toggleLayer(map, layers_group['aoi_layer'], $(this));
   });
-
-  $('#all_points').change(function () {
-    toggleLayer(map, charcoalpoints_group['layer_all_points'], $(this));
+  
+  $('#deselect_all_points').click(function () {
+    deselectAll(map, charcoalpoints_group, charcoalpoints_cluster);
   });
 
+  $('#all_points').change(function () {
+    toggleLayer(map, charcoalpoints_group['all_points'], $(this));
+  });
+  
+  $('#cluster_all_points').change(function () {
+    toggleCluster(map, charcoalpoints_group['all_points'],charcoalpoints_cluster['cluster_all_points'], $(this));
+  });
+  
   // Footprint Checkbox Change Detect
   {% for charcoalpoint in charcoalpoint_years %}
   $('#charcoalpoint_{{charcoalpoint.year}}').change(function () {
     toggleLayer(map, charcoalpoints_group['charcoalpoint_{{charcoalpoint.year}}'], $(this));
   });
+  
+  $('#cluster_charcoalpoint_{{charcoalpoint.year}}').change(function () {
+    toggleCluster(map, charcoalpoints_group['charcoalpoint_{{charcoalpoint.year}}'], charcoalpoints_cluster['cluster_charcoalpoint_{{charcoalpoint.year}}'], $(this));
+  });
   {% endfor %}
+  
+  $('#firehotspot_2020').change(function () {
+    toggleLayer(map, fire_hotspots['firehotspot_2020'], $(this));
+  });
+  
+// Toggle for LU/LC layer
+$('#lulc_savannah').change(function () {
+  toggleLayer(map, watershed_group['watershed'], $(this));
+  $('.watershed_legend').toggle($(this).prop('checked'));
+});
+
+// Toggle for Water Shed layer
+$('#watershed_layer').change(function () {
+  toggleLayer(map, layers_group['watershed_boundary_layer'], $(this));
+});
 
   
   let coords;
@@ -784,4 +649,19 @@ GLOBAL Variables And Helper
   measureControl.addTo(map);
   map.zoomControl.setPosition('bottomleft');
 </script>
+{% endblock %}
+
+{% block gtagscript %}
+{% if not debug_status %}
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ERJ0GMKFDS"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-ERJ0GMKFDS');
+</script>
+{% endif %}
+
 {% endblock %}

@@ -1,0 +1,4 @@
+<option disabled selected>Select District</option>
+{% for district in districts %}
+<option value="{{district.properties.district_code}}">{{district.properties.district | title}}</option>
+{% endfor %}

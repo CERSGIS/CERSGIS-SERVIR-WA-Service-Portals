@@ -9,52 +9,69 @@
     <!-- {% comment %} <img class="vector-20-hXj" src="REPLACE_IMAGE:436:2076" /> {% endcomment %} -->
     <div class="frame-293-CzH">
         <div class="auto-group-qeuu-7rM">
-            <div id="details" class="details_div frame-308-X6m side-nav-button intro-step" data-step="3">
+
+            <div id="dashboard_btn" class="dashboard_div frame-308-X6m side-nav-button intro-step" data-step="4">
                 <div class="side-nav-icons">
-                    <i class="fa-solid fa-circle-info "></i>
+                    <i class="fa-solid fa-chalkboard"></i>
                 </div>
-                <p class="dt-txt details-1qF">Details</p>
+                <p class="dt-txt layers-G2R">Dashboard</p>
             </div>
-            <div id="layer" class="layer_div frame-308-X6m side-nav-button intro-step" data-step="4">
-                <div class="side-nav-icons">
-                    <i class="fa-solid fa-layer-group"></i>
-                </div>
-                <p class="dt-txt layers-G2R">Layers</p>
+
+            <div class="dropdown" style="width: 100%;">
+                <button id="map_nav_div" class="dropdown btn dropdown-toggle frame-308-X6m side-nav-button" type="button" data-bs-toggle="dropdown" data-bs-auto-close="false" aria-expanded="false">
+                    <div class="side-nav-icons">
+                        <i class="fa-solid fa-map "></i>
+                    </div>
+                    <p class="dt-txt details-1qF">Map</p>
+                  </button>
+
+                  <ul class="dropdown-list map_nav_dropdown map-side-nav-dropdown">
+                  <li id="details" class="details_div frame-308-X6m side-nav-button intro-step">  
+                    <div class="side-nav-icons">
+                        <i class="fa-solid fa-circle-info "></i>
+                    </div>
+                    <p class="dt-txt details-1qF">Details</p>
+                </li>
+                    <li id="layer" class="layer_div frame-308-X6m side-nav-button intro-step" data-step="4">
+                    <div class="side-nav-icons">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </div>
+                    <p class="dt-txt layers-G2R">Layers</p>
+                    </li>
+                    <li id="basemap" class="basemap_div frame-308-X6m side-nav-button side-nav-button intro-step" data-step="6">
+                        <div class="side-nav-icons"> 
+                            <i class="fa-solid fa-map"></i>
+                        </div>
+                        <p class="dt-txt basemaps-ogZ">Basemaps</p>
+                  </li>
+                  <li id="footprints" class="footprints_div frame-308-X6m side-nav-button side-nav-button intro-step" data-step="7">
+                    <div class="side-nav-icons">
+                        <i class="fa-solid fa-shoe-prints"></i>
+                    </div>
+                    <p class="dt-txt details-1qF">Footprints</p>
+                </li>
+                <li id="reference" class="reference_div frame-308-X6m side-nav-button" data-step="11">
+                    <div class="side-nav-icons">
+                        <i class="fa-solid fa-folder-tree"></i>
+                    </div>
+                    <p class="dt-txt details-1qF">Additional Layers</p>
+                </li>
+                </ul>
             </div>
-            <!-- <div id="legend" class="legend_div frame-308-X6m side-nav-button side-nav-button intro-step" data-step="5">
-                <div class="side-nav-icons">
-                    <i class="fa-solid fa-list-check"></i>
-                </div>
-                <p class="dt-txt legend-jem">Legend</p>
-            </div> -->
-            <div id="basemap" class="basemap_div frame-308-X6m side-nav-button side-nav-button intro-step" data-step="6">
-                <div class="side-nav-icons"> 
-                    <i class="fa-solid fa-map"></i>
-                </div>
-                <p class="dt-txt basemaps-ogZ">Basemaps</p>
-            </div>
-            <div id="footprints" class="footprints_div frame-308-X6m side-nav-button side-nav-button intro-step" data-step="7">
-                <div class="side-nav-icons">
-                    <i class="fa-solid fa-shoe-prints"></i>
-                </div>
-                <p class="dt-txt details-1qF">Footprints</p>
-            </div>
-            <!-- <div id="query" class="frame-308-X6m side-nav-button">
-                <img class="tabler-brand-google-big-query-F2m"
-                    src="{% static 'portal/assets/assets/footprints.png' %}" />
-                <p class="dt-txt details-1qF">Footprints</p>
-            </div> -->
+
+
+            
             <div id="analytics" class="analytics_div frame-308-X6m side-nav-button side-nav-button intro-step" data-step="8">
                 <div class="side-nav-icons">
                     <i class="fa-solid fa-chart-column "></i>
                 </div>
                 <p class="dt-txt details-1qF">Analysis</p>
             </div>
-            <div id="report" class="report_div frame-308-X6m side-nav-button side-nav-button intro-step" data-step="9">
+            <div id="report" url="{% url 'galamseyPortal:galamsey_reports' %}" class="report_div frame-308-X6m side-nav-button side-nav-button intro-step" data-step="9">
                 <div class="side-nav-icons">
                     <i class="fa-solid fa-book-open-reader "></i>
                 </div>
-                <p class="dt-txt details-1qF">Report</p>
+                <p class="dt-txt details-1qF">Reports & Maps</p>
             </div>
             <!-- <div id="manual" class="manual_div frame-308-X6m side-nav-button side-nav-button intro-step" data-step="10"> -->
             <div id="manual" class="manual_div frame-308-X6m side-nav-button side-nav-button">
@@ -69,12 +86,12 @@
                 </div>
                 <p class="dt-txt details-1qF">Data Request</p>
             </div>
-            <div id="reference" class="reference_div frame-308-X6m side-nav-button" data-step="11">
+            <!-- <div id="reference" class="reference_div frame-308-X6m side-nav-button" data-step="11">
                 <div class="side-nav-icons">
                     <i class="fa-solid fa-folder-tree"></i>
                 </div>
-                <p class="dt-txt details-1qF">Reference Data</p>
-            </div>
+                <p class="dt-txt details-1qF">Additional Layers</p>
+            </div> -->
         </div>
     </div>
 </div>
@@ -86,11 +103,18 @@
     </div>
     <div class="frame-293-CzH">
         <div class="auto-group-qeuu-7rM">
+            <div id="dashboard_btn" class="dashboard_div frame-308-X6m side-nav-button intro-step" data-toggle="tooltip" data-placement="right" title="Dashboard">
+                <div class="side-nav-icons">
+                    <i class="fa-solid fa-chalkboard"></i>
+                </div>
+            </div>
+
             <div id="details" class="details_div frame-292-1B3 side-nav-button" data-toggle="tooltip" data-placement="right" title="Details">
                 <div class="side-nav-icons">
                     <i class="fa-solid fa-circle-info "></i>
                 </div>
             </div>
+
             <div id="layer" class="layer_div frame-290-eWq side-nav-button" data-toggle="tooltip" data-placement="right" title="Layers">
                 <div class="side-nav-icons">
                     <i class="fa-solid fa-layer-group"></i>
@@ -120,7 +144,7 @@
                     <i class="fa-solid fa-chart-column "></i>
                 </div>
             </div>
-            <div id="report" class="report_div frame-308-X6m side-nav-button" data-toggle="tooltip" data-placement="right" title="Report">
+            <div id="report" class="report_div frame-308-X6m side-nav-button" data-toggle="tooltip" data-placement="right" title="Reports & Maps">
                 <div class="side-nav-icons">
                     <i class="fa-solid fa-book-open-reader "></i>
                 </div>
@@ -135,7 +159,7 @@
                     <i class="fa-solid fa-database "></i>
                 </div>
             </div>
-            <div id="reference" class="reference_div frame-308-X6m side-nav-button" data-toggle="tooltip" data-placement="right" title="Reference Data">
+            <div id="reference" class="reference_div frame-308-X6m side-nav-button" data-toggle="tooltip" data-placement="right" title="Additional Layers">
                 <div class="side-nav-icons">
                     <i class="fa-solid fa-folder-tree"></i>
                 </div>

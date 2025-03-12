@@ -3,20 +3,25 @@
 <html lang="en">
 
 <head>
+    {% block gtagscript %} {% endblock %}
     <meta charset="utf-8">
 
     <title>{% block title %}{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato%3A700" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro%3A700" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro%3A700&family=Roboto+Serif:ital,wght@0,100..900;1,100..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" integrity="sha512-gc3xjCmIy673V6MyOAZhIW93xhM9ei1I+gLbmFjUHIjocENRsLX/QUE1htk5q1XV2D/iie/VQ8DXI6Vu8bexvQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="{% static 'root_app/assets/styles/style.css' %}" />
     <link rel="stylesheet" href="{% static 'root_app/assets/styles/map-nav.css' %}" />
+    <link rel="stylesheet" href="{% static 'root_app/assets/styles/dashboard.css' %}" />
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 
     <!-- Favicon -->
     <!-- <link href="{% static 'assets/landing/images/partners/servir-favicon.png' %}" rel="icon"> -->
@@ -26,6 +31,9 @@
 
     <!-- Intro js modern theme -->
     <link href="{% static 'root_app/assets/styles/introjs-modern.css' %}" rel="stylesheet">
+
+    <!-- FOR CUSTOM MAP TO BE PRINTED -->
+    <link rel="stylesheet" href="{% static 'root_app/assets/styles/custom-map.css' %}">
 
     <style type="text/css">
         .leaflet-bar {
@@ -90,7 +98,8 @@
             --bs-btn-close-bg: none
         }
                 
-        .statistics .accordion-button, .statistics .accordion-button:not(.collapsed){
+        .statistics .accordion-button, .deforest_legend .accordion-button, .deforest_legend .accordion-button:not(.collapsed), .watershed_legend .accordion-button, .watershed_legend .accordion-button:not(.collapsed), .statistics .accordion-button:not(.collapsed){
+            box-shadow: none;
             background-color: {% if app_details %}{{ app_details.box_top_color }}{% else %}#FFFFFF{% endif %};
             color: {% if app_details %}{{ app_details.box_top_text_color }}{% else %}#000000{% endif %};
         }
@@ -101,7 +110,7 @@
         
         .accordion-button.collapsed::after, .accordion-button::after {
             background-image: none;
-            content: "\f077";
+            content: "\f078";
             font-size: 18px;
             font-weight: 800;
             font-family: FontAwesome;
@@ -112,7 +121,7 @@
         }
 
         .map-nav-Z9P .right-map-content  {
-            background: {% if app_details %}{{ app_details.analysis_background }}{% else %}#FFFFFF{% endif %};
+            background: {% if app_details and app_details.analysis_background %}{% else %}#FFFFFF{% endif %};
             {% if app_details and app_details.analysis_background %}background-size:{{app_details.analysis_background_size}};{% endif %};
         }
 
@@ -120,7 +129,7 @@
             margin-top: 0px;
         }
 
-        #loading-bar-spinner.spinner {
+        #loading-bar-spinner.spinner, #data-request-loading-spinner.spinner {
             left: 50%;
             margin-left: -20px;
             top: 50%;
@@ -130,7 +139,7 @@
             animation: loading-bar-spinner 400ms linear infinite;
         }
 
-        #loading-bar-spinner.spinner .spinner-icon {
+        #loading-bar-spinner.spinner .spinner-icon, #data-request-loading-spinner.spinner .spinner-icon {
             width: 50px;
             height: 50px;
             border: solid 4px transparent;
@@ -203,6 +212,7 @@
 </head>
 
 <body>
+    {% block gtagbody %}{% endblock %}
     <div id="modal-container" class="one">
         <div class="modal-background">
             <div class="modal">
@@ -220,29 +230,30 @@
 
     <div class="header">
         <div class="map-nav-sAd">
-            <div class="col-7 col-sm-8 col-md-6 col-lg-5 col-xl-7">
+            <div class="col-7 col-sm-8 col-md-6 col-lg-6 col-xl-7">
                 <h2> {% if app_details %} {{ app_details.app_name | safe}} {% else %} App title {% endif %} <h2>
             </div>
-            <div class="col-4 col-sm-4 col-md-5 col-lg-6 col-xl-4">
+            <div class="col-5 col-sm-4 col-md-5 col-lg-6 col-xl-5">
                 <div class="frame-286-ecd partners">
                     {% for partner in partners %}
                     <img class="map-logo" src="{{ partner.logo.url }}" />
                     {% endfor %}
                 </div>
             </div>
+            {% if debug %}
             <div class="notify">
                 <p class="" id="notifyText"><img class="" style="display: inline-flex;"
-                        src="{% static 'galamsey_portal/assets/images/ph-info-light-rcD.png' %}" /> in development</p>
+                        src="{% static 'root_app/assets/images/ph-info-light-rcD.png' %}" /> in development</p>
             </div>
+            {% endif %}
         </div>
     </div>
 
     <div class="map-nav-Z9P">
         <!-- Side navigation -->
-
-             {% block side-nav %}
-            {% endblock %}
-
+        {% block side-nav %}
+        {% endblock %}
+        
 
         <div class="right-map-content">
             <div id="loader-analysis-container" class="d-none justify-content-center align-items-center">
@@ -262,11 +273,16 @@
                 </div>
             </div>
 
+            <!-- Button trigger modal -->
+            <!-- <button type="button" id="map-modal-btn" class="btn btn-dark position-absolute d-none bottom-0 start-0" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Print
+            </button> -->
+
             <!-- MAP -->
             <div class="map-container">
                 <div class="analysis-box">
 
-                    <div id="map" class="map" style="position: relative;">
+                    <div id="map" class="map map-items" style="position: relative;">
                         <!-- <div class="control-box">
                             <div class="inner-control-box"> -->
                                 <!-- Zoom In -->
@@ -293,11 +309,9 @@
                         </div> -->
                     </div>
 
-                    <div id="analysis-map" class="map d-none" style="border-radius: inherit; position: relative;">
+                    <div id="analysis-map" class="map map-items d-none" style="border-radius: inherit; position: relative;">
                         
                     </div>
-
-                        <!-- <div> -->
 
                         {% block body %}
                         {% endblock %}
@@ -320,7 +334,10 @@
 
                         <!-- REFERENCE DATA -->
                          {% include 'root_app/components/reference.html' %}
-                    <!-- </div> -->
+
+                        <!-- PRINT MODAL -->
+                         {% include 'root_app/components/map-modal.html' %}
+
 
                 </div>
             </div>
@@ -338,18 +355,17 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
    
     
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
-        integrity="sha512-+NqPlbbtM1QqiK8ZAo4Yrj2c4lNQoGv8P79DPtKzj++l5jnN39rHA/xsqn8zE9l0uSoxaCdrOgFs6yjyfbBxSg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha512-+NqPlbbtM1QqiK8ZAo4Yrj2c4lNQoGv8P79DPtKzj++l5jnN39rHA/xsqn8zE9l0uSoxaCdrOgFs6yjyfbBxSg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js" integrity="sha512-ozq8xQKq6urvuU6jNgkfqAmT7jKN2XumbrX1JiB3TnF7tI48DPI4Gy1GXKD/V3EExgAs1V+pRO7vwtS1LHg0Gw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <!-- highcharts CDN scripts -->
     <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -360,15 +376,24 @@
     <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
 
+    <!-- Iconify icons CDN -->
+    <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
+
+    <!-- Datatable js -->
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
     <!-- Sweet alert CDN script -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- To allow download entire webpage  -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
     <!-- Intro js CDN -->
     <script src="https://unpkg.com/intro.js/intro.js"></script>
 
     <!-- Custom Control Buttons -->
     <script src="{% static 'root_app/assets/js/control-buttons.js' %}" defer></script>
-            
 
     <script type="text/javascript">
         const Toast = Swal.mixin({
@@ -409,8 +434,9 @@
             // alert('box2 already on shutting down entire box');
         }
 
-        setInterval(doit, 70000);
-
+        {% if debug %}
+        setInterval(doit, 1000);
+        {% endif %}
 
         $(function () {
             $('[data-toggle="side-nav-popover"]').tooltip()
@@ -418,11 +444,37 @@
     </script>
 
 
-    <!-- <script>
-        $(document).ready(function(){
-            $('[data-toggle="tooltip"]').tooltip();
-        });
-    </script> -->
+     
+    <script>
+        // JavaScript function to download the webpage layout as an image
+        function downloadLayoutAsImage() {
+            const element = document.getElementById('print-map-container'); // The area you want to capture
+            
+            html2canvas(element, {
+                useCORS: true,
+                backgroundColor: '#ffffff' // Set a background color
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png');
+                link.download = 'web-layout.png';
+                link.click();
+            });
+        }
+
+
+        $(document).ready(function() {
+
+            $("#map-modal-btn").on('click', function () {
+            // Clone the content from the mapContent div
+            var clonedContent = $("#map .leaflet-map-pane").clone();
+                clonedContent.removeAttr('id'); // Remove the ID to avoid duplicate IDs
+
+                // Clear the modal body and append the cloned content
+                $("#map-img-container").empty().append(clonedContent);
+            })
+
+        })
+    </script>
 
 
     <script>
@@ -432,40 +484,48 @@
         const galamsey_data_request_url = '{% url "galamseyPortal:data_request" %}';
 
 
-        $("#data_request_submit").click(function () {
-        event.preventDefault();
-        $('#loading-spinner').removeClass('d-none');
-        
-        var data = new FormData($('#data_request_form').get(0));
-        
-        
-        const url = "{{request.path}}" == charcoal_base_url ? charcoal_data_request_url : "{{request.path}}" == galamsey_base_url ? galamsey_data_request_url : "none";
+        $("#data_request_form").on("submit", function(event) {
+            event.preventDefault(); // Prevent the default form submission
 
-        $.ajax({
-            url: url,
-            type: 'POST',
-            data: data,
-            processData: false,
-            contentType: false,
-            success: function (data) {
-            
-            if (data.status == 200) {
-                $('#loading-spinner').addClass('d-none')
-                Toast.fire({
-                    icon: 'success',
-                    title: data.message,
-                    })
-                setTimeout(function(){window.location.reload()}, 2000)
+            let form = this;
+            if (!form.checkValidity()) {
+                event.stopPropagation();
             } else {
-                $('#loading-spinner').addClass('d-none')
-                Toast.fire({
-                    icon: 'error',
-                    title: data.message,
-                    })
+                $('#data-request-loading-spinner').removeClass('d-none');
+                
+                var data = new FormData($(this).get(0));
+                
+                const url = "{{request.path}}" == charcoal_base_url ? charcoal_data_request_url : "{{request.path}}" == galamsey_base_url ? galamsey_data_request_url : "none";
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: data,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {                
+                        if (data.status == 200) {
+                            $('#data-request-loading-spinner').addClass('d-none')
+                            form.reset(); // Reset form
+                            $(form).removeClass("was-validated");
+                            Toast.fire({
+                                icon: 'success',
+                                title: data.message,
+                            })
+                            // **Close the modal**
+                            $('#dataRequestModal').modal('hide')
+                            // setTimeout(function(){window.location.reload()}, 2000)
+                        } else {
+                            $('#data-request-loading-spinner').addClass('d-none')
+                            Toast.fire({
+                                icon: 'error',
+                                title: data.message,
+                            })
+                        }
+                    }
+                });
             }
-            
-            }
-        });
+        $(this).addClass("was-validated");
     })
 
 
@@ -474,14 +534,16 @@
                         // MAP INITIALIZATING AND BASE MAP 
 // =======================================================================================
     
-    const carto_white_map_url = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
-    // const openstreetmap_url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+    // const carto_white_map_url = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
+    const openstreetmap_url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
 
     let initialView , initialZoom;
 
     if ("{{request.path}}" === galamsey_base_url) {
-        initialView = [6.155785, -1.936499];
-        initialZoom = 9;
+        // initialView = [6.155785, -1.936499];
+        // initialZoom = 9;
+        initialView = [6.5013553,-0.3855109];
+        initialZoom = 8;
     } else if ("{{request.path}}" === charcoal_base_url) {
         initialView = [8.967388, -0.971667];
         initialZoom = 8.2;
@@ -495,25 +557,31 @@
     let analysis_map = L.map('analysis-map', { attributionControl: false}).setView(initialView, initialZoom)
 
     // CARTO WHITE 
-    let initialBasemap = L.tileLayer(carto_white_map_url, {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-        }).addTo(map);
-
-    let analysisInitialBasemap = L.tileLayer(carto_white_map_url, {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-        }).addTo(analysis_map);
-    // OPEN STREET
-    // let initialBasemap = L.tileLayer(openstreetmap_url, {
-    //         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>'
+    // let initialBasemap = L.tileLayer(carto_white_map_url, {
+    //         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
     //     }).addTo(map);
 
-    // let analysisInitialBasemap = L.tileLayer(openstreetmap_url, {
-    //         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>'
+    // let analysisInitialBasemap = L.tileLayer(carto_white_map_url, {
+    //         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
     //     }).addTo(analysis_map);
+
+    // OPEN STREET
+    let initialBasemap = L.tileLayer(openstreetmap_url, {
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>'
+            ,zIndex: -1
+        }).addTo(map);
+
+    let analysisInitialBasemap = L.tileLayer(openstreetmap_url, {
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>'
+        }).addTo(analysis_map);
 
     map.invalidateSize();
     // analysis_map.invalidateSize();
 
+
+    $("#map_nav_div").on('click', function () {
+        setTimeout(function(){ map.invalidateSize()}, 10);
+    });
 
     $("#analytics").on('click', function () {
         setTimeout(function(){ analysis_map.invalidateSize()}, 10);

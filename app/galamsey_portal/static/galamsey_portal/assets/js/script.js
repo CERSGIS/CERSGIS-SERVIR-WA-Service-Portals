@@ -8,6 +8,7 @@
         document.querySelector('body').classList.toggle('toggle-sidebar')
         }
     })
+
   }
 
 
@@ -57,6 +58,9 @@ function shutallboxes() {
     reportbox = 'off';
     manualbox = 'off';
     referencebox = 'off';
+
+    // Toggle dashboard off
+    toggleDashboardOff()
 
     if ($('body').hasClass('analysis-opened')){
         $('body').toggleClass('analysis-opened')
@@ -284,13 +288,33 @@ function reference() {
     referencebox = 'on';
 }
 
+
 function togglebox() {
     $(".box").animate({
         width: "toggle"
     });
 }
 
+function toggleDashboardOff() {
+    $(".map-items").css('display', 'block'); 
+    $(".dashboard-container").css('display', 'none'); 
+}
 
+ // Toggle Dashboard On/Off
+ $('#dashboard_btn.dashboard_div').click(function() {
+     shutallboxes()
+     $(".map-items").css('display', 'none');
+     $(".dashboard-container").css('display', 'block');    
+});
+    
+// For toggling map dropdown
+ $('#map_nav_div').click(function() {
+    // shutallboxes()
+    $('.dropdown-list.map_nav_dropdown').toggleClass('show-list')
+    $(".map-items").css('display', 'block'); 
+    $(".map-container").css('display', 'block'); 
+    $(".dashboard-container").css('display', 'none');       
+});
 
 $('#details.details_div').click(function() {
     if (detialsbox == 'off') {
@@ -359,19 +383,27 @@ $('#footprints.footprints_div').click(function() {
 $('#analytics.analytics_div').click(function() {
     if (analyticsbox == 'off') {
         shutallboxes()
+        toggleDashboardOff()
         analytics();
     } else if (analyticsbox == 'on') {
         shutallboxes()
+        toggleDashboardOff()
     }
 });
 
+// $('#report.report_div').click(function() {
+//     if (reportbox == 'off') {
+//         shutallboxes()
+//         report();
+//     } else if (reportbox == 'on') {
+//         shutallboxes()
+//     }
+// });
+
+
 $('#report.report_div').click(function() {
-    if (reportbox == 'off') {
-        shutallboxes()
-        report();
-    } else if (reportbox == 'on') {
-        shutallboxes()
-    }
+        let url = this.getAttribute("url");  // Get URL from HTML
+        window.location.href = url;  // Redirect
 });
 
 $('#manual.manual_div').click(function() {

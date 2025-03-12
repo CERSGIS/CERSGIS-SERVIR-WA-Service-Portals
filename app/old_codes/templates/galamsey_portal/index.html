@@ -1,0 +1,1095 @@
+{% extends 'portal/components/default-base.html' %} 
+{% load static %}
+
+{% block title %}SSM Portal{% endblock %}
+{% block css %}
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+        integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.12/leaflet.draw.css" />
+    <link rel="stylesheet" href="{% static 'portal/assets/libs/styles/map-nav.css' %}" />
+    <link rel="stylesheet" href="{% static 'portal/assets/libs/css/leaflet-measure.css' %}" />
+    <link rel="stylesheet" href="{% static 'portal/assets/libs/styles/style.css' %}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style type="text/css">
+        /* .leaflet-control-measure .leaflet-control {
+            border: 2px solid rgba(0, 0, 0, 0.2) !important;
+            background-clip: padding-box;
+        }
+
+  .leaflet-control-measure {
+    box-shadow: 0 1px 5px rgb(0, 0, 0, 0.2) !important;
+  }
+
+        .leaflet-touch .leaflet-control-measure .leaflet-control-measure-toggle,
+        .leaflet-touch .leaflet-control-measure .leaflet-control-measure-toggle:hover {
+            width: 31px;
+            height: 31px;
+        } */
+
+    </style>
+{% endblock %} 
+
+{% block side-nav %}
+{% include 'portal/snippets/side-nav.html' %}
+{% endblock %}
+
+{% block body %}
+<div class="box detials">
+  <div class="d-flex justify-content-between box-title">
+    <h4 class="title-text"> Details</h4>
+    <i class="close closebox fa-solid fa-xmark my-auto"></i>
+  </div>
+
+  <!-- <div class="close closebox"> <span> X </span></div> -->
+  <!-- <h4> &nbsp; </h4> -->
+  <!-- <p>In collaboration with </p> -->
+  <div class="box-body">
+    <p>
+      <img class="" style="width: 80%; height: auto; margin-bottom: 15px;"
+      src="{% static 'portal/assets/assets/partners/11.png' %}" />
+      <br>
+      {% if app_details %} {{app_details.details | safe}} {% else %} <p> Details </p>{% endif %}
+    </p>
+
+
+    <!-- <p>
+      <img class="" style="width: 80%; height: auto; margin-bottom: 15px;"
+        src="{% static 'portal/assets/assets/partners/11.png' %}" />
+      <br>
+      The online portal has been developed by the Center for Remote Sensing and
+      Geographic Information Services (CERSGIS), with the support of USAID and NASA
+      as part of the SERVIR West Africa Program, a global network of SERVIR programs
+      in more than 50 countries around the world. <br><br>
+      This map visualization service is available to help close the information gap required to make informed decisions
+      and ensure evidence-based reporting. <br><br> The
+      information is produced and updated by CERSGIS in collaboration with national
+      partner institutions.
+    </p> -->
+  </div>
+</div>
+
+<div class="box2 legend">
+  <div class="d-flex justify-content-between box-title">
+    <h4 class="title-text"> Legend</h4>
+    <i class="close closebox1 fa-solid fa-xmark my-auto"></i>
+  </div>
+  <div class="row" style="padding: 5px;">
+    <!-- <h4 class="boxheading"> Layers</h4> -->
+    <div class="col-12" id="legend-region">
+      <div class="lgd lgdx1"></div>
+      <p class="layer-name">Region</p>
+    </div>
+    <!-- <div class="col-12" id="legend-district">
+                        <div class="lgd lgdx2"></div>
+                        <p class="layer-name">District</p>
+                    </div> -->
+    <div class="col-12" id="legend-protected-areas">
+      <div class="lgd lgdx3"></div>
+      <p class="layer-name">Protected Areas</p>
+    </div>
+    <div class="col-12" id="legend-mineral-concession">
+      <div class="lgd lgdx41"></div>
+      <p class="layer-name">Mineral Concession</p>
+    </div>
+    <!-- <div class="col-12" id="legend-aoi">
+                        <div class="lgd lgdx4"></div>
+                        <p class="layer-name">Galamsey Area of Interest</p>
+                    </div> -->
+    <div class="col-12" id="legend-doi">
+      <div class="lgd lgdx4"></div>
+      <p class="layer-name">Districts of Interest</p>
+    </div>
+    <div class="col-12" id="legend-selected-district">
+      <div class="lgd lgdx5"></div>
+      <p class="layer-name">District of Interest</p>
+    </div>
+    <div class="col-12" id="legend-footprint-2015">
+      <div class="lgd lgdx15"></div>
+      <p class="layer-name">Galamsey footprints 2015</p>
+    </div>
+    <div class="col-12" id="legend-footprint-2016">
+      <div class="lgd lgdx16"></div>
+      <p class="layer-name">Galamsey footprints 2016</p>
+    </div>
+    <div class="col-12" id="legend-footprint-2017">
+      <div class="lgd lgdx17"></div>
+      <p class="layer-name">Galamsey footprints 2017</p>
+    </div>
+    <div class="col-12" id="legend-footprint-2018">
+      <!-- <div class="lgd lgdx63"></div> -->
+      <div class="lgd lgdx18"></div>
+      <p class="layer-name">Galamsey footprints 2018</p>
+    </div>
+    <div class="col-12" id="legend-footprint-2019">
+      <div class="lgd lgdx19"></div>
+      <p class="layer-name">Galamsey footprints 2019</p>
+    </div>
+    <div class="col-12" id="legend-footprint-2020">
+      <div class="lgd lgdx20"></div>
+      <p class="layer-name">Galamsey footprints 2020</p>
+    </div>
+    <div class="col-12" id="legend-footprint-2021">
+      <!-- <div class="lgd lgdx66"></div> -->
+      <div class="lgd lgdx21"></div>
+      <p class="layer-name">Galamsey footprints 2021</p>
+    </div>
+    <div class="col-12" id="legend-footprint-2022">
+      <!-- <div class="lgd lgdx66"></div> -->
+      <div class="lgd lgdx22"></div>
+      <p class="layer-name">Galamsey footprints 2022</p>
+    </div>
+    <!-- <div class="col-12">
+                        <div class="lgd lgdx64"></div>
+                        <p class="layer-name">Galamsey footprints 2023</p>
+                    </div> -->
+    <div class="col-12" id="legend-year-one">
+      <div class="lgd lgdx7"></div>
+      <p class="layer-name">Galamsey footprints (Year1)</p>
+    </div>
+    <div class="col-12" id="legend-year-two">
+      <div class="lgd lgdx8"></div>
+      <p class="layer-name">Galamsey footprints (Year2)</p>
+    </div>
+  </div>
+</div>
+
+<div class="box layer">
+  <div class="d-flex justify-content-between box-title">
+    <h4> Layers</h4>
+    <!-- <span class="close closebox my-auto"> X </span> -->
+    <i class="close closebox fa-solid fa-xmark my-auto"></i>
+  </div>
+  <div class="row box-body">
+    <!-- <h4 class="boxheading"> Layers</h4> -->
+    <div class="col-12">
+      <div class="form-check form-switch form-check-reverse custom-switch">
+        <input type="checkbox" class="form-check-input switch-input" id="region_boundary" name="example">
+        <label class="custom-control-label" for="region_boundary"></label>
+      </div>
+      <div class="lgd lgd1"></div>
+      <p class="layer-name">Region</p>
+    </div>
+    <!-- <div class="col-12">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="form-check-input switch-input" id="district_boundary" name="example">
+                            <label class="custom-control-label" for="district_boundary"></label>
+                        </div>
+                        <div class="lgd lgd2"></div>
+                        <p class="layer-name">District</p>
+                    </div> -->
+    <div class="col-12">
+      <div class="form-check form-switch form-check-reverse custom-switch">
+        <input type="checkbox" class="form-check-input switch-input" id="doi" name="example">
+        <label class="form-check-label" for="doi"></label>
+      </div>
+      <div class="lgd lgd5"></div>
+      <p class="layer-name">Districts of Interest</p>
+    </div>
+    <div class="col-12">
+      <div class="form-check form-switch form-check-reverse custom-switch">
+        <input type="checkbox" class="form-check-input switch-input" id="protected_area_boundary" name="example">
+        <label class="form-check-label" for="protected_area_boundary"></label>
+      </div>
+      <div class="lgd lgd3"></div>
+      <p class="layer-name">Protected Areas</p>
+    </div>
+    <div class="col-12">
+      <div class="form-check form-switch form-check-reverse custom-switch">
+        <input type="checkbox" class="form-check-input switch-input" id="mineral_concession_boundary" name="example">
+        <label class="form-check-label" for="mineral_concession_boundary"></label>
+      </div>
+      <div class="lgd lgd4"></div>
+      <p class="layer-name">Mineral Concession</p>
+    </div>
+    <!-- <div class="col-12">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="form-check-input switch-input" id="mining_concession_boundary"
+                                name="example">
+                            <label class="custom-control-label" for="mining_concession_boundary"></label>
+                        </div>
+                        <div class="lgd lgd7"></div>
+                        <p class="layer-name">Mining Concession</p>
+                    </div> -->
+    <!-- <div class="col-12">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="aoi" name="example">
+                            <label class="custom-control-label" for="aoi"></label>
+                        </div>
+                        <div class="lgd lgd6"></div>
+                        <p class="layer-name">Galamsey Area of Interest</p>
+                    </div> -->
+    <!-- <div class="col-12">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="2016" name="example">
+                            <label class="custom-control-label" for="2016"></label>
+                        </div>
+                        <div class="lgd lgdx61"></div>
+                        <p class="layer-name">Footprints</p>
+                    </div> -->
+    <!-- <div class="col-12">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="2015" name="example">
+                            <label class="custom-control-label" for="2015"></label>
+                        </div>
+                        <div class="lgd lgdx15"></div>
+                        <p class="layer-name"> 2015</p>
+                    </div>
+                    <div class="col-12">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="2016" name="example">
+                            <label class="custom-control-label" for="2016"></label>
+                        </div>
+                        <div class="lgd lgdx16"></div>
+                        <p class="layer-name">Footprint for 2016</p>
+                    </div>
+                    <div class="col-12">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="2017" name="example">
+                            <label class="custom-control-label" for="2017"></label>
+                        </div>
+                        <div class="lgd lgdx17"></div>
+                        <p class="layer-name">Footprint for 2017</p>
+                    </div>
+                    <div class="col-12">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="2018" name="example">
+                            <label class="custom-control-label" for="2018"></label>
+                        </div>
+                        <div class="lgd lgdx63"></div>
+                        <div class="lgd lgdx18"></div>
+                        <p class="layer-name">Footprint for 2018</p>
+                    </div>
+                    <div class="col-12">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="2019" name="example">
+                            <label class="custom-control-label" for="2019"></label>
+                        </div>
+                        <div class="lgd lgdx19"></div>
+                        <p class="layer-name">Footprint for 2019</p>
+                    </div>
+                    <div class="col-12">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="2020" name="example">
+                            <label class="custom-control-label" for="2020"></label>
+                        </div>
+                        <div class="lgd lgdx20"></div>
+                        <p class="layer-name">Footprint for 2020</p>
+                    </div>
+                    <div class="col-12">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="2021" name="example">
+                            <label class="custom-control-label" for="2021"></label>
+                        </div>
+                        <div class="lgd lgdx66"></div>
+                        <div class="lgd lgdx21"></div>
+                        <p class="layer-name">Footprint for 2021</p>
+                    </div>
+                    <div class="col-12">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="2022" name="example">
+                            <label class="custom-control-label" for="2022"></label>
+                        </div>
+                        <div class="lgd lgdx66"></div>
+                        <div class="lgd lgdx22"></div>
+                        <p class="layer-name">Footprint for 2022</p>
+                    </div> -->
+
+    <!-- {% for year in years %}
+                    <div class="col-12">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="{{year.year}}" name="example">
+                            <label class="custom-control-label" for="{{year.year}}"></label>
+                        </div>
+                        <div class="lgd lgd5"></div>
+                        <p class="layer-name">Footprint for {{year.year}}</p>
+                    </div>
+                    {% endfor %} -->
+  </div>
+</div>
+
+<div class="box footprints-modal">
+  <div class="d-flex justify-content-between box-title">
+    <h4 class="title-text">Footprints</h4>
+    <i class="close closebox fa-solid fa-xmark my-auto"></i>
+  </div>
+
+  <div class="box-body">
+    <div class="col-12">
+      <div class="form-check form-switch form-check-reverse custom-switch">
+        <input type="checkbox" class="form-check-input switch-input" id="2015" name="example">
+        <label class="form-check-label" for="2015"></label>
+      </div>
+      <div class="lgd lgdx15"></div>
+      <p class="layer-name">2015</p>
+    </div>
+    <div class="col-12">
+      <div class="form-check form-switch form-check-reverse custom-switch">
+        <input type="checkbox" class="form-check-input switch-input" id="2016" name="example">
+        <label class="form-check-label" for="2016"></label>
+      </div>
+      <div class="lgd lgdx16"></div>
+      <p class="layer-name">2016</p>
+    </div>
+    <div class="col-12">
+      <div class="form-check form-switch form-check-reverse custom-switch">
+        <input type="checkbox" class="form-check-input switch-input" id="2017" name="example">
+        <label class="form-check-label" for="2017"></label>
+      </div>
+      <div class="lgd lgdx17"></div>
+      <p class="layer-name">2017</p>
+    </div>
+    <div class="col-12">
+      <div class="form-check form-switch form-check-reverse custom-switch">
+        <input type="checkbox" class="form-check-input switch-input" id="2018" name="example">
+        <label class="form-check-label" for="2018"></label>
+      </div>
+      <!-- <div class="lgd lgdx63"></div> -->
+      <div class="lgd lgdx18"></div>
+      <p class="layer-name">2018</p>
+    </div>
+    <div class="col-12">
+      <div class="form-check form-switch form-check-reverse custom-switch">
+        <input type="checkbox" class="form-check-input switch-input" id="2019" name="example">
+        <label class="form-check-label" for="2019"></label>
+      </div>
+      <div class="lgd lgdx19"></div>
+      <p class="layer-name">2019</p>
+    </div>
+    <div class="col-12">
+      <div class="form-check form-switch form-check-reverse custom-switch">
+        <input type="checkbox" class="form-check-input switch-input" id="2020" name="example">
+        <label class="form-check-label" for="2020"></label>
+      </div>
+      <div class="lgd lgdx20"></div>
+      <p class="layer-name">2020</p>
+    </div>
+    <div class="col-12">
+      <div class="form-check form-switch form-check-reverse custom-switch">
+        <input type="checkbox" class="form-check-input switch-input" id="2021" name="example">
+        <label class="form-check-label" for="2021"></label>
+      </div>
+      <!-- <div class="lgd lgdx66"></div> -->
+      <div class="lgd lgdx21"></div>
+      <p class="layer-name"> 2021</p>
+    </div>
+    <div class="col-12">
+      <div class="form-check form-switch form-check-reverse custom-switch">
+        <input type="checkbox" class="form-check-input switch-input" id="2022" name="example">
+        <label class="form-check-label" for="2022"></label>
+      </div>
+      <!-- <div class="lgd lgdx66"></div> -->
+      <div class="lgd lgdx22"></div>
+      <p class="layer-name"> 2022</p>
+    </div>
+  </div>
+</div>
+
+<!-- <div class="box query">
+  <div class="close closebox"> <span> X </span></div>
+  <h4> Galamsey Footprints</h4>
+  <form class="form-compact" action="#">
+    <div class="row paddingBottom20">
+      <div class="container col-12">
+        <div class="row">
+          <sub class="text-right text-muted col-12"><a href="#" tabindex="-1"><i class="far fa-edit"></i></a></sub>
+        </div>
+        <div class="dropdown-divider mb-3"></div>
+        <div class="form-group row align-items-center">
+          <div class="col-12">
+            <div class="col-12">
+              <label for="boundary" class="col-12 col-form-label-lg">Boundary:</label>
+              <div class="input-group">
+                <select id="boundary" class="form-control">
+                  <option disabled selected>Select a Boundary</option>
+                  <option value="admin_boundaries">Admin Boundaries</option>
+                  <option value="protected_area">Protected Area</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row align-items-center level">
+          <div class="col-12">
+            <div class="col-12">
+              <label for="region" class="col-12 col-form-label-lg">Level:</label>
+              <div class="input-group">
+                <select id="level" class="form-control">
+                  <option disabled selected>Select a Level</option>
+                  <option value="national">National</option>
+                  <option value="regional">Regional</option>
+                  <option value="district">District</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row align-items-center region">
+          <div class="col-12">
+            <div class="col-12">
+              <label for="region" class="col-12 col-form-label-lg">Region:</label>
+              <div class="input-group">
+                <select id="region" class="form-control">
+                  <option disabled selected>Select a Region</option>
+
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row align-items-center district">
+          <div class="col-12">
+            <div class="col-12">
+              <label for="district" class="col-12 col-form-label-lg">District:</label>
+              <div class="input-group">
+                <select id="district" class="form-control">
+                  <option value="" disabled selected>Select a District</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row align-items-center protected_areas">
+          <div class="col-12">
+            <div class="col-12">
+              <label for="protected_areas" class="col-12 col-form-label-lg">Protected
+                Area:</label>
+              <div class="input-group">
+                <select id="protected_areas" class="form-control">
+                  <option value="">Select a Protected</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row align-items-center oneyear">
+          <div class="col-12">
+            <div class="col-12">
+              <label for="year" class="col-12 col-form-label-lg">Year:</label>
+              <div class="input-group">
+                <select id="year" class="form-control">
+                  <option>Select the Year</option>
+                  <option value="2015">2015</option>
+                  <option value="2018">2018</option>
+                  <option value="2022">2022</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row align-items-center twoyear" style="display: none;">
+          <div class="row" style="padding: 0px 15px;">
+            <div class="col-6">
+              <label for="firstName" class="col-12 col-form-label-lg">Year 1:</label>
+              <div class="col-12">
+                <div class="input-group">
+                  <select id="year1" class="form-control">
+                    <option>Select Year1</option>
+                    <option value="2015">2015</option>
+                    <option value="2018">2018</option>
+                    <option value="2022">2022</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="col-6">
+              <label for="firstName" class="col-12 col-form-label-lg"> Year 2:</label>
+              <div class="col-12">
+                <div class="input-group">
+                  <select id="year2" class="form-control">
+                    <option>Select Year2</option>
+                    <option value="2015">2015</option>
+                    <option value="2018">2018</option>
+                    <option value="2022">2022</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row align-items-center switchyear">
+          <div class="col-12">
+            <label class="col-12 col-form-label-lg"> <input id="switchyear" type="checkbox">
+              Compare two (2) years instead </label>
+          </div>
+        </div>
+        <div class="form-group row align-items-center execute">
+          <div class="col-12">
+            <button id="execute" type="button" class="btn btn-success"> Query </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div> -->
+
+<div class="box analytics ">
+  <div class="d-flex justify-content-between box-title"> 
+    <h4>Query</h4>
+    <i class="close closebox fa-solid fa-xmark my-auto"></i>
+</div>
+  <form class="form-compact" action="#" style="margin-top: 10px; padding: 5px 15px 5px 15px;">
+    <div class="row paddingBottom20">
+      <div class="container col-12">
+        <div class="form-group row align-items-center">
+              <label for="boundary" class="col-12 col-form-label-lg">Boundary:</label>
+              <div class="input-group">
+                <select id="boundary" class="form-control">
+                  <option disabled selected>Select a Boundary</option>
+                  <option value="admin_boundaries">Admin Boundaries</option>
+                  <option value="protected_area">Protected Area</option>
+                </select>
+              </div>
+        </div>
+        <div class="form-group row align-items-center level">
+              <label for="region" class="col-12 col-form-label-lg">Level:</label>
+              <div class="input-group">
+                <select id="level" class="form-control">
+                  <option disabled selected>Select a Level</option>
+                  <option value="national">National</option>
+                  <option value="regional">Regional</option>
+                  <option value="district">District</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group row align-items-center region">
+              <label for="region" class="col-12 col-form-label-lg">Region:</label>
+              <div class="input-group">
+                <select id="region" class="form-control">
+                  <option disabled selected>Select a Region</option>
+
+                </select>
+              </div>
+        </div>
+        <div class="form-group row align-items-center district">
+              <label for="district" class="col-12 col-form-label-lg">District:</label>
+              <div class="input-group">
+                <select id="district" class="form-control">
+                  <option value="" disabled selected>Select a District</option>
+                </select>
+              </div>
+        </div>
+        <div class="form-group row align-items-center protected_areas">
+              <label for="protected_areas" class="col-12 col-form-label-lg">Protected
+                Area:</label>
+              <div class="input-group">
+                <select id="protected_areas" class="form-control">
+                  <option value="">Select a Protected</option>
+                </select>
+              </div>
+        </div>
+        <div class="form-group row align-items-center oneyear">
+              <label for="year" class="col-12 col-form-label-lg">Year:</label>
+              <div class="input-group">
+                <select id="year" class="form-control">
+                  <option>Select the Year</option>
+                  <option value="2015">2015</option>
+                  <option value="2018">2018</option>
+                  <option value="2022">2022</option>
+                </select>
+              </div>
+        </div>
+        <div class="form-group row align-items-center twoyear" style="display: none;">
+          <div class="row" style="padding: 0px 15px;">
+            <div class="col-6">
+              <label for="firstName" class="col-form-label-lg">Year 1:</label>
+                <div class="input-group">
+                  <select id="year1" class="form-control">
+                    <option>Select Year1</option>
+                    <option value="2015">2015</option>
+                    <option value="2018">2018</option>
+                    <option value="2022">2022</option>
+                  </select>
+                </div>
+            </div>
+            <div class="col-6">
+              <label for="firstName" class="col-form-label-lg"> Year 2:</label>
+                <div class="input-group">
+                  <select id="year2" class="form-control">
+                    <option>Select Year2</option>
+                    <option value="2015">2015</option>
+                    <option value="2018">2018</option>
+                    <option value="2022">2022</option>
+                  </select>
+                </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group align-items-center switchyear">
+            <label class="col-form-label-lg"> <input id="switchyear" type="checkbox">
+              Compare two (2) years instead </label>
+        </div>
+        <div class="form-group row align-items-center execute mt-3">
+            <button id="execute" type="button" class="btn btn-success"> Query </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="statistics-box statistics">
+  <div class="accordion" id="accordionExample">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingOne">
+        <button class="accordion-button py-1" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+          aria-expanded="true" aria-controls="collapseOne">
+          STATISTICS
+        </button>
+      </h2>
+      <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+        data-bs-parent="#accordionExample">
+        <div class="accordion-body">
+          <div id="bar-chart"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="box report">
+  <div class="d-flex justify-content-between box-title"> 
+    <h4> Reports</h4>
+    <i class="close closebox fa-solid fa-xmark my-auto"></i>
+  </div>
+  <div class="report-container" style="margin-top: 10px; padding: 5px 15px 5px 15px;">
+    {% for report in reports %}
+    <div class="report-card border shadow bg-body">
+      <div class="row h-100">
+        <div class="col-4">
+            <img class="report-img" src="{{report.image.url}}">
+        </div>
+        <div class="col-8 ps-0 pt-2">
+          <p class="report-title">{{report.name |truncatechars:45}}</p>
+          <div class="row report-btns">
+            <button class="col-6 btn"><a class="d-flex align-items-center" href="{{report.document.url}}" download><i class="fa-solid fa-download pe-2"></i> Download</a></button>
+            <button class="col-6 btn"><a class="d-flex align-items-center" target="_blank" href="{{report.document}}"><i class="fa-solid fa-eye pe-2"></i>View </a></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+            <div class="box basemap">
+                <div class="d-flex justify-content-between box-title"> 
+                    <h4> Basemaps</h4>
+                    <i class="close closebox fa-solid fa-xmark my-auto"></i>
+                </div>
+                <div class="row" style="margin-top: 10px; padding: 5px 15px 5px 15px;">
+                    <!-- <h4 class="boxheading"> Layers</h4> -->
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-4 lgndthumb" id="basemap1">
+                                <img src="{% static 'portal/assets/assets/maplegend/cartodb_positron.png' %}">
+                            </div>
+                            <div class="col-4 lgndthumb" id="basemap9">
+                                <img src="{% static 'portal/assets/assets/maplegend/esri_oceanbasemap.png' %} ">
+                            </div>
+                            <div class="col-4 lgndthumb" id="basemap3">
+                                <img src="{% static 'portal/assets/assets/maplegend/esri_worldterrain.png' %} ">
+                            </div>
+                            <div class="col-4 lgndthumb" id="basemap2">
+                                <img src="{% static 'portal/assets/assets/maplegend/here_satelliteday.png' %} ">
+                            </div>
+                            <div class="col-4 lgndthumb" id="basemap5">
+                                <img src="{% static 'portal/assets/assets/maplegend/stamen_toner.png' %} ">
+                            </div>
+                            <div class="col-4 lgndthumb" id="no_basemap">
+                                <img src="{% static 'portal/assets/assets/maplegend/white.png' %}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="data-request">
+                {% include 'portal/components/data-request.html' %}
+            </div>
+   
+{% endblock %}
+
+{% block js %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script>
+  // Set up the chart
+  Highcharts.chart('bar-chart', {
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: 'Galamsey Area Size per Years'
+    },
+    xAxis: {
+        type: 'category',
+        labels: {
+            autoRotation: [-45, -90],
+            style: {
+                fontSize: '13px',
+                fontFamily: 'Verdana, sans-serif'
+            }
+        }
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'Area (hectres)'
+        }
+    },
+    legend: {
+        enabled: false
+    },
+    tooltip: {
+        pointFormat: 'Population in {point.x}: <b>{point.y:.1f} millions</b>'
+    },
+    series: [{
+        name: 'Population',
+        colors: [
+            '#9b20d9', '#9215ac', '#861ec9', '#7a17e6', '#7010f9', '#691af3',
+            '#6225ed', '#5b30e7', '#533be1', '#4c46db', '#4551d5', 
+        ],
+        colorByPoint: true,
+        groupPadding: 0,
+        data: [
+            ['2015', 37.33],
+            ['2016', 31.18],
+            ['2017', 27.79],
+            ['2018', 22.23],
+            ['2019', 21.91],
+            ['2020', 21.74],
+            ['2021', 21.32],
+            ['2022', 20.89],
+            ['2023', 20.67],
+        ],
+        dataLabels: {
+            enabled: true,
+            rotation: -90,
+            color: '#FFFFFF',
+            inside: true,
+            verticalAlign: 'top',
+            format: '{point.y:.1f}', // one decimal
+            y: 10, // 10 pixels down from the top
+            style: {
+                fontSize: '13px',
+                fontFamily: 'Verdana, sans-serif'
+            }
+        }
+    }]
+});
+
+</script>
+<!-- <script src="{% static 'portal/assets/libs/js/L.Geoserver.js' %}"></script> -->
+
+<!-- MAP CONTROLLING FUNCTION -->
+<script>
+
+  /* 
+    GLOBAL Variables And Helper
+  */
+  const geoserver_wfs_url = 'https://geoserver-dev.cersgis.org/geoserver/wfs'
+  const openstreetmap_url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+
+
+  // Set Map
+  let map = L.map('map', { attributionControl: false }).setView([6.155785, -1.936499], 9);
+
+
+  var layers_group = ['district_layer', 'region_layer'];
+  var footprints_group = [];
+
+  async function GeoserverWFS(geoserver_wfs_url, options, target_layer) {
+
+    return $.ajax(geoserver_wfs_url, {
+      type: 'GET',
+      dataType: 'json',
+      data: {
+        servrice: 'WFS',
+        version: '2.0.0',
+        request: 'GetFeature',
+        typename: options.layers,
+        CQL_FILTER: options.CQL_FILTER,
+        srsname: options.srsname,
+        outputFormat: "application/json",
+        // format_options: "callback: getJson",
+      },
+
+      // dataType: "jsonp",
+      // jsonpCallback: "getJson",
+      success: await handlejson
+    });
+
+    function handlejson(data) {
+      layers_group[target_layer] = L.geoJSON(data, {
+        style: options.style,
+        onEachFeature: options.onEachFeature,
+        attribution: target_layer
+      });
+
+    }
+  }
+
+  // Set Initial BaseMap
+  let initialBasemap = L.tileLayer(openstreetmap_url, {
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>'
+  }).addTo(map);
+
+  map.invalidateSize();
+
+  let districtOnEachFeature, regionOnEachFeature;
+
+  // ---------------- HELPER Functions ---------------------
+
+  // Zoom to Feature
+  function zoomToFeature(e) {
+    map.fitBounds(e.target.getBounds());
+  }
+
+  // HighlightFeature
+  function highlightFeature(e) {
+    var layer = e.target;
+
+    layer.setStyle({
+      weight: 5,
+      color: '#666',
+      dashArray: '',
+      fillOpacity: 0.7,
+      fillColor: 'transparent',
+    });
+
+    if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+      layer.bringToFront();
+    }
+  }
+
+  // Highlight and zoom
+  function zoomAndHighlight(e) {
+    var layer = e.target;
+
+    layer.setStyle({
+      color: '#ff7f7f',
+    })
+
+    layer.bringToFront();
+
+    map.fitBounds(layer.getBounds());
+  }
+
+  // Reset Layers
+  function resetLayerHighlight(e) {
+    layers_group[e.target.options.attribution].resetStyle(e.target);
+  }
+
+  // Reset Region
+  function regionresetHighlight(e) {
+    console.log(e)
+    console.log('propagatedFrom', e.propagatedFrom)
+    layers_group.resetStyle(e.target);
+  }
+
+  function resetDistrictHighlight(e) {
+
+    district_layer.resetStyle(e.target)
+
+  }
+
+  districtOnEachFeature = function (feature, layer) {
+
+    layer.on({
+      mouseover: highlightFeature,
+      mouseout: resetLayerHighlight,
+      click: zoomAndHighlight
+    });
+
+    layer.bindTooltip(layer.feature.properties['district'])
+  };
+
+  regionOnEachFeature = function (feature, layer) {
+    layer.on({
+      mouseover: highlightFeature,
+      mouseout: resetLayerHighlight,
+      click: zoomToFeature,
+    });
+
+    layer.bindPopup(layer.feature.properties["region"] + ' REGION');
+  }
+
+
+  // Handler for Toggle
+  function toggleLayer(map, layer, checkbox) {
+
+    if (layer) {
+      map.removeLayer(layer)
+      if (checkbox.prop('checked')) {
+        map.removeLayer(layer)
+        map.addLayer(layer)
+      } else {
+        map.removeLayer(layer)
+      }
+    } else {
+      alert('Preparing layer for visualisation. Please check in a few seconds');
+      checkbox.prop('checked', false)
+    }
+  }
+
+
+
+
+  /* 
+      Layers [ Region, District, Protected Areas, Mineral Concession ]
+  */
+
+  // Region
+  // region_layer = L.Geoserver.wms(
+  //   geoserver_wfs_url,
+  //   {
+  //     layers: 'galamsey:footprint_2015',
+  //     wmsCQL_FILTER: ['GRAY_INDEX=3'],
+  //   }
+  // );
+
+  // District
+  // district_layer = GeoserverWFS(
+  //   geoserver_wfs_url,
+  //   {
+  //     layers: 'galamsey:area_of_interest',
+  //     style: {
+  //       fillColor: 'transparent',
+  //       weight: 2,
+  //       opacity: 1,
+  //       color: '#000000',
+  //       dashArray: '3',
+  //       fillOpacity: 0.7
+  //     },
+  //     onEachFeature: districtOnEachFeature
+  //   }
+  // );
+
+  // console.log('District Layer',district_layer);
+
+  // GET WFS data on load
+  (function async() {
+    // Region
+    GeoserverWFS(geoserver_wfs_url,
+      {
+        layers: 'galamsey:region',
+        style: {
+          fillColor: "transparent",
+          weight: 5,
+          opacity: 1,
+          color: "#ff7f7f",
+          dashArray: "3",
+          fillOpacity: 0.7,
+        },
+        onEachFeature: regionOnEachFeature
+      },
+      'region_layer'
+    );
+
+    // District 
+    GeoserverWFS(geoserver_wfs_url,
+      {
+        layers: 'galamsey:area_of_interest',
+        style: {
+          fillColor: 'transparent',
+          weight: 2,
+          opacity: 1,
+          color: '#000000',
+          dashArray: '3',
+          fillOpacity: 0.7
+        },
+        onEachFeature: districtOnEachFeature
+      },
+      'district_layer'
+    ).then(() => {
+      let onload_check = $('#doi').prop('checked', true);
+      toggleLayer(map, layers_group['district_layer'], onload_check);
+    });
+
+  })();
+
+
+
+
+
+  // Checkbox Change Detection
+  $('#region_boundary').change(function () {
+    toggleLayer(map, layers_group['region_layer'], $(this));
+  });
+  $('#doi').change(function () {
+    toggleLayer(map, layers_group['district_layer'], $(this));
+  });
+
+
+
+  let coords;
+  var drawnItems = new L.geoJson().addTo(map);
+  drawnItems.bringToFront();
+  var layer;
+
+  map.on(L.Draw.Event.CREATED, function (event) {
+    drawnItems.removeLayer(layer);
+    layer = event.layer;
+
+    // $("#dialog").dialog("open");
+    drawnItems.addLayer(layer);
+
+    let type = event.layerType;
+    coords = layer.getLatLngs();
+
+  });
+
+
+
+  L.EditToolbar.Delete.include({
+    removeAllLayers: false,
+  });
+
+  // Control Options
+  var measureOptions = {
+    position: 'bottomleft',
+    primaryAreaUnit: 'hectares',
+    secondaryAreaUnit: 'sqmeters',
+    primaryLengthUnit: 'meters',
+    secondaryLengthUnit: 'kilometers'
+  }
+
+  var positionOption = {
+    position: 'bottomleft'
+  }
+
+  var drawtool = new L.Control.Draw({
+    edit: {
+      featureGroup: drawnItems,
+    },
+    draw: {
+      polygon: true,
+      rectangle: true,
+      circlemarker: false,
+      marker: false,
+      polyline: false,
+      circle: false,
+    },
+    position: 'bottomleft',
+  });
+
+
+
+
+  // Control Initialization
+  var measureControl = new L.Control.Measure(measureOptions);
+  var browserPrintControl = L.control.browserPrint(positionOption);
+
+
+  // Adding Controls - NB: Order appears inverted on page
+  browserPrintControl.addTo(map)
+  drawtool.addTo(map)
+  measureControl.addTo(map);
+  map.zoomControl.setPosition('bottomleft');
+
+</script>
+
+{% endblock %}

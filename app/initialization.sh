@@ -11,6 +11,8 @@ python manage.py migrate auth --database=default
 python manage.py migrate contenttypes --database=default
 python manage.py migrate sessions --database=default
 python manage.py migrate messages --database=default
+python manage.py migrate home --database=default
+python manage.py migrate root_app --database=default
 
 echo "Applying Galamsey database migrations"
 # Galamsey Migrations
@@ -26,4 +28,4 @@ python manage.py migrate landscape_gh --database=landscape-gh
 
 # Running the Server
 echo "Running the Application"
-gunicorn servir-portals.wsgi:application --timeout 600 --workers 5  --bind 0.0.0.0:8000 --error-logfile -
+gunicorn servir-portals.wsgi:application --timeout 1200 --workers 5  --bind 0.0.0.0:8000 --error-logfile -

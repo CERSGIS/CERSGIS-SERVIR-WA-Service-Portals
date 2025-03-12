@@ -1,11 +1,16 @@
 {% extends 'root_app/default-base.html' %}
 {% load static %}
 
+
 {% block title %}SSM Portal{% endblock %}
 {% block css %}
 
   <!-- <link rel="stylesheet" href="{% static 'galamsey_portal/assets/styles/map-nav.css' %}" /> -->
   <link rel="stylesheet" href="{% static 'root_app/assets/css/leaflet-measure.css' %}" />
+
+  <!-- Dashboard CSS Link -->
+  <link rel="stylesheet" href="{% static 'galamsey_portal/assets/styles/dashboard.css' %}" />
+
   <!-- <link rel="stylesheet" href="{% static 'galamsey_portal/assets/styles/style.css' %}" /> -->
   <style type="text/css">
         /* .leaflet-control-measure .leaflet-control {
@@ -38,6 +43,18 @@
     background-size: 20% 50%;
     animation: l44 1s infinite linear alternate; 
   }
+
+  .statistics-box .nav-pills{ 
+    --bs-nav-pills-link-active-bg: {% if app_details %}{{ app_details.side_nav_icon_color }}{% else %}#fff{% endif %}; 
+    --bs-nav-pills-link-active-color: {% if app_details %}{{ app_details.side_nav_color }}{% else %}#fff{% endif %}; 
+    --bs-nav-link-color: {% if app_details %}{{ app_details.side_nav_icon_color }}{% else %}#fff{% endif %};
+  }
+
+  .statistics-box .nav-pills a:hover{
+    outline:1px solid {% if app_details %}{{ app_details.side_nav_icon_color }}{% else %}#fff{% endif %}; 
+    --bs-nav-link-hover-color: {% if app_details %}{{ app_details.side_nav_icon_color }}{% else %}#fff{% endif %}; 
+  }
+  
   @keyframes l44 {
     0%,
     5%    {background-position: calc(0*100%/3) 50% ,calc(1*100%/3) 50% ,calc(2*100%/3) 50% ,calc(3*100%/3) 50% }
@@ -68,6 +85,11 @@
 {% endblock %}
 
 {% block body %}
+
+{% include 'portal/components/dashboard.html' %}
+
+
+<div class="all-map-contents">
 <div class="box detials">
   <div class="d-flex justify-content-between box-title">
     <h4 class="title-text"> Details</h4>
@@ -188,7 +210,6 @@
 <div class="box layer">
   <div class="d-flex justify-content-between box-title">
     <h4 class="title-text"> Layers</h4>
-    <!-- <span class="close closebox my-auto"> X </span> -->
     <i class="close closebox fa-solid fa-circle-xmark my-auto"></i>
   </div>
   <div class="row box-body">
@@ -259,7 +280,7 @@
 </div>
 
 
-<div class="statistics-box statistics intro-step" data-step="11">
+<!-- <div class="statistics-box statistics intro-step" data-step="11">
   <div class="accordion" id="statAccordionExample">
     <div class="accordion-item">
       <h2 class="accordion-header" id="headingOne">
@@ -271,14 +292,171 @@
       <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
         data-bs-parent="#statAccordionExample">
         <div class="accordion-body">
+    
+            <ul class="nav nav-pills" id="pending-myTab" role="tablist">
+              <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="bar-chart-tab" data-bs-toggle="tab" data-bs-target="#bar-chart-home" type="button" role="tab" aria-controls="bar-chart-home" title="Yearly" aria-selected="true">
+                    Yearly
+                </a>
+              </li>
+              <li class="nav-item" role="presentation">
+                <a class="nav-link" id="trend-tab" data-bs-toggle="tab" data-bs-target="#trend-profile" type="button" role="tab" aria-controls="pending-profile" title="Trend analysis"  aria-selected="false">
+                    Trend analysis</a>
+              </li>
+              <li class="nav-item" role="presentation">
+                <a class="nav-link" id="pending-profile-tab" data-bs-toggle="tab" data-bs-target="#pending-profile" type="button" role="tab" aria-controls="pending-profile" title="Trend analysis"  aria-selected="false">
+                    Pie chart</a>
+              </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+          
+              <div class="tab-pane fade show active" id="bar-chart-home" role="tabpanel" aria-labelledby="bar-chart-tab">          
+                    <div class="chart-card">
+                      <div id="stat-bar-chart"></div>
+                    </div>
+              </div>
+          
+              <div class="tab-pane fade" id="trend-profile" role="tabpanel" aria-labelledby="trend-tab">
+                <div class="chart-card">
+                  <div id="trend-chart"></div> 
+                </div>
+              </div>
+              
+              <div class="tab-pane fade" id="pending-profile" role="tabpanel" aria-labelledby="pending-profile-tab">
+                <div class="chart-card">
+                  <div id="pie-chart"></div> 
+                </div>
+              </div>
+          
+            </div>
+
           <div id="loader-stats-container" class="d-flex justify-content-center align-items-center">
             <div class="loader-stats"></div>
           </div>
-          <div id="stat-bar-chart"></div>
         </div>
       </div>
     </div>
   </div>
+</div> -->
+
+<!-- Degradation Legend -->
+{% if deforest_palette %}
+<div class="box deforest_legend">
+  <div class="accordion" id="defLegendAccordion">
+    <div class="accordion-item">
+      <div class="d-flex justify-content-between box-title">
+        <button class="accordion-button py-1" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDefLegend"
+              aria-expanded="true" aria-controls="DefLegend">
+              <h4 class="title-text">Forest Cover</h4>
+            </button>
+      </div>
+    
+      <div id="collapseDefLegend" class="box-body accordion-collapse collapse show">
+        <div class="col-12">
+          <div class="lgd" style="background-color: {{deforest_palette.low_forest_cover}};"></div>
+          <p class="layer-name">Low Forest Cover</p>
+        </div>
+        <div class="col-12">
+          <div class="lgd" style="background-color: {{deforest_palette.open_forest}};"></div>
+          <p class="layer-name">Open Forest</p>
+        </div>
+        <div class="col-12">
+          <div class="lgd" style="background-color: {{deforest_palette.closed_forest}};"></div>
+          <p class="layer-name">Closed Forest</p>
+        </div>
+        <div class="col-12">
+          <div class="lgd" style="background-color: {{deforest_palette.degradation}};"></div>
+          <p class="layer-name">Degradation</p>
+        </div>
+        <div class="col-12">
+          <div class="lgd" style="background-color: {{deforest_palette.open_forest_loss}};"></div>
+          <p class="layer-name">Open Forest Loss</p>
+        </div>
+        <div class="col-12">
+          <div class="lgd" style="background-color: {{deforest_palette.closed_forest_loss}};"></div>
+          <p class="layer-name">Closed Forest Loss</p>
+        </div>
+        <div class="col-12">
+          <div class="lgd" style="background-color: {{deforest_palette.open_forest_recovery}};"></div>
+          <p class="layer-name">Open Forest Recovery</p>
+        </div>
+        <div class="col-12">
+          <div class="lgd" style="background-color: {{deforest_palette.closed_forest_recovery}};"></div>
+          <p class="layer-name">Closed Forest Recovery</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<div class="box watershed_legend">
+  <div class="accordion" id="defLegendAccordion">
+    <div class="accordion-item">
+      <div class="d-flex justify-content-between box-title">
+        <button class="accordion-button py-1" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDefLegend"
+              aria-expanded="true" aria-controls="DefLegend">
+              <h4 class="title-text">Land Use/Land Cover Legend</h4>
+            </button>
+      </div>
+    
+      <div id="collapseDefLegend" class="box-body accordion-collapse collapse show">
+        <div class="col-12">
+          <div class="lgd" style="background-color: #02dcff;"></div>
+          <p class="layer-name">Water</p>
+        </div>
+        <div class="col-12">
+          <div class="lgd" style="background-color: #6749a7;"></div>
+          <p class="layer-name">Mangrove/Wetlands</p>
+        </div>
+        <div class="col-12">
+          <div class="lgd" style="background-color: #aa90d3;"></div>
+          <p class="layer-name">Wetlands</p>
+        </div>
+        <div class="col-12">
+          <div class="lgd" style="background-color: #000;"></div>
+          <p class="layer-name">Mining</p>
+        </div>
+        <div class="col-12">
+          <div class="lgd" style="background-color: red;"></div>
+          <p class="layer-name">Artificial Surfaces</p>
+        </div>
+        <div class="col-12">
+          <div class="lgd" style="background-color: darkgreen;"></div>
+          <p class="layer-name">Closed Forest</p>
+        </div>
+        <div class="col-12">
+          <div class="lgd" style="background-color: #5dbb00;"></div>
+          <p class="layer-name">Open Forest</p>
+        </div>
+        <div class="col-12">
+          <div class="lgd" style="background-color: #e4a14f;"></div>
+          <p class="layer-name">Woody Crops</p>
+        </div>
+        <div class="col-12">
+          <div class="lgd" style="background-color: #f7fb15;"></div>
+          <p class="layer-name">Agriculture</p>
+        </div>
+        <div class="col-12">
+          <div class="lgd" style="background-color: #9efbaa;"></div>
+          <p class="layer-name">Grassland</p>
+        </div>
+        <div class="col-12">
+          <div class="lgd" style="background-color: tan;"></div>
+          <p class="layer-name">Shrub</p>
+        </div>
+        <div class="col-12">
+          <div class="lgd" style="background-color: #0a11fb;"></div>
+          <p class="layer-name">Rubber</p>
+        </div>
+        <div class="col-12">
+          <div class="lgd" style="background-color: #fba017;"></div>
+          <p class="layer-name">Palm</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 </div>
 
 
@@ -294,6 +472,7 @@
 <script src="{% static 'root_app/assets/js/leaflet-measure.js' %}"></script>
 <script src="{% static 'galamsey_portal/assets/js/leaflet-side-by-side.min.js' %}"></script>
 <script src="{% static 'galamsey_portal/assets/js/functions.js' %}"></script>
+<script src="{% static 'galamsey_portal/assets/js/dashboard.js' %}"></script>
 <script defer src="{% static 'galamsey_portal/assets/js/script.js' %}"></script>
 
 <!-- Intro js Initilization -->
@@ -311,9 +490,11 @@
   const geoserver_wfs_url = 'https://geoserver-dev.cersgis.org/geoserver/wfs';
   const geoserver_wms_url = 'https://geoserver-dev.cersgis.org/geoserver/wms';
   const footprint_url = '{% url "galamseyPortal:load_galamsey_footprint" %}';
+  const deforestation_url = '{% url "galamseyPortal:load_deforestation_data" %}';
+  const watershed_url = '{% url "galamseyPortal:load_lulc_watershed" %}';
+  const planet_url = '{% url "galamseyPortal:load_planet_basemap" %}';
 
-  var layers_group = [];
-  var footprints_group = [];
+  var layers_group = [], footprints_group = [], deforestation_group = [], watershed_group = [] , planet_group = [], mineral_concession_stats = [];
 
   // Geoserver WFS request
   async function GeoserverWFS(geoserver_wfs_url, options, target_layer) {
@@ -338,6 +519,12 @@
     });
 
     function handlejson(data) {
+
+      // Load Mineral Concession Statistics on Dashboard
+      if (target_layer === 'mineral_concession_layer') {
+        laodMiningConcessionTable(data)
+      }
+
       layers_group[target_layer] = L.geoJSON(data, {
         style: options.style,
         onEachFeature: options.onEachFeature,
@@ -348,7 +535,6 @@
   }
 
   // Geoserver WMS 
-
   async function GeoserverWMS(geoserver_wms_url, options, target_layer) {
 
     return footprints_group[target_layer] = await L.tileLayer.betterWms(geoserver_wms_url, {
@@ -359,14 +545,7 @@
     });
   }
 
-  // Set Initial BaseMap
-  // let initialBasemap = L.tileLayer(openstreetmap_url, {
-  //   attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>'
-  // }).addTo(map);
-
-  // map.invalidateSize();
-
-  let districtOnEachFeature, regionOnEachFeature, protectedOnEachFeature, mineralOnEachFeature;
+  let districtOnEachFeature, regionOnEachFeature, protectedOnEachFeature, mineralOnEachFeature, watershedOnEachFeature;
 
   // ---------------- HELPER Functions ---------------------
 
@@ -390,6 +569,34 @@
     // if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
     //   layer.bringToFront();
     // }
+  }
+  // HighlightFeature District
+  function highlightFeatureDistrict(e) {
+    var layer = e.target;
+
+    layer.setStyle({
+      weight: 5,
+      color: '#666',
+      dashArray: '',
+      fillOpacity: 0.7,
+      fillColor: 'transparent',
+    });
+  }
+
+  function highlightFeatureWaterShed(e) {
+    var layer = e.target;
+
+    layer.setStyle({
+      weight: 5,
+      color: '#fff',
+      dashArray: '',
+      fillOpacity: 0.7,
+      fillColor: 'transparent',
+    });
+
+    if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+      layer.bringToFront();
+    }
   }
 
   // Highlight and zoom
@@ -419,12 +626,12 @@
   districtOnEachFeature = function (feature, layer) {
 
     layer.on({
-      mouseover: highlightFeature,
+      mouseover: highlightFeatureDistrict,
       mouseout: resetLayerHighlight,
       click: zoomAndHighlight
     });
 
-    layer.bindTooltip(layer.feature.properties['district'])
+    // layer.bindTooltip(layer.feature.properties['district'])
   };
 
   regionOnEachFeature = function (feature, layer) {
@@ -459,6 +666,16 @@
     layer.bindTooltip(`<div class="container table-responsive"> <table class="table table-bordered table-hover"> <thead class="thead-dark"> <tr> <th scope="col" colspan="2" class="text-center"> Information on the Concession </th></tr> </thead> <tbody> <tr><th scope="row">Owner</th><td>` + layer.feature.properties['owner'] + `</td> </tr><tr> <th scope="row">Type</th> <td>` + layer.feature.properties['type'] + `</td></tr><tr> <th scope="row">Status</th> <td>` + layer.feature.properties['status'] + `</td> </tr> <tr> <th scope="row">Code</th> <td>` + layer.feature.properties['code'] + `</td> </tr> <tr> <th scope="row">Assets</th> <td>` + layer.feature.properties['assets'] +`</td> </tr> </tbody> </table> </div>`)
   }
 
+  watershedOnEachFeature = function (feature, layer) {
+    layer.on({
+      mouseover: highlightFeatureWaterShed,
+      mouseout: resetLayerHighlight,
+      click: zoomToFeature,
+    })
+
+    layer.bindTooltip('Watershed Name: ' + layer.feature.properties['water_basi'])
+  }
+
 
   // Handler for Toggle
   function toggleLayer(map, layer, checkbox) {
@@ -466,9 +683,15 @@
     if (layer) {
       map.removeLayer(layer)
       if (checkbox.prop('checked')) {
-        map.removeLayer(layer)
-        layer.bringToFront();
         map.addLayer(layer)
+
+        if (layer.options.attribution && layer.options.attribution === 'planet_layer') {
+          layer.setZIndex(0); 
+        }else {
+          layer.setZIndex(10);
+          layer.bringToFront();
+        }
+
       } else {
         map.removeLayer(layer)
       }
@@ -509,7 +732,7 @@
       {
         layers: 'galamsey:area_of_interest',
         style: {
-          fillColor: 'transparent',
+          fillColor: '#00000063',
           weight: 2,
           opacity: 1,
           color: '#000000',
@@ -519,10 +742,11 @@
         onEachFeature: districtOnEachFeature
       },
       'district_layer'
-    ).then(() => {
-      let onload_check = $('#doi').prop('checked', true);
-      toggleLayer(map, layers_group['district_layer'], onload_check);
-    });
+    )
+    // .then(() => {
+    //   let onload_check = $('#doi').prop('checked', true);
+    //   toggleLayer(map, layers_group['district_layer'], onload_check);
+    // });
 
     // Protected Area
     GeoserverWFS(geoserver_wfs_url,
@@ -558,13 +782,52 @@
       'mineral_concession_layer'
     );
 
+    GeoserverWFS(geoserver_wfs_url,
+      {
+        layers: 'galamsey:watershed_southern',
+        style: {
+          fillColor: 'transparent',
+          weight: 2,
+          opacity: 1,
+          color: '#000000',
+          dashArray: '3',
+          fillOpacity: 0.7
+        },
+        onEachFeature: watershedOnEachFeature
+      },
+      'watershed_boundary_layer'
+    )
+
     {% for footprint in footprint_years %}
     
     loadFootprint(footprint_url, '{{footprint.year}}', 'footprint_{{footprint.year}}')
 
     {% endfor %}
 
-    loadGeneralStats(`{% url 'galamseyPortal:load_statistics' %}?year=all`)
+    // {% for waford in waford_years %}
+    // loadDeforestation(deforestation_url, '{{waford.year}}', 'waford_{{waford.year}}')
+    // {% endfor %}
+    
+    // {% for planet in planet_years %}
+    // loadPlanetImage(planet_url, '{{planet.year}}', 'planet_{{planet.year}}')
+    // {% endfor %}
+
+    // Watershed Loader
+    loadwaterShed(watershed_url, '2019', 'watershed_2019')
+    loadwaterShed(watershed_url, '2024', 'watershed_2024')
+    
+    $.get(`{% url 'galamseyPortal:load_statistics' %}?year=all`, function (data) {
+      loadGeneralStats(data)
+      loadTotalArea(data)
+    });
+
+    $.get(`{% url 'galamseyPortal:load_dashboard_protected_area' %}`, function (data) {
+      loadProtectedAreaSummaryTable(data['response'])
+    });
+    $.get(`{% url 'galamseyPortal:load_dashboard_districts' %}`, function (data) {
+      loadDistrictSummaryTable(data['response'])
+    });
+    // loadGeneralStats(`{% url 'galamseyPortal:load_statistics' %}?year=all`)
   })();
 
 
@@ -579,11 +842,11 @@
   $('#doi').change(function () {
     toggleLayer(map, layers_group['district_layer'], $(this));
   });
-
+  
   $('#protected_area_boundary').change(function () {
     toggleLayer(map, layers_group['protected_area_layer'], $(this));
   });
-
+  
   $('#mineral_concession_boundary').change(function () {
     toggleLayer(map, layers_group['mineral_concession_layer'], $(this));
   });
@@ -594,7 +857,35 @@
     toggleLayer(map, footprints_group['footprint_{{footprint.year}}'], $(this));
   });
   {% endfor %}
+  
+  {% for waford in waford_years %}
+  $('#waford_{{waford.year}}').change(function () {
+    toggleLayer(map, deforestation_group['waford_{{waford.year}}'], $(this));
+    toggleLegend('.deforest_legend', [deforestation_group]);
+  });
+  {% endfor %}
+  
+  $('#watershed_2019').change(function () {
+    toggleLayer(map, watershed_group['watershed_2019'], $(this));
+    toggleLegend('.watershed_legend', [watershed_group]);
+  });
+  
+  $('#watershed_2024').change(function () {
+    toggleLayer(map, watershed_group['watershed_2024'], $(this));
+    toggleLegend('.watershed_legend', [watershed_group]);
+  });
 
+  $('#watershed_layer').change(function () {
+    toggleLayer(map, layers_group['watershed_boundary_layer'], $(this));
+  });
+
+
+  // Planet map Checkbox Change Detect
+  {% for planet in planet_years %}
+  $('#planet_{{planet.year}}').change(function () {
+    toggleLayer(map, planet_group['planet_{{planet.year}}'], $(this));
+  });
+  {% endfor %}
 
 
 
@@ -672,6 +963,71 @@
 </script>
 
 
+<!-- === Dashboard JavaScript ======= Dashboard JavaScript ========-->
+<script>
+  // =============================================================
+  //        Annual Forest Degradation Area cover Pie Chart
+  // =============================================================
+  Highcharts.chart('forest-degradation-pie-chart', {
+    chart: {
+        type: 'pie',
+        options3d: {
+            enabled: true,
+            alpha: 45,
+            beta: 0
+        }
+    },
+    title: {
+        useHTML: true,
+        text: '<span class="item-title" style="display: flex;align-items: center; gap: 7px;"><i class="game-icons--circle-forest"></i> Annual Forest Degradation Area Cover</span>',
+        align: 'left'
+    },
+    accessibility: {
+        point: {
+            valueSuffix: '%'
+        }
+    },
+    tooltip: {
+        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+    },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            depth: 35,
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }
+    },
+    series: [{
+        type: 'pie',
+        name: 'Share',
+        data: [
+          {% for item in forestDegradation %}
+            ["{{item.name | upper }}", {{item.count}}],
+            {% endfor %}
+        ]
+    }]
+});
 
+</script>
+
+
+{% endblock %}
+
+{% block gtagscript %}
+{% if not debug_status %}
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-2ES9B214MZ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-2ES9B214MZ');
+</script>
+{% endif %}
 
 {% endblock %}

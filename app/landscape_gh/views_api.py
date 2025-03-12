@@ -1,10 +1,14 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from drf_yasg.utils import swagger_auto_schema
+
 
 from .models import *
 from .functions import check_data_object_is_empty, image_decoding, audio_decoding, geom_calculator
 
+# Hide from Swagger Documentation
+@swagger_auto_schema(method='get', auto_schema=None)
 @api_view()
 def apiHomeView(request):
   result = {
@@ -13,6 +17,7 @@ def apiHomeView(request):
     }
   return Response(result, status.HTTP_200_OK)
 
+@swagger_auto_schema(method='post', auto_schema=None)
 @api_view(['POST'])
 def apiDataSubmissions(request):
   # Check for POST METHOD

@@ -144,7 +144,7 @@ function computeAnalysis(level) {
   if (level == 'region') {
     url = `compute-analysis?layer_name=galamsey:region&region=${region_val}&year=${year_val}`;
   } else if (level == 'district') {
-    url = `compute-analysis?layer_name=galamsey:area_of_interest&district=${district_val}&year=${year_val}`;
+    url = `compute-analysis?layer_name=galamsey:aoi_districts&district=${district_val}&year=${year_val}`;
   } else if (level == 'protected') {
     url = `compute-analysis?layer_name=galamsey:protected_area&protected_id=${protected_val}&year=${year_val}`;
   }
@@ -189,7 +189,7 @@ function computeCompareAnalysis(level) {
   if (level == 'region') {
     url = `compute-analysis?layer_name=galamsey:region&compare=compare&region=${region_val}&year1=${year1_val}&year2=${year2_val}`;
   } else if (level == 'district') {
-    url = `compute-analysis?layer_name=galamsey:area_of_interest&compare=compare&district=${district_val}&year1=${year1_val}&year2=${year2_val}`;
+    url = `compute-analysis?layer_name=galamsey:aoi_districts&compare=compare&district=${district_val}&year1=${year1_val}&year2=${year2_val}`;
   } else if (level == 'protected') {
     url = `compute-analysis?layer_name=galamsey:protected_area&compare=compare&protected_id=${protected_val}&year1=${year1_val}&year2=${year2_val}`;
   }

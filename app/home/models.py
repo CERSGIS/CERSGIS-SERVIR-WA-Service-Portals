@@ -12,3 +12,9 @@ class GlobalPartner(models.Model):
     logo = models.ImageField(upload_to='logo/', blank=True, null=True)
     url = models.URLField(unique=True)
 
+class RecipientEmail(models.Model):
+    first_name = models.CharField(max_length=250, unique=True)
+    last_name = models.CharField(max_length=250, unique=True)
+    email = models.EmailField(unique=True, blank=True)
+    receive_galamsey_email = models.BooleanField(default=False)
+    receive_charcoal_email = models.BooleanField(default=False)

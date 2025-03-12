@@ -161,6 +161,8 @@ h6 { font-size: 18px; line-height: 26px; font-weight: 600;}
 } */
 
 /* .detials, .query, .footprints-modal {width: 19%; display: none; max-height: 650px; overflow: auto;} */
+/* TODO: Uncomment to show dashboard */
+/* .dashboard-container{display: block; overflow: auto;} */
 .detials, .query, .report {width: 19%; display: none; max-height: 650px; overflow: auto;}
 .analytics {width: 15%; display: none; min-height: 200px; max-height: 650px; overflow: auto;}
 .footprints-modal {width: 10%; display: none; max-height: 650px; overflow: auto;}

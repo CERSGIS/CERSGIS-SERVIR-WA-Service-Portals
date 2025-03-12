@@ -2,6 +2,10 @@ path.leaflet-interactive:focus {
   outline: none;
 }
 
+.accordion-button:focus {
+  box-shadow: none;
+}
+
 a:focus,
 a:active,
 input,
@@ -94,6 +98,20 @@ h6 {
   font-weight: 600;
 }
 
+.modal-backdrop {
+  display: none!important;
+}
+
+
+
+#dashboard {
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+/* TODO: To show dashboard onload */
+/* .map-container {display: none;} */
+/* .map-items {display: none;} */
 #data-request .modal-content {
   background: rgba(255, 255, 255, 0.459);
   backdrop-filter: blur(3px);
@@ -146,7 +164,7 @@ h6 {
   top: 5px;
   height: auto;
   /* padding: 8px 15px 0px; */
-  z-index: 99999999;
+  z-index: 999;
   display: none;
   background: rgba(255, 255, 255, 0.5);
   border-radius: 15px;
@@ -171,7 +189,7 @@ h6 {
   bottom: 19px;
   background-color: #fff;
   height: auto;
-  z-index: 99999999;
+  z-index: 999;
   display: none;
   background: rgba(255, 255, 255, 0.5);
   border-radius: 15px;
@@ -507,7 +525,7 @@ body.modal-active {
   top: 0;
   left: 0;
   transform: scale(0);
-  z-index: 9999999999;
+  z-index: 99999999;
 }
 #modal-container.one {
   transform: scaleY(0.01) scaleX(0);
@@ -692,3 +710,132 @@ body.modal-active {
   border-radius: 5px;
   box-shadow: #373737 0px 0px 5px 1px;
 }
+
+
+/* HighCharts Data */
+.highcharts-data-table table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  background: white;
+  min-width: 100%;
+  margin-top: 10px;
+  font-family: sans-serif;
+  font-size: 0.9em;
+}
+
+.highcharts-data-table td,
+.highcharts-data-table th,
+.highcharts-data-table caption {
+  border: 1px solid silver;
+  padding: 0.5em;
+}
+
+.highcharts-data-table tr:nth-child(even),
+.highcharts-data-table thead tr {
+  background: #f8f8f8;
+}
+
+.highcharts-data-table tr {
+  cursor: pointer;
+}
+
+.highcharts-data-table tr:hover {
+  background: #eff;
+}
+
+.highcharts-data-table caption {
+  border-bottom: none;
+  font-size: 1.1em;
+  font-weight: bold;
+  display: none;
+}
+
+.highcharts-sort-ascending::after {
+  content: " ↓";
+}
+
+.highcharts-sort-descending::after {
+  content: " ↑";
+}
+
+.charcoaldata-container {
+  padding-top: 10px;
+  padding-bottom: 5px;
+  margin-bottom: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1.5px solid rgba(206, 205, 205, 0.452);
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px,
+    rgba(0, 0, 0, 0.04) 0px 10px 10px -5px; 
+}
+
+.cluster-container {
+  padding: 5px 25px 5px 10px;
+  margin-bottom: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1.5px solid rgba(206, 205, 205, 0.452);
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px,
+  rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;
+}
+
+.switch-input-cluster {
+  font-size: 20px;
+}
+
+.referencedata-container {
+  padding-top: 10px;
+  padding-bottom: 5px;
+  margin-bottom: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1.5px solid rgba(206, 205, 205, 0.452);
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px,
+  rgba(0, 0, 0, 0.04) 0px 10px 10px -5px; 
+}
+
+.reference-subitem-container {
+  padding: 5px 25px 5px 10px;
+  margin-bottom: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1.5px solid rgba(206, 205, 205, 0.452);
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px,
+  rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;
+}
+
+.deforest_legend, .watershed_legend {
+  bottom: 20px;
+  top: auto;
+  right: 10px;
+  left: auto;
+  min-height: 0px;
+  width: 16.5%;
+}
+
+.addition-layer {
+  padding-top: 4px;
+  padding-bottom: 2px;
+  margin-bottom: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1.5px solid rgba(206, 205, 205, 0.452);
+  box-shadow:rgba(0, 0, 0, 0.1) 8px 3px 25px -5px, 
+  rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;
+  cursor: pointer;
+}
+
+.addition-layer:hover {
+  background: rgba(221, 220, 220, 0.5);
+}
+

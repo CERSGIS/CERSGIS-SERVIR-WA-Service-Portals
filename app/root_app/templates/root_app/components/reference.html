@@ -1,13 +1,139 @@
+{% url 'galamseyPortal:galamsey_map_view' as galamsey_portal_url %}
+{% url 'charcoalPortal:charcoal_map_view' as charcoal_portal_url %}
 <div class="box reference">
   <div class="d-flex justify-content-between box-title">
-    <h4 class="title-text">Reference Data</h4>
+    <h4 class="title-text">Additional Layers</h4>
     <i class="close closebox fa-solid fa-circle-xmark my-auto"></i>
   </div>
-  <div class="box">
-    <div class="col-12">
-      <div class="form-check form-switch form-check-reverse custom-switch">
+  <div class="box-body">
+    <div class="row rows-cols-12 gap-2 justify-content-center">
+      {% if request.path == galamsey_portal_url %}
 
+      {% for additional_layer in additional_layers %}
+      <div class="addition-layer" onclick="window.open('{{additional_layer.url}}', '_blank');">
+          <p class="layer-name text-capitalize">{{additional_layer.name}}</p>
       </div>
+      {% endfor %}
+
+      <div class="row row-cols-12 gap-2 justify-content-center referencedata-container">
+        <div class="col-12" data-bs-toggle="collapse" data-bs-target="#referenceItem" aria-expanded="false" aria-controls="referenceItem">
+          <p class="layer-name text-capitalize">LU/LC</p>
+        </div>
+        <div id="referenceItem" class="reference-subitem-container border border-2 collapse col-11">
+          <div class="form-check form-check-reverse custom-switch">
+            <input type="checkbox" class="form-check-input switch-input-cluster" id="watershed_2019"
+            name="watershed_2019">
+            <label class="form-check-label" for="watershed_2019"></label>
+          </div>
+          <p class="layer-name">2019</p>
+        </div>
+        <div id="referenceItem" class="reference-subitem-container border border-2 collapse col-11">
+          <div class="form-check form-check-reverse custom-switch">
+            <input type="checkbox" class="form-check-input switch-input-cluster" id="watershed_2024"
+            name="watershed_2024">
+            <label class="form-check-label" for="watershed_2024"></label>
+          </div>
+          <p class="layer-name">2024</p>
+        </div>
+      </div>
+      <div class="addition-layer">
+        <!-- Water Shed Toggle -->
+        <div class="form-check form-check-reverse custom-switch">
+            <input 
+                type="checkbox" 
+                class="form-check-input switch-input-cluster" 
+                style="float: left;" 
+                id="watershed_layer" 
+                name="watershed_layer">
+            <label class="form-check-label" for="watershed_layer"></label>
+        </div>
+        <p class="layer-name text-capitalize">Watershed</p>
+    </div>
+    </div>
+
+<!-- 
+      {% if waford_years %}
+      <div class="row row-cols-12 gap-2 justify-content-center referencedata-container">
+        <div class="col-12" data-bs-toggle="collapse" data-bs-target="#referenceItem" aria-expanded="false" aria-controls="referenceItem">
+          <p class="layer-name text-capitalize">Forest Degradation</p>
+        </div>
+        {% for waford in waford_years %}
+        <div id="referenceItem" class="reference-subitem-container border border-2 collapse col-11">
+          <div class="form-check form-check-reverse custom-switch">
+            <input type="checkbox" class="form-check-input switch-input-cluster" id="waford_{{waford.year}}"
+            name="waford_{{waford.year}}">
+            <label class="form-check-label" for="waford_{{waford.year}}"></label>
+          </div>
+          <p class="layer-name">{{waford.year}}</p>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %} -->
+
+      <!-- {% if planet_years %}
+      <div class="row row-cols-12 gap-2 justify-content-center referencedata-container">
+        <div class="col-12" data-bs-toggle="collapse" data-bs-target="#planetItem" aria-expanded="false" aria-controls="planetItem">
+          <p class="layer-name text-capitalize">Planet Image</p>
+        </div>
+      {% for planet in planet_years %}
+      <div id="planetItem" class="reference-subitem-container border border-2 collapse col-11">
+        <div class="form-check form-check-reverse custom-switch">
+          <input type="checkbox" class="form-check-input switch-input-cluster" id="planet_{{planet.year}}"
+          name="planet_{{planet.year}}">
+          <label class="form-check-label" for="planet_{{planet.year}}"></label>
+        </div>
+        <p class="layer-name">{{planet.year}}</p>
+      </div>
+      {% endfor %}
+      </div>
+      {% endif %} -->
+      
+      {% else %}
+      <div class="row row-cols-12 gap-2 justify-content-center referencedata-container">
+        <div class="col-12" data-bs-toggle="collapse" data-bs-target="#referenceItem" aria-expanded="false" aria-controls="referenceItem">
+          <p class="layer-name text-uppercase">Fire Occurances</p>
+        </div>
+        <div id="referenceItem" class="reference-subitem-container border border-2 collapse col-11">
+          <div class="form-check form-check-reverse custom-switch">
+            <input type="checkbox" class="form-check-input switch-input-cluster" id="firehotspot_2020"
+            name="firehotspot_2020">
+            <label class="form-check-label" for="firehotspot_2020"></label>
+          </div>
+          <p class="layer-name">2020</p>
+        </div>
+      </div>
+      
+      <div class="addition-layer">
+        <!-- LU/LC Toggle -->
+        <div class="form-check form-check-reverse custom-switch">
+            <input 
+                type="checkbox" 
+                class="form-check-input switch-input-cluster" 
+                style="float: left;" 
+                id="lulc_savannah" 
+                name="lulc_savannah">
+            <label class="form-check-label" for="lulc_savannah"></label>
+        </div>
+        <p class="layer-name text-capitalize">LU/LC</p>
+    </div>
+    
+    <div class="addition-layer">
+        <!-- Water Shed Toggle -->
+        <div class="form-check form-check-reverse custom-switch">
+            <input 
+                type="checkbox" 
+                class="form-check-input switch-input-cluster" 
+                style="float: left;" 
+                id="watershed_layer" 
+                name="watershed_layer">
+            <label class="form-check-label" for="watershed_layer"></label>
+        </div>
+        <p class="layer-name text-capitalize">WaterShed</p>
+    </div>
+    
+
+      
+      {% endif %}
       
     </div>
   </div>

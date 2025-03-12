@@ -5,7 +5,7 @@ app_name = 'rootApp'
 
 urlpatterns = [
 
-    # path('region', RegionView.as_view(), name='region'),
+    path('region', RegionView.as_view(), name='region'),
     
     # path('get-districts', getDistricts, name='get_districts'),
 

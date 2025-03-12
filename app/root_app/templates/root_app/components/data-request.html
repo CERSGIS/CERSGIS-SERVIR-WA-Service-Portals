@@ -10,31 +10,42 @@
           </button>
         </div>
         <div class="modal-body">
-            <form id="data_request_form">
+          <div id="data-request-loading-spinner" class="spinner d-none">
+            <div class="spinner-icon"></div>
+          </div>
+            <form id="data_request_form" class="needs-validation" novalidate>
                 <div class="row mt-2">
                   {% csrf_token %}
                     <div class="mb-4 col-6">
                       <label for="name" class="form-label">Name / Organization </label>
-                        <input type="text" class="form-control" id="name" name="name" placeholder="name">
+                        <input type="text" class="form-control" id="name" name="name" placeholder="name" required>
+                        <div class="invalid-feedback">
+                          Please enter your name.
+                        </div>
                     </div>
                     <div class="mb-4 col-6">
                       <label for="email" class="form-label">Email</label>
-                      <input type="email" class="form-control" id="email" name="email" placeholder="servir@mail.com">
+                      <input type="email" class="form-control" id="email" name="email" placeholder="your.email@mail.com" required>
+                      <div class="invalid-feedback">
+                        Please enter your email.
+                      </div>
                     </div>
                     <div class="mb-4 col-12">
                       <label for="subject" class="form-label">Subject</label>
-                        <input type="text" class="form-control" id="subject" name="subject" placeholder="Data Request">
+                        <input type="text" class="form-control" id="subject" name="subject" placeholder="Data Request" required>
+                        <div class="invalid-feedback">
+                          Subject is required.
+                        </div>
                     </div>
                     <div class="col-12">
                       <label for="comments" class="form-label">Comments</label>
                       <textarea class="form-control" name="comments" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
                     </div>
                 </div>
+                <div class="justify-content-between  mt-4 mb-1">
+                  <button type="submit" id="data_request_submit" class="btn btn-lg w-100">Request</button>
+                </div>
             </form>
-        </div>
-        <div class="modal-footer justify-content-between">
-          <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
-          <button type="button" id="data_request_submit" class="btn btn-lg w-100">Request</button>
         </div>
       </div>
     </div>

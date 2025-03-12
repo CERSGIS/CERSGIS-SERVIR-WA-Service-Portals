@@ -1,0 +1,100 @@
+/* Skeleton loader container */
+.skeleton-loader {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: flex-end;
+  width: 100%;
+  height: 400px;
+}
+
+/* Individual skeleton bar placeholders (vertical bars) */
+.skeleton-chart-bar {
+  background-color: #e0e0e0;
+  width: 60px;
+  height: 0%;
+  animation: skeletonBarChartAnimation 1.5s infinite ease-in-out;
+}
+
+.skeleton-chart-bar:nth-child(1) {
+  animation-duration: 1.2s; /* Fast */
+}
+
+.skeleton-chart-bar:nth-child(2) {
+  animation-duration: 1.5s; /* Default */
+  animation-name: skeletonBarChartAnimation2;
+}
+
+.skeleton-chart-bar:nth-child(3) {
+  animation-duration: 1.8s; /* Slow */
+}
+
+/* Animation for the skeleton loader */
+@keyframes skeletonBarChartAnimation {
+  0% {
+    height: 30%;
+  }
+  50% {
+    height: 50%;
+  }
+  100% {
+    height: 30%;
+  }
+}
+
+/* Animation for the second bar (default max height) */
+@keyframes skeletonBarChartAnimation2 {
+  0% {
+    height: 30%;
+  }
+  50% {
+    height: 70%;
+  }
+  100% {
+    height: 30%;
+  }
+}
+
+
+
+/* Top cards Total numbers loader */
+.skeleton-loader-text {
+  display: inline-block;
+  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  color: transparent; /* Hide the text until replaced */
+  border-radius: 4px;
+  height: 35px;
+  width: 130px;
+  animation: skeletonBarAnimation 1.5s infinite linear;
+}
+
+
+/* Table Skeleton Loader */
+.skeleton-table-loader {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.skeleton-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.skeleton-table {
+  background: linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: skeletonBarAnimation 1.5s infinite;
+  border-radius: 4px;
+}
+
+@keyframes skeletonBarAnimation {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+/* End Table Skeleton Loader */

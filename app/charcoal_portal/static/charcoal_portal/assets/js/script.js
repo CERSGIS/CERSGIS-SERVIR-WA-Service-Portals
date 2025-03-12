@@ -43,7 +43,7 @@ function shutallboxes() {
     $(".query").css('display', 'none');
     $(".basemap").css('display', 'none');
     $(".charcoaldata-modal").css('display', 'none');
-    $(".analytics").css('display', 'none');
+    $(".query-container").css('display', 'none');
     $(".report").css('display', 'none');
     $(".manual").css('display', 'none');
     $('.reference').css('display', 'none');
@@ -58,6 +58,17 @@ function shutallboxes() {
     reportbox = 'off';
     manualbox = 'off';
     referencebox = 'off';
+
+    toggleDashboardOff()
+
+    if ($('body').hasClass('analysis-opened')){
+        $('body').toggleClass('analysis-opened')
+        $('#map').removeClass('d-none')
+        $('#analysis-map').addClass('d-none')
+    }
+
+    analysis_map.invalidateSize()
+    map.invalidateSize()
 }
 
 
@@ -67,7 +78,7 @@ function detials() {
     $(".query").css('display', 'none');
     $(".basemap").css('display', 'none');
     $(".charcoaldata-modal").css('display', 'none');
-    $(".analytics").css('display', 'none');
+    $(".query-container").css('display', 'none');
     $(".report").css('display', 'none');
     $('.reference').css('display', 'none');
     // $(".iconbox").removeClass("active");
@@ -88,7 +99,7 @@ function layer() {
     $(".query").css('display', 'none');
     $(".basemap").css('display', 'none');
     $(".charcoaldata-modal").css('display', 'none');
-    $(".analytics").css('display', 'none');
+    $(".query-container").css('display', 'none');
     $(".report").css('display', 'none');
     $('.reference').css('display', 'none');
 
@@ -122,7 +133,7 @@ function query() {
     $(".query").css('display', 'block');
     $(".basemap").css('display', 'none');
     $(".charcoaldata-modal").css('display', 'none');
-    $(".analytics").css('display', 'none');
+    $(".query-container").css('display', 'none');
     $(".report").css('display', 'none');
     $('.reference').css('display', 'none');
 
@@ -144,7 +155,7 @@ function basemap() {
     $(".query").css('display', 'none');
     $(".basemap").css('display', 'block');
     $(".charcoaldata-modal").css('display', 'none');
-    $(".analytics").css('display', 'none');
+    $(".query-container").css('display', 'none');
     $(".report").css('display', 'none');
     $('.reference').css('display', 'none');
 
@@ -166,7 +177,7 @@ function charcoaldata() {
     // $(".query").css('display', 'none');
     $(".charcoaldata-modal").css('display', 'block');
     $(".basemap").css('display', 'none');
-    $(".analytics").css('display', 'none');
+    $(".query-container").css('display', 'none');
     $(".report").css('display', 'none');
     $('.reference').css('display', 'none');
 
@@ -187,7 +198,7 @@ function analytics() {
     $(".layer").css('display', 'none');
     $(".charcoaldata-modal").css('display', 'none');
     $(".basemap").css('display', 'none');
-    $(".analytics").css('display', 'block');
+    $(".query-container").css('display', 'block');
     $(".report").css('display', 'none');
     $('.reference').css('display', 'none');
 
@@ -199,6 +210,12 @@ function analytics() {
     analyticsbox = 'on';
     reportbox = 'off';
     referencebox = 'off';
+
+    if (!$('body').hasClass('analysis-opened')){
+        $('body').toggleClass('analysis-opened')
+        $('#map').addClass('d-none')
+        $('#analysis-map').removeClass('d-none')
+    }
 }
 
 function report() {
@@ -206,7 +223,7 @@ function report() {
     $(".layer").css('display', 'none');
     $(".charcoaldata-modal").css('display', 'none');
     $(".basemap").css('display', 'none');
-    $(".analytics").css('display', 'none');
+    $(".query-container").css('display', 'none');
     $(".report").css('display', 'block');
     $('.reference').css('display', 'none');
 
@@ -225,7 +242,7 @@ function manual() {
     $(".layer").css('display', 'none');
     $(".footprints-modal").css('display', 'none');
     $(".basemap").css('display', 'none');
-    $(".analytics").css('display', 'none');
+    $(".query-container").css('display', 'none');
     $(".report").css('display', 'none');
     $(".manual").css('display', 'block');
     $('.reference').css('display', 'none');
@@ -246,7 +263,7 @@ function reference() {
     $(".layer").css('display', 'none');
     $(".footprints-modal").css('display', 'none');
     $(".basemap").css('display', 'none');
-    $(".analytics").css('display', 'none');
+    $(".query-container").css('display', 'none');
     $(".report").css('display', 'none');
     $(".manual").css('display', 'none');
     $('.reference').css('display', 'block');
@@ -270,7 +287,7 @@ function togglebox() {
 
 
 
-$('#details').click(function() {
+$('#details.details_div').click(function() {
     if (detialsbox == 'off') {
         shutallboxes()
         detials();
@@ -282,7 +299,7 @@ $('#details').click(function() {
 });
 
 
-$('#layer').click(function() {
+$('#layer.layer_div').click(function() {
     if (layerbox == 'off') {
         shutallboxes()
         layer();
@@ -293,7 +310,7 @@ $('#layer').click(function() {
     }
 });
 
-$('#legend').click(function () {
+$('#legend.legend_div').click(function () {
     if (legendbox == 'off') {
         showlegend()
     } else if (legendbox == 'on') {
@@ -301,7 +318,7 @@ $('#legend').click(function () {
     }
 });
 
-$('#query').click(function() {
+$('#query.query_div').click(function() {
     if (querybox == 'off') {
         shutallboxes()
         query();
@@ -312,7 +329,7 @@ $('#query').click(function() {
     }
 });
 
-$('#basemap').click(function() {
+$('#basemap.basemap_div').click(function() {
     if (basemapbox == 'off') {
         shutallboxes()
         basemap();
@@ -337,9 +354,11 @@ $('#charcoaldata.charcoaldata_div').click(function() {
 $('#analytics.analytics_div').click(function() {
     if (analyticsbox == 'off') {
         shutallboxes()
+        toggleDashboardOff()
         analytics();
     } else if (analyticsbox == 'on') {
         shutallboxes()
+        toggleDashboardOff()
     }
 });
 
@@ -423,3 +442,34 @@ function districtselect() {
     $('.region').css('display','block');
     $('.district').css('display','block');
 }
+
+// document.addEventListener('DOMContentLoaded', function () {
+//     const dashboardButton = document.getElementById('dashboard_btn');
+//     const dashboardContent = document.getElementById('dashboard');
+
+//     if (dashboardButton && dashboardContent) {
+//         dashboardContent.style.display = 'none';
+
+//         dashboardButton.addEventListener('click', function () {
+//             dashboardContent.style.display = dashboardContent.style.display === 'none' ? 'block' : 'none';
+//         });
+//     } else {
+//         console.error('Dashboard button or content is missing!');
+//     }
+// });
+
+
+function toggleDashboardOff() {
+    $(".map-items").css('display', 'block'); 
+    $(".statistics").css('display', 'block');
+    $(".dashboard-container").css('display', 'none'); 
+}
+
+ // Toggle Dashboard On/Off
+ $('#dashboard_btn.dashboard_div').click(function() {
+     shutallboxes()
+     $(".map-items").css('display', 'none');
+     $(".statistics").css('display', 'none');
+     $(".dashboard-container").css('display', 'block');    
+});
+

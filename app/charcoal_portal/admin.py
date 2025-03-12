@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import AppDetails, Partner, CharcoalPointYear, Report
+from .models import AppDetails, Partner, CharcoalPointYear, CharcoalRegion, DataRequest
 # Register your models here.
 
 @admin.register(AppDetails)
@@ -23,10 +23,10 @@ class AppDetailsAdmin(admin.ModelAdmin):
 class PartnersAdmin(admin.ModelAdmin):
     pass   
 
-@admin.register(Report)
+# @admin.register(Report)
 
-class ReportsAdmin(admin.ModelAdmin):
-    pass
+# class ReportsAdmin(admin.ModelAdmin):
+#     pass
 
 
 @admin.register(CharcoalPointYear)
@@ -38,3 +38,14 @@ class CharcoalPointYearAdmin(admin.ModelAdmin):
         (None, {"fields": ['year']}),
         ("Styling", {"fields": ['fill_color', 'border_color']})
     ]
+
+@admin.register(CharcoalRegion)
+
+class CharcoalRegionAdmin(admin.ModelAdmin):
+    list_display = ['reg_code', 'region']
+
+
+@admin.register(DataRequest)
+
+class DataRequestAdmin(admin.ModelAdmin):
+    pass

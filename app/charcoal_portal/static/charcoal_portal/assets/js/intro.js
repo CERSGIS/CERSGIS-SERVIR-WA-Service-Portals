@@ -55,7 +55,7 @@ function startIntro() {
         {
             element: document.querySelector('[data-step="9"]'),
             title: "Report",
-            intro: "Access reports on issues related to galamsey, including socio-economic and gender reports.",
+            intro: "Access reports on issues related to charcoal, including socio-economic and gender reports.",
             position: 'right'
         },
         // {
@@ -67,6 +67,12 @@ function startIntro() {
             element: document.querySelector('[data-step="10"]'),            
             title: "Data Request",
             intro: "Submit a request for specific data needed by completing the pop-up form. Available for organizations, companies, or individual users.",
+            position: 'right'
+        },
+        {
+            element: document.querySelector('[data-step="11"]'),            
+            title: "Reference Data",
+            intro: "This link would take you through a remotely sensed reference data base on which the charcoal points were collected. These would help you create a link between the image data and the ground reality.",
             position: 'right'
         },
         {

@@ -23,18 +23,68 @@ function loadFootprint(url, year, target_layer) {
   }
 }
 
-function loadGeneralStats(url) {
+// Loading Wafford Reference Data
+function loadDeforestation(url, year, target_layer) {
+
+  return $.get(url,
+    data={ 
+      year: year,
+    },
+    success = handleresponse
+  );
+  
+  function handleresponse(data) {
+    deforestation_group[target_layer] = L.tileLayer(data['mapid'], {});
+  }
+}
+
+// Load LULC WaterShed
+function loadwaterShed(url, year, target_layer) {
+
+  return $.get(url,
+    data={ 
+      year: year,
+    },
+    success = handleresponse
+  );
+  
+  function handleresponse(data) {
+    watershed_group[target_layer] = L.tileLayer(data['mapid'], {});
+  }
+}
+
+
+// Loading Planet Reference Data
+function loadPlanetImage(url, year, target_layer) {
+
+  return $.get(url,
+    data={ 
+      year: year,
+    },
+    success = handleresponse
+  );
+  
+  function handleresponse(data) {
+    planet_group[target_layer] = L.tileLayer(data['mapid'], {attribution: 'planet_layer'});
+  }
+}
+
+function loadGeneralStats(stats_data) {
   $('#loader-stats-container').addClass('d-flex');
 
   let options = {
     chart: {
+      height: 100 + '%',
       renderTo: 'stat-bar-chart',
       type: 'column',
       backgroundColor: '#ffffff59' // Transparent background
       // backgroundColor: 'rgba(0, 0, 0, 0)' // Transparent background
     },
     title: {
-      text: 'Area per Year',
+      useHTML: true,
+      // text: 'Area per Year',
+      text: '<span class="item-title" style="display: flex;align-items: center; gap: 7px;"><i class="emojione-monotone--footprints"></i> Annual Footprint Area Cover</span>',
+      align: 'left',
     },
     xAxis: {
       type: 'category',
@@ -67,15 +117,14 @@ function loadGeneralStats(url) {
         name: 'Population',
         colors: [
           '#ae8157',
-          '#9c744e',
-          '#8b6745',
-          '#795a3c',
-          '#684d34',
-          '#57402b',
-          '#453322',
-          '#34261a',
-          '#221911',
-          // '#bf6f36', '#d07b32', '#e0882c',
+          // '#9c744e',
+          // '#8b6745',
+          // '#795a3c',
+          // '#684d34',
+          // '#57402b',
+          // '#453322',
+          // '#34261a',
+          // '#221911',
         ],
         colorByPoint: true,
         groupPadding: 0,
@@ -119,14 +168,45 @@ function loadGeneralStats(url) {
     }
   };
 
-  $.get(url, function (data) {
-    options.series[0].data = data['computed_stats'];
-    
 
-    $('#loader-stats-container').removeClass('d-flex');
-    $('#loader-stats-container').addClass('d-none');
+  options.series[0].data = stats_data['computed_stats'];
+  
 
-    return new Highcharts.Chart(options);
-  });
+  $('#loader-stats-container').removeClass('d-flex');
+  $('#loader-stats-container').addClass('d-none');
+
+  return new Highcharts.Chart(options);
+  
 
 }
+
+function toggleLegend(legend_name, checkboxes_array) {
+  temp = 0
+  for (i=0; i < checkboxes_array.length; i++) {  
+    for (index in checkboxes_array[i]) {
+      if ($(`#${index}`).prop('checked')) {
+        temp++
+      }
+    }
+  }
+
+  if (temp > 0) {
+    $(legend_name).addClass('d-block')
+  } else {
+    $(legend_name).removeClass('d-block')
+  }
+}
+
+
+// Create a hidden checkbox for the water shed boundary layer
+const $boundaryCheckbox = $('<input type="checkbox" id="watershed_boundary_layer_checkbox" hidden>').appendTo('body');
+
+function checkWatershedLayers() {
+  const isWatershedActive = $('#watershed_2019').prop('checked') || $('#watershed_2024').prop('checked');
+
+  // Set the hidden checkbox state
+  $boundaryCheckbox.prop('checked', isWatershedActive);
+
+  // Toggle on/off
+  toggleLayer(map, layers_group['watershed_boundary_layer'], $boundaryCheckbox);
+ }

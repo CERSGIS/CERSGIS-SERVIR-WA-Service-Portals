@@ -1,0 +1,215 @@
+{% load static %}
+{% url "galamseyPortal:galamsey_map_view" as galamsey_data_request_url %}
+
+
+<!-- Dashboard start -->
+
+<div id="dashboard" class="p-5 dashboard-container">
+    <div class="row justify-content-center">
+        <!-- Mineral Concessions card -->
+        <div class="col-md-5">
+          <div class="dashboard-card">
+            <h5 class="card-title">Yearly Change in Protected Area (Sqkm)</h5>
+            <div class="row w-100" >
+                <div class="total-active-license-div col-md-4 d-flex flex-column justify-content-center align-items-center border-end border-dark-subtle border-2">
+                    <h4 class="license-text">2015</h4>
+                    <h5 id='total_active_license_value' class="concessions-card-total skeleton-loader-text"></h5>
+                </div>
+
+                <div class="total-under-review-license-div col-md-4 d-flex flex-column justify-content-center align-items-center border-end border-dark-subtle border-2">
+                    <h4 class="license-text">2020</h4>
+                    <h5 id="total_under_review_license_value" class="concessions-card-total skeleton-loader-text"></h5>
+                </div>
+                
+                <div class="total-suspended-license-div col-md-4 d-flex flex-column justify-content-center align-items-center">
+                    <h4 class="license-text">2024</h4>
+                    <h5 id="total_suspended_license_value" class="concessions-card-total skeleton-loader-text"></h5>
+                </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- District of Interest card -->
+        <div class="col-md-3">
+          <div class="dashboard-card d-flex flex-column gap-4">
+            <h5 class="card-title">Total Area in Sqkm for <span id="total_area_inital_year"></span></h5>
+            <h5 id='total_area_inital_value' class="card-total skeleton-loader-text"></h5>
+          </div>
+        </div>
+
+        <!-- Protected Areas card -->
+        <div class="col-md-3">
+          <div class="dashboard-card d-flex flex-column gap-4">
+            <h5 class="card-title">Total Area in Sqkm for <span id="total_area_latest_year"></span></h5>
+            <h5 id='total_area_latest_value' class="card-total skeleton-loader-text"></h5>
+          </div>
+        </div> 
+    </div>
+
+
+
+    <div class="row g-5 mt-5">
+    <!-- <div class="dashboard-row"> -->
+
+      <!----- Mining Status Chart ---- Mining Status Chart ---->
+        <!-- <div class="dashboard-cols">
+            <div class="chart-card">
+                Loading Stats container
+                <div id="loader-mining-status-container" class="d-flex">
+                    {% include 'root_app/components/skeleton_loaders/bar-chart-loader.html' %}
+                </div>
+                Loading Stats container
+                <div id="mining-status-bar-chart"></div>
+            </div>
+        </div> -->
+
+
+        <div class="dashboard-cols col-6">                     
+            <div class="accordion-body">
+                    <div class="tab-pane fade show active" id="bar-chart-home" role="tabpanel" aria-labelledby="bar-chart-tab">          
+                        <div class="chart-card">
+                            <!-- Loading Stats container -->
+                            <div id="loader-stats-container" class="d-flex">
+                                {% include 'root_app/components/skeleton_loaders/bar-chart-loader.html' %}
+                            </div>
+                            <!-- Loading Stats container -->
+                            <div id="stat-bar-chart"></div>
+                        </div>
+                    </div>                        
+                </div>
+    
+                <!-- <div id="loader-stats-container" class="d-flex justify-content-center align-items-center">
+                <div class="loader-stats"></div>
+                </div> -->
+        </div>
+        
+        <!-- Protected Area Summary Table -->
+        <div class="dashboard-cols col-6">
+            <div class="table chart-card">
+                <h5 class="card-title pb-2"><span class="iconify me-2" data-icon="carbon:protected-area" data-width="22" data-height="20"></span>Summary of Protected Area Encroachment </h5>
+                <div id="tblborder" class="tblborder">                         
+                    <table id="protected_area_summary_table" class="display">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Total Area (Sqkm)</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                    </table> 
+                </div>  
+
+                <!-- Loading container -->
+                <div id="protected-area-summary-table-loader" class="d-flex">
+                    {% include 'root_app/components/skeleton_loaders/table-loader.html' %}
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Distrists Summary Table -->
+        <div class="dashboard-cols col-12">
+            <div class="table chart-card">
+                <h5 class="card-title pb-2"><span class="iconify me-2" data-icon="game-icons:mining" data-width="22" data-height="22"></span>Districts Summary</h5>
+                <div id="tblborder" class="tblborder">                         
+                    <table id="district_summary_table" class="display">
+                        <thead>
+                            <tr>
+                                <th>Region</th>
+                                <th>District</th>
+                                <th>Total District Area (Sqkm)</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                    </table> 
+                </div>  
+
+                <!-- Loading container -->
+                <div id="district-summary-table-loader" class="d-flex">
+                    {% include 'root_app/components/skeleton_loaders/table-loader.html' %}
+                </div>
+
+            </div>
+        </div>
+
+        <!----- Mineral Concession Table ---- Mineral Concession Table ---->
+        <div class="dashboard-cols col-12">
+            <div class="table chart-card">
+                <h5 class="card-title pb-2"><span class="iconify me-2" data-icon="game-icons:mining" data-width="22" data-height="22"></span>Mineral Concessions</h5>
+                <div id="tblborder" class="tblborder">                         
+                    <table id="mineral_concession_table" class="display">
+                        <thead>
+                            <tr>
+                                <!-- <th>Code</th> -->
+                                <!-- <th>Name</th> -->
+                                <th>Owner</th>
+                                <th>Status</th>
+                                <th>Assets</th>
+                                <th>Type</th>
+                            </tr>
+                        </thead>
+                    </table> 
+                </div>  
+
+                <!-- Loading container -->
+                <div id="mineral-concession-table-loader" class="d-flex">
+                    {% include 'root_app/components/skeleton_loaders/table-loader.html' %}
+                </div>
+
+            </div>
+        </div>
+
+
+
+        <!-- Annual Forest Degradation Area Cover -->
+        <!-- <div class="dashboard-cols">
+            <div class="chart-card">
+                <div id="forest-degradation-pie-chart"></div>
+            </div>
+        </div> -->
+
+        <!-- <div class="dashboard-cols">
+            <div class="dashboard-report">
+                <div class="d-flex flex-row justify-content-between align-items-center" style="width: 85%;">
+                    <div class="">
+                        <h2 class="pb-2">Annual Reports on Activities</h2>
+                        {% for report in reports %}
+                        <div class="row ms-3 pb-2">
+                            <div class="col-8">{{report.name}}</div>
+                            <div class="col-4 text-primary">Download</div>
+                        </div>
+                        {%endfor%}
+                        <div class="row ms-3 pb-2">
+                            <div class="col-8">March Report</div>
+                            <div class="col-4 text-primary">Download</div>
+                        </div>
+                        <div class="row ms-3 pb-2">
+                            <div class="col-8">May Report</div>
+                            <div class="col-4 text-primary">Download</div>
+                        </div>
+                        <div class="row ms-3 pb-2">
+                            <div class="col-8">July Report</div>
+                            <div class="col-4 text-primary">Download</div>
+                        </div>
+                        <div class="row ms-3 pb-2">
+                            <div class="col-8">September Report</div>
+                            <div class="col-4 text-primary">Download</div>
+                        </div>
+                    </div>
+                    <div class="mt-">
+                        <span class="iconify" data-icon="lsicon:report-filled" data-width="130" data-height="130"></span>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+      
+    </div>
+
+</div>
+<!-- Dashboard End -->
+    

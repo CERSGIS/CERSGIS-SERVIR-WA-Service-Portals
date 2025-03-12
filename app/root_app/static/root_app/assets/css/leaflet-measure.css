@@ -70,7 +70,7 @@
     /* background-position: 50% 50%; */
     padding: 5px;
     background-repeat: no-repeat;
-    background-image: url(/static/root_app/assets/icons/measure.png);
+    background-image: url(/static/root_app/assets/icons/measure-tool.png);
     border-radius: 5px;
     text-indent: 150%;
     background-origin: content-box;
@@ -81,7 +81,7 @@
 
 .leaflet-retina .leaflet-control-measure .leaflet-control-measure-toggle,
 .leaflet-retina .leaflet-control-measure .leaflet-control-measure-toggle:hover {
-    background-image: url(/static/root_app/assets/icons/measure.png);
+    background-image: url(/static/root_app/assets/icons/measure-tool.png);
     background-size: 16px 16px
 }
 
@@ -126,11 +126,11 @@
     padding-left: 18px;
     background-repeat: no-repeat;
     background-position: 0% 50%;
-    background-image: url(/static/portal/assets/images/print/start.png)
+    background-image: url(/static/root_app/assets/print/start.png)
 }
 
 .leaflet-retina .leaflet-control-measure a.start {
-    background-image: url(/static/portal/assets/images/print/start_@2X.png);
+    background-image: url(/static/root_app/assets/print/start_@2X.png);
     background-size: 12px 12px
 }
 
@@ -138,11 +138,11 @@
     padding-left: 18px;
     background-repeat: no-repeat;
     background-position: 0% 50%;
-    background-image: url(/static/portal/assets/images/print/cancel.png)
+    background-image: url(/static/root_app/assets/print/cancel.png)
 }
 
 .leaflet-retina .leaflet-control-measure a.cancel {
-    background-image: url(/static/portal/assets/images/print/cancel_@2X.png);
+    background-image: url(/static/root_app/assets/print/cancel_@2X.png);
     background-size: 12px 12px
 }
 
@@ -150,11 +150,11 @@
     padding-left: 18px;
     background-repeat: no-repeat;
     background-position: 0% 50%;
-    background-image: url(/static/portal/assets/images/print/check.png)
+    background-image: url(/static/root_app/assets/print/check.png)
 }
 
 .leaflet-retina .leaflet-control-measure a.finish {
-    background-image: url(/static/portal/assets/images/print/check_@2X.png);
+    background-image: url(/static/root_app/assets/print/check_@2X.png);
     background-size: 12px 12px
 }
 
@@ -162,11 +162,11 @@
     padding-left: 18px;
     background-repeat: no-repeat;
     background-position: 0% 50%;
-    background-image: url(/static/portal/assets/images/print/focus.png)
+    background-image: url(/static/root_app/assets/print/focus.png)
 }
 
 .leaflet-retina .leaflet-measure-resultpopup a.zoomto {
-    background-image: url(/static/portal/assets/images/print/focus_@2X.png);
+    background-image: url(/static/root_app/assets/print/focus_@2X.png);
     background-size: 12px 12px
 }
 
@@ -174,10 +174,10 @@
     padding-left: 18px;
     background-repeat: no-repeat;
     background-position: 0% 50%;
-    background-image: url(/static/portal/assets/images/print/trash.png)
+    background-image: url(/static/root_app/assets/print/trash.png)
 }
 
 .leaflet-retina .leaflet-measure-resultpopup a.deletemarkup {
-    background-image: url(/static/portal/assets/images/print/trash_@2X.png);
+    background-image: url(/static/root_app/assets/print/trash_@2X.png);
     background-size: 11px 12px
 }

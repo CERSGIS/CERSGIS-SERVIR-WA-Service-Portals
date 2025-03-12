@@ -46,3 +46,11 @@ class DataRequest(models.Model):
     email = models.CharField(max_length=250)
     subject = models.CharField(max_length=250, null=True, blank=True)
     comments = models.TextField(null=True, blank=True)
+
+class CharcoalRegion(models.Model):
+    reg_code = models.CharField(max_length=50, unique=True)
+    region = models.CharField(max_length=255)
+
+    class Meta:
+        verbose_name = 'Charcoal Region'
+        verbose_name_plural = 'Charcoal Regions'

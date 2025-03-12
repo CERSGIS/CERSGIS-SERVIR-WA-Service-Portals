@@ -1,0 +1,71 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'root_app/assets/styles/custom-map.css' %}">
+</head>
+<body>
+    <div id="print-map-container" class="print-map-container">
+        <div class="map-header">
+            <input id="map_title" class="title" for="title" placeholder="Map title here" />
+            <!-- <h1 class="title">COCOA COMMUNITIES OF SEFWI WIAWSO DISTRICT</h1> -->
+        </div>
+
+        <div class="map-content">
+            <div class="right-side">
+                <div class="map-img-container">
+                    <!-- Replace this with your map image or an embedded map -->
+                    <img class="map-image" src="{% static 'root_app/assets/images/map.jpg' %}" alt="map">
+                </div>
+            </div>
+
+            <div class="side-content">
+                <div class="north-arrow">
+                     <!-- North arrow representation -->
+                     <img class="north-arrow-img" src="{% static 'root_app/assets/images/arrow.jpg' %}" alt="north-arrow">
+                </div>
+
+                <div class="scale">
+                    <!-- Scale representation -->
+                    <div class="scale-bar"></div>
+                    <span class="scale-text">1 km</span>
+                </div>
+
+                <div class="legend">
+                     <!-- Legend representation -->
+                     <img class="legend-img" src="{% static 'root_app/assets/images/legend.png' %}" alt="legend">
+                </div>
+
+                <div class="logo">
+                     <!-- Logo representation -->
+                     <img class="logo-img" src="{% static 'root_app/assets/images/logo.jpg' %}" alt="logo">
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>
+
+
+    <!-- To allow download entire webpage  -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+<script>
+  // JavaScript function to download the webpage layout as an image
+  function downloadLayoutAsImage() {
+      const element = document.getElementById('map-container'); // The area you want to capture
+
+      html2canvas(element, {
+          useCORS: true,
+          backgroundColor: '#ffffff' // Set a background color
+      }).then(canvas => {
+          const link = document.createElement('a');
+          link.href = canvas.toDataURL('image/png');
+          link.download = 'web-layout.png';
+          link.click();
+      });
+  }
+</script>
+</html>

@@ -1,0 +1,156 @@
+{% extends 'root_app/base-1.html' %}
+{% load static %}
+
+
+{% block title %}SSM Portal- Reports{% endblock %}
+{% block css %}
+
+{% endblock %}
+
+{% block body %}
+
+
+        <!-- Spinner Start -->
+        <!-- <div id="spinner" class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50  d-flex align-items-center justify-content-center">
+            <div class="spinner-grow text-primary" role="status"></div>
+        </div> -->
+        <!-- Spinner End -->
+
+
+        <!-- Contact Start -->
+        <div class="container-fluid contact py-5">
+            <div class="container py-5">
+                <div class="p-5 bg-light rounded">
+                    <div class="row g-4">
+               
+                        <div class="col-lg-5 bg-info rounded">
+                            <div class="">
+                                <div class="mx-auto" style="max-width: 700px;">
+                                    <h2 class="text-primary">Get in touch</h2>
+                                    <p class="mb-4">The contact form is currently inactive.</p>
+                                </div>
+                            </div>
+                            <div class="d-flex px-4 py-2 rounded mb-4 bg-white">
+                                <i class="fas fa-map-marker-alt fa-2x text-primary me-4"></i>
+                                <div>
+                                    <h4>Address</h4>
+                                    <p class="mb-2">PMB L17, Annie Jiagge St, University of Ghana - Legon -Accra.</p>
+                                </div>
+                            </div>
+                            <div class="d-flex px-4 py-2 rounded mb-4 bg-white">
+                                <i class="fas fa-envelope fa-2x text-primary me-4"></i>
+                                <div>
+                                    <h4>Mail Us</h4>
+                                    <a href="mailto:cersgis@ug.edu.gh" class="mb-2">cersgis@ug.edu.gh</a>
+                                </div>
+                            </div>
+                            <div class="d-flex px-4 py-2 rounded bg-white">
+                                <i class="fa fa-phone-alt fa-2x text-primary me-4"></i>
+                                <div>
+                                    <h4>Telephone</h4>
+                                    <p class="mb-2">(+233) 0303974211</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-7">
+                            <form action="" class="">
+                                <input type="text" class="w-100 form-control border-0 py-3 mb-4" placeholder="Your Name">
+                                <input type="email" class="w-100 form-control border-0 py-3 mb-4" placeholder="Enter Your Email">
+                                <textarea class="w-100 form-control border-0 mb-4" rows="7" cols="10" placeholder="Your Message"></textarea>
+                                <button class="w-100 btn form-control border-secondary py-3 bg-white text-primary " type="submit">Submit</button>
+                            </form>
+                        </div>
+
+                         <div class="col-lg-12">
+                            <div class="h-100 rounded">
+                                <iframe class="rounded w-100"  
+                                style="height: 400px;" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5588.581083740963!2d-0.18549462372728925!3d5.651379132680553!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xfdf9c86ae080cc1%3A0x60d7aa1d9e994be7!2sCentre%20for%20Remote%20Sensing%20and%20Geographic%20Information%20Services!5e1!3m2!1sen!2sgh!4v1739192111247!5m2!1sen!2sgh" 
+                                allowfullscreen=""  loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Contact End -->
+        
+        
+        
+        
+        
+        
+        <!-- Contact -->
+        <!-- <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+            <div class="row gy-4">
+              <div class="col-lg-6 ">
+                <div class="row gy-4">
+    
+                  <div class="col-lg-12">
+                    <div class="info-item d-flex flex-column justify-content-center align-items-center" data-aos="fade-up" data-aos-delay="200">
+                      <i class="bi bi-geo-alt"></i>
+                      <h3>Address</h3>
+                      <p>A108 Adam Street, New York, NY 535022</p>
+                    </div>
+                  </div>
+    
+                  <div class="col-md-6">
+                    <div class="info-item d-flex flex-column justify-content-center align-items-center" data-aos="fade-up" data-aos-delay="300">
+                      <i class="bi bi-telephone"></i>
+                      <h3>Call Us</h3>
+                      <p>+1 5589 55488 55</p>
+                    </div>
+                  </div>
+    
+                  <div class="col-md-6">
+                    <div class="info-item d-flex flex-column justify-content-center align-items-center" data-aos="fade-up" data-aos-delay="400">
+                      <i class="bi bi-envelope"></i>
+                      <h3>Email Us</h3>
+                      <p>info@example.com</p>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+    
+              <div class="col-lg-6">
+                <form action="forms/contact.php" method="post" class="php-email-form" data-aos="fade-up" data-aos-delay="500">
+                  <div class="row gy-4">
+    
+                    <div class="col-md-6">
+                      <input type="text" name="name" class="form-control" placeholder="Your Name" required="">
+                    </div>
+    
+                    <div class="col-md-6 ">
+                      <input type="email" class="form-control" name="email" placeholder="Your Email" required="">
+                    </div>
+    
+                    <div class="col-md-12">
+                      <input type="text" class="form-control" name="subject" placeholder="Subject" required="">
+                    </div>
+    
+                    <div class="col-md-12">
+                      <textarea class="form-control" name="message" rows="4" placeholder="Message" required=""></textarea>
+                    </div>
+    
+                    <div class="col-md-12 text-center">
+                      <div class="loading">Loading</div>
+                      <div class="error-message"></div>
+                      <div class="sent-message">Your message has been sent. Thank you!</div>
+    
+                      <button type="submit">Send Message</button>
+                    </div>
+    
+                  </div>
+                </form>
+              </div> -->
+              <!-- End Contact Form -->
+    
+
+
+
+{% endblock %}
+
+
+{% block js %}
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends 'root_app/base-1.html' %}
+{% load static %}
+
+{% block title %}SSM Portal- Reports{% endblock %}
+
+{% block css %}
+  <!-- Main CSS File -->
+  <link href="{% static 'root_app/assets/styles/article.css' %}" rel="stylesheet">
+{% endblock %}
+  
+{% block body %}
+
+    <!-- Page Title -->
+    <div class="page-title dark-background" data-aos="fade" style="background-image: url({% static 'assets/landing/images/slider-bg.jpg' %});">
+      <div class="container position-relative">
+        <h1>Reports</h1>
+        <p>Get detailed reports on mining activities. Track trends, analyze data, and stay informed to help protect our environment.</p>
+        <nav class="breadcrumbs">
+          <ol>
+            <li><a href="index.html">Home</a></li>
+            <li class="current">Reports</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+    <!-- End Page Title -->
+
+
+ <!-- Blog Posts Section -->
+ <section id="report-posts" class="report-posts section">
+
+    <div class="container">
+      <div class="row gy-4">
+
+        {% for report in reports %}
+        <div class="col-lg-4">
+          <article class="position-relative report-item h-100">
+
+            <div class="post-img position-relative overflow-hidden">
+
+              {% if report.image %}
+                <img class="" src="{{report.image.url}}">
+              {% else %}
+                <img class="" src="/static/assets/landing/images/thumbnail.jpg" alt="{{ report.title}}"/>
+              {% endif %}
+              <span class="post-date">{{report.created_at | date:"F j"}}</span>
+            </div>
+
+            <div class="post-content d-flex flex-column">
+
+              <h3 class="post-title">{{report.title |title}}</h3>
+
+              <p>
+                {{report.description |truncatechars:135}}
+              </p>
+
+              <hr>
+
+              <a href="{% url 'galamseyPortal:galamsey_reports' %}?id={{report.id}}" class="readmore stretched-link"><span>Read More</span><i class="bi bi-arrow-right"></i></a>
+
+            </div>
+
+          </article>
+        </div>
+        {% endfor %}
+        <!-- End post list item -->
+
+      </div>
+    </div>
+
+  </section>
+  <!-- /Blog Posts Section -->
+
+
+    <!-- Blog Pagination Section -->
+    <section id="blog-pagination" class="blog-pagination section">
+
+      <div class="container">
+        <div class="d-flex justify-content-center">
+          <ul>
+            <li><a href="#"><i class="bi bi-chevron-left"></i></a></li>
+            <li><a href="#">1</a></li>
+            <li><a href="#" class="active">2</a></li>
+            <li><a href="#">3</a></li>
+            <li><a href="#">4</a></li>
+            <li>...</li>
+            <li><a href="#">10</a></li>
+            <li><a href="#"><i class="bi bi-chevron-right"></i></a></li>
+          </ul>
+        </div>
+      </div>
+
+    </section>
+    <!-- /Blog Pagination Section -->
+
+
+  <!-- Preloader -->
+  <div id="preloader"></div>
+
+
+  {% endblock %}
+
+
+{% block js %}
+  <!-- Main JS File -->
+  <script src="{% static 'root_app/assets/js/article.js' %}"></script>
+
+
+{% endblock %}

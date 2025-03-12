@@ -1,0 +1,155 @@
+{% extends "portal/base.html" %}
+{% block home %} active {% endblock %}
+{% load static %}{% load humanize %}
+{% block css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin="" />
+
+<style type="text/css">
+    .form-control-borderless {
+    border: none;
+}
+
+.form-control-borderless:hover, .form-control-borderless:active, .form-control-borderless:focus {
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+</style>
+
+
+{% endblock %}
+{% block body %}
+<div id="" class="row" style=" padding-top: 20px;">
+	<div class="col-md-2" >
+		
+	</div>
+    <div class="col-md-8 ">
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="section-block" id="image-card" style="text-align: center;">
+                    <h3 class="section-title">Datasets</h3>
+                    <p>These contains all UNECA dataset for the Congo Basin  </p>
+                </div>
+
+                 <div class="card-body row no-gutters align-items-center">
+                    <!--end of col-->
+                    <div class="col">
+                        <input class="form-control form-control-lg form-control-borderless" type="search" placeholder="Search topics or keywords">
+                    </div>
+                    <!--end of col-->
+                    <div class="col-auto">
+                        <button class="btn btn-lg btn-success" type="submit">Search</button>
+                    </div>
+                    <!--end of col-->
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-12">
+                <div class="card">
+                    <img class="card-img-top img-fluid" src="/static/portal/assets/images/owabi_Elevation_Map.png" alt="Card image cap">
+                    <div class="card-body">
+                        <p class="card-text">Vestibuluimis in faucibus orci luctus et ultrices posuere cubilia Curis ipsum in augue posuere congue.</p>
+                        <a data-toggle="modal" data-target="#myModal" href="#" class="btn btn-primary">View Metadata</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-12">
+                <div class="card">
+                    <img class="card-img-top img-fluid" src="/static/portal/assets/images/flood_Assesment1m.png" alt="Card image cap">
+                    <div class="card-body">
+                        <p class="card-text">Vestibuluimis in faucibus orci luctus et ultrices posuere cubilia Curis ipsum in augue posuere congue.</p>
+                        <a href="#" class="btn btn-primary">View Metadata</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-12">
+                <div class="card">
+                    <img class="card-img-top img-fluid" src="/static/portal/assets/images/Elevation_Map.png" alt="Card image cap">
+                    <div class="card-body">
+                        <p class="card-text">Vestibuluimis in faucibus orci luctus et ultrices posuere cubilia Curis ipsum in augue posuere congue.</p>
+                        <a href="#" class="btn btn-primary">View Metadata</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-12">
+                <div class="card">
+                    <img class="card-img-top img-fluid" src="/static/portal/assets/images/owabi_landuse.png" alt="Card image cap">
+                    <div class="card-body">
+                        <p class="card-text">Vestibuluimis in faucibus orci luctus et ultrices posuere cubilia Curis ipsum in augue posuere congue.</p>
+                        <a href="#" class="btn btn-primary">View Metadata</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-12">
+                <div class="card">
+                    <img class="card-img-top img-fluid" src="/static/portal/assets/images/Elevation_Map.png" alt="Card image cap">
+                    <div class="card-body">
+                        <p class="card-text">Vestibuluimis in faucibus orci luctus et ultrices posuere cubilia Curis ipsum in augue posuere congue.</p>
+                        <a href="#" class="btn btn-primary">View Metadata</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-12">
+                <div class="card">
+                    <img class="card-img-top img-fluid" src="/static/portal/assets/images/owabi_landuse.png" alt="Card image cap">
+                    <div class="card-body">
+                        <p class="card-text">Vestibuluimis in faucibus orci luctus et ultrices posuere cubilia Curis ipsum in augue posuere congue.</p>
+                        <a href="#" class="btn btn-primary">View Metadata</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-12">
+                <div class="card">
+                    <img class="card-img-top img-fluid" src="/static/portal/assets/images/owabi_Elevation_Map.png" alt="Card image cap">
+                    <div class="card-body">
+                        <p class="card-text">Vestibuluimis in faucibus orci luctus et ultrices posuere cubilia Curis ipsum in augue posuere congue.</p>
+                        <a href="#" class="btn btn-primary">View Metadata</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-12">
+                <div class="card">
+                    <img class="card-img-top img-fluid" src="/static/portal/assets/images/flood_Assesment1m.png" alt="Card image cap">
+                    <div class="card-body">
+                        <p class="card-text">Vestibuluimis in faucibus orci luctus et ultrices posuere cubilia Curis ipsum in augue posuere congue.</p>
+                        <a href="#" class="btn btn-primary">View Metadata</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- The Modal -->
+  <div class="modal" id="myModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+      
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Metadata</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        
+        <!-- Modal body -->
+        <div class="modal-body">
+          Modal body..
+        </div>
+        
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+
+{% endblock %}
+{% block js %}
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+<script src="/static/portal/assets/libs/js/map.js"></script>
+{% endblock %}
